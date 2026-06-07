@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-background text-on-background font-body-md overflow-x-hidden;
+  }
+}
+
+/* Material Symbols Overrides */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Custom Gradients & Shadows from Design */
+.hero-gradient {
+  background: linear-gradient(to right, rgba(29, 28, 22, 0.8), rgba(29, 28, 22, 0.4));
+}
+
+.chat-shadow {
+  box-shadow: 0px 8px 30px rgba(28, 28, 28, 0.1);
+}
+
+.bento-card {
+  background-color: #f3ede3; /* surface-container */
+  transition: all 0.3s ease;
+}
+
+.bento-card:hover {
+  box-shadow: 0px 4px 20px rgba(28, 28, 28, 0.05);
+  transform: translateY(-2px);
+}

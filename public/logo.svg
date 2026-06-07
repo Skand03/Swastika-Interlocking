@@ -1,0 +1,14 @@
+<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="400" fill="#FAF7F2" />
+  <!-- Circular Boundary -->
+  <circle cx="200" cy="180" r="100" fill="none" stroke="#E8650A" stroke-width="12" />
+  
+  <!-- Stylized Geometric Interlocking / Auspicious Pattern -->
+  <!-- This uses clean, heavy lines to evoke both a paver block shape and the traditional symbol without being literal -->
+  <path d="M160 140 H240 V180 H200 V220 H120 V180 H160 V140" fill="#E8650A" />
+  <path d="M240 220 H160 V180 H200 V140 H280 V180 H240 V220" fill="#1C1C1C" opacity="0.8" />
+  
+  <!-- Bilingual Text -->
+  <text x="200" y="320" font-family="Montserrat, sans-serif" font-size="28" font-weight="bold" fill="#1C1C1C" text-anchor="middle">स्वस्तिका इंटरलॉकिंग</text>
+  <text x="200" y="360" font-family="Montserrat, sans-serif" font-size="24" font-weight="600" fill="#E8650A" text-anchor="middle">SWASTIKA INTERLOCKING</text>
+</svg>
