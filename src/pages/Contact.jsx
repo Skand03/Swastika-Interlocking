@@ -87,13 +87,18 @@ export default function Contact({ language }) {
     setIsTyping(true);
 
     try {
-      const response = await fetch('./api/chat.php', {
+      const response = await fetch('/api/chat.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ message: userMessage.text })
       });
+      
+      if (response.status !== 200) {
+        throw new Error(`HTTP Error ${response.status}`);
+      }
+
       const result = await response.json();
       
       setTimeout(() => {
@@ -124,195 +129,199 @@ export default function Contact({ language }) {
   };
 
   return (
-    <main class="pt-32 pb-20 px-gutter max-w-container-max mx-auto min-h-screen">
+    <main className="pt-32 pb-20 px-gutter max-w-container-max mx-auto min-h-screen">
       {/* Hero Section */}
-      <section class="mb-16 text-center md:text-left select-none animate-fade-in">
-        <h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-4">{t.title}</h1>
-        <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl leading-relaxed">
+      <section className="mb-16 text-center md:text-left select-none animate-fade-in">
+        <h1 className="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-4">{t.title}</h1>
+        <p className="font-body-lg text-body-lg text-on-surface-variant max-w-2xl leading-relaxed">
           {t.sub}
         </p>
       </section>
 
-      {/* Bento Contact & Chat Layout */}
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
-        {/* Contact Info & Details Bento Grid */}
-        <div class="lg:col-span-7 grid grid-cols-1 md:grid-cols-12 gap-6">
-          
-          {/* Map Placeholder */}
-          <div class="md:col-span-12 rounded-xl overflow-hidden bento-card h-[350px] relative group border border-surface-variant/30 select-none shadow-sm">
-            <img 
-              class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 transition-all duration-700" 
-              alt="Industrial Map Layout"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNYbCTNUNbtXHduKpSg5bWwPGFefJK-kjlJwvQkVcGU8Hf4Hx2FD31tf1iNRTqnnNIPWiMv0ynVzefPnzmLgv4YTcEMMFtqEJo-sDVsIEtZSQU4cidP-3dtIs2ofam17CAeF8MP6w13fID77Qz5WBUEMBFANvKjEp31Djb03h2ggkLsoaIKkAYMvTRrutIuyG5fvkm8POhFLKCQeC3PCOLEqCeYTCwEqfDSWtqHB_TiTuDkQOyP1l71ywkrc05ay33V6opwD_0qYs"
-            />
-            <div class="absolute inset-0 bg-gradient-to-t from-surface-container/60 to-transparent flex items-end p-6">
-              <div class="bg-surface-bright p-4 rounded-lg shadow-sm border border-outline-variant/30">
-                <p class="font-label-sm text-label-sm text-primary mb-1 uppercase tracking-wider">{t.industrialHub}</p>
-                <h3 class="font-headline-md text-headline-md text-on-surface font-semibold">{t.mfgUnit}</h3>
-              </div>
-            </div>
-          </div>
+      {/* Bento Contact Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+        {/* Map on Left */}
+        <div className="lg:col-span-5 rounded-xl overflow-hidden shadow-sm border border-surface-variant/30 h-full min-h-[500px]">
+          <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3570.661898870162!2d83.44953537542526!3d26.49882887689632!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMjbCsDI5JzU1LjgiTiA4M8KwMjcnMDcuNiJF!5e0!3m2!1sen!2sin!4v1780881087813!5m2!1sen!2sin" 
+            width="100%" 
+            height="100%" 
+            style={{border: 0, minHeight: '500px'}} 
+            allowFullScreen="" 
+            loading="lazy" 
+            referrerPolicy="no-referrer-when-downgrade"
+            title="Google Map Location"
+          ></iframe>
+        </div>
 
-          {/* Address Card */}
-          <div class="md:col-span-6 p-card-padding bento-card rounded-xl flex flex-col gap-4 border border-surface-variant/30 shadow-sm">
-            <div class="flex items-center gap-4 text-primary select-none font-semibold">
-              <span class="material-symbols-outlined">location_on</span>
-              <h4 class="font-headline-md text-headline-md">{t.address}</h4>
+        {/* Contact Cards on Right */}
+        <div className="lg:col-span-7 flex flex-col gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Address Card */}
+            <div className="p-card-padding bento-card rounded-xl flex flex-col gap-4 border border-surface-variant/30 shadow-sm">
+            <div className="flex items-center gap-4 text-primary select-none font-semibold">
+              <span className="material-symbols-outlined">location_on</span>
+              <h4 className="font-headline-md text-headline-md">{t.address}</h4>
             </div>
-            <div class="space-y-3">
+            <div className="space-y-3">
               <div>
-                <p class="font-label-sm text-label-sm text-outline mb-1">ENGLISH</p>
-                <p class="font-body-md text-body-md text-on-surface leading-relaxed">Plot 42, Industrial Area Phase II, Okhla, New Delhi - 110020</p>
+                <p className="font-label-sm text-label-sm text-outline mb-1">ENGLISH</p>
+                <p className="font-body-md text-body-md text-on-surface leading-relaxed">Girdharpur uncher, Kauriram, Uttar Pradesh</p>
               </div>
-              <div class="pt-2 border-t border-outline-variant/20">
-                <p class="font-label-sm text-label-sm text-outline mb-1">HINDI</p>
-                <p class="font-body-md text-body-md text-on-surface leading-relaxed">प्लाट ४२, औद्योगिक क्षेत्र फेज II, ओखला, नई दिल्ली - ११००२०</p>
+              <div className="pt-2 border-t border-outline-variant/20">
+                <p className="font-label-sm text-label-sm text-outline mb-1">HINDI</p>
+                <p className="font-body-md text-body-md text-on-surface leading-relaxed">गिरधरपुर ऊंचर, कौड़ीराम, उत्तर प्रदेश</p>
               </div>
             </div>
           </div>
 
           {/* Call Card */}
-          <div class="md:col-span-6 p-card-padding bento-card rounded-xl flex flex-col gap-4 border border-surface-variant/30 shadow-sm justify-between">
-            <div class="flex items-center gap-4 text-primary select-none font-semibold">
-              <span class="material-symbols-outlined">call</span>
-              <h4 class="font-headline-md text-headline-md">{t.callUs}</h4>
+          <div className="p-card-padding bento-card rounded-xl flex flex-col gap-4 border border-surface-variant/30 shadow-sm justify-between">
+            <div className="flex items-center gap-4 text-primary select-none font-semibold">
+              <span className="material-symbols-outlined">call</span>
+              <h4 className="font-headline-md text-headline-md">{t.callUs}</h4>
             </div>
-            <div class="flex flex-col gap-3 py-2">
-              <a class="font-body-lg text-body-lg font-bold text-on-surface hover:text-primary transition-colors flex items-center gap-2" href="tel:+919876543210">
-                <span class="material-symbols-outlined text-sm shrink-0">call</span>
-                +91 98765 43210
+            <div className="flex flex-col gap-3 py-2">
+              <a className="font-body-lg text-body-lg font-bold text-on-surface hover:text-primary transition-colors flex items-center gap-2" href="tel:+918400936290">
+                <span className="material-symbols-outlined text-sm shrink-0">call</span>
+                +918400936290
               </a>
-              <a class="font-body-lg text-body-lg font-bold text-on-surface hover:text-primary transition-colors flex items-center gap-2" href="tel:+91112345678">
-                <span class="material-symbols-outlined text-sm shrink-0">call</span>
-                +91 11 2345 678
+              <a className="font-body-lg text-body-lg font-bold text-on-surface hover:text-primary transition-colors flex items-center gap-2" href="tel:+917905887340">
+                <span className="material-symbols-outlined text-sm shrink-0">call</span>
+                +917905887340
               </a>
-            </div>
-          </div>
+              <a className="font-body-lg text-body-lg font-bold text-on-surface hover:text-primary transition-colors flex items-center gap-2" href="tel:+919722832661">
+                <span className="material-symbols-outlined text-sm shrink-0">call</span>
+                +919722832661
+              </a>
 
-          {/* WhatsApp CTA (Wide) */}
-          <div class="md:col-span-12">
-            <a 
-              class="w-full bg-[#1b6d24] hover:bg-[#217128] text-white p-6 rounded-xl flex flex-col md:flex-row items-center justify-between gap-6 transition-all shadow-sm hover:shadow-md active:scale-[0.99] cursor-pointer" 
-              href="https://wa.me/919876543210" 
-              target="_blank" 
-              rel="noreferrer"
-            >
-              <div class="flex items-center gap-6">
-                <div class="bg-white/20 p-4 rounded-full flex items-center justify-center shrink-0 select-none">
-                  <span class="material-symbols-outlined scale-150">chat</span>
-                </div>
-                <div class="text-center md:text-left">
-                  <h3 class="font-headline-md text-headline-md font-bold mb-1">{t.waHeader}</h3>
-                  <p class="font-body-md text-body-md opacity-90">{t.waSub}</p>
-                </div>
-              </div>
-              <div class="bg-white text-secondary font-bold px-8 py-3 rounded-full flex items-center gap-2 font-label-sm text-label-sm uppercase tracking-widest group shrink-0">
-                {t.waCTA} 
-                <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
-              </div>
-            </a>
-          </div>
-
-          {/* Additional Info Cards */}
-          <div class="md:col-span-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="p-card-padding bento-card rounded-xl border border-surface-variant/30 shadow-sm flex flex-col justify-between">
-              <div>
-                <span class="material-symbols-outlined text-primary mb-4 select-none">mail</span>
-                <h5 class="font-headline-md text-headline-md mb-2 font-semibold">{t.email}</h5>
-              </div>
-              <div class="space-y-1">
-                <p class="font-body-md text-body-md text-on-surface-variant">sales@swastikainterlocking.com</p>
-                <p class="font-body-md text-body-md text-on-surface-variant">info@swastikainterlocking.com</p>
-              </div>
-            </div>
-            
-            <div class="p-card-padding bento-card rounded-xl border border-surface-variant/30 shadow-sm flex flex-col justify-between">
-              <div>
-                <span class="material-symbols-outlined text-primary mb-4 select-none">schedule</span>
-                <h5 class="font-headline-md text-headline-md mb-2 font-semibold">{t.hours}</h5>
-              </div>
-              <div class="space-y-1">
-                <p class="font-body-md text-body-md text-on-surface-variant">{t.hoursVal}</p>
-                <p class="font-body-md text-body-md text-on-surface-variant">{t.sunday}</p>
-              </div>
-            </div>
-
-            <div class="p-card-padding bento-card rounded-xl border border-surface-variant/30 shadow-sm flex flex-col justify-between">
-              <div>
-                <span class="material-symbols-outlined text-primary mb-4 select-none">link</span>
-                <h5 class="font-headline-md text-headline-md mb-2 font-semibold">{t.social}</h5>
-              </div>
-              <div class="flex gap-4">
-                <a class="text-on-surface-variant hover:text-primary transition-all underline" href="https://linkedin.com" target="_blank" rel="noreferrer">LinkedIn</a>
-                <a class="text-on-surface-variant hover:text-primary transition-all underline" href="https://facebook.com" target="_blank" rel="noreferrer">Facebook</a>
-              </div>
             </div>
           </div>
         </div>
 
-        {/* Dedicated Embedded Chatbot Container */}
-        <div class="lg:col-span-5 bg-surface rounded-2xl border border-surface-variant/30 shadow-md overflow-hidden flex flex-col h-[525px]">
-          {/* Chat Header */}
-          <div class="bg-primary p-4 flex items-center gap-3 text-white select-none">
-            <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-              <span class="material-symbols-outlined text-xl">smart_toy</span>
+        {/* Additional Info Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="p-card-padding bento-card rounded-xl border border-surface-variant/30 shadow-sm flex flex-col justify-between">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-2xl select-none">✉️</span>
+                <h5 className="font-headline-md text-headline-md font-semibold">{t.email}</h5>
+              </div>
+              <div className="space-y-1">
+                <p className="font-body-md text-body-md text-on-surface-variant">sales@swastikainterlocking.com</p>
+                <p className="font-body-md text-body-md text-on-surface-variant">info@swastikainterlocking.com</p>
+              </div>
+            </div>
+
+            <div className="p-card-padding bento-card rounded-xl border border-surface-variant/30 shadow-sm flex flex-col justify-between">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-2xl select-none">🔗</span>
+                <h5 className="font-headline-md text-headline-md font-semibold">{t.social}</h5>
+              </div>
+              <div className="flex gap-4">
+                <a className="text-on-surface-variant hover:text-primary transition-all underline" href="https://linkedin.com" target="_blank" rel="noreferrer">LinkedIn</a>
+                <a className="text-on-surface-variant hover:text-primary transition-all underline" href="https://facebook.com" target="_blank" rel="noreferrer">Facebook</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Contact Form Section */}
+      <section className="mt-16 max-w-3xl mx-auto">
+        <div className="bg-surface-container-low p-8 sm:p-10 rounded-2xl shadow-sm border border-surface-variant/30">
+          <h3 className="font-headline-md text-headline-md mb-2">{language === 'hi' ? 'हमें एक संदेश भेजें' : 'Send us a Message'}</h3>
+          <p className="text-on-surface-variant mb-8 text-sm">
+            {language === 'hi' 
+              ? 'कोई प्रश्न है जैसे "आपका कार्यालय कहाँ है?" या "क्या आप थोक में बिक्री करते हैं?" - कृपया नीचे दिए गए फॉर्म को भरें और हमारी टीम आपसे संपर्क करेगी।' 
+              : 'Have a question like "Where is your office?" or "Do you do wholesale?" - Please fill out the form below and our team will get back to you.'}
+          </p>
+
+          <form className="space-y-6" onSubmit={async (e) => {
+            e.preventDefault();
+            if (!inputValue.name || !inputValue.phone || !inputValue.message) {
+              setMessages([{ type: 'error', text: language === 'hi' ? 'कृपया सभी आवश्यक फ़ील्ड भरें।' : 'Please fill all required fields.' }]);
+              return;
+            }
+            setIsTyping(true);
+            try {
+              const res = await fetch('/api/submit_contact.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: inputValue.name, phone: inputValue.phone, requirements: inputValue.message })
+              });
+              if (res.status !== 200) {
+                throw new Error(`HTTP Error ${res.status}`);
+              }
+              const data = await res.json();
+              if (data.success) {
+                setMessages([{ type: 'success', text: language === 'hi' ? 'संदेश सफलतापूर्वक भेजा गया!' : 'Message sent successfully!' }]);
+                setInputValue({ name: '', phone: '', message: '' });
+              } else {
+                setMessages([{ type: 'error', text: data.message || 'Error submitting form.' }]);
+              }
+            } catch (err) {
+              setMessages([{ type: 'error', text: (language === 'hi' ? 'कनेक्शन एरर: ' : 'Connection error: ') + err.message }]);
+            } finally {
+              setIsTyping(false);
+            }
+          }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium mb-2 text-on-surface">
+                  {language === 'hi' ? 'नाम *' : 'Name *'}
+                </label>
+                <input 
+                  type="text" 
+                  value={inputValue.name || ''} 
+                  onChange={e => setInputValue({...inputValue, name: e.target.value})}
+                  className="w-full bg-white border border-outline-variant/50 rounded-xl p-3 text-on-surface focus:ring-2 focus:ring-primary outline-none transition-all shadow-sm"
+                  placeholder={language === 'hi' ? 'अपना नाम दर्ज करें' : 'Enter your name'}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2 text-on-surface">
+                  {language === 'hi' ? 'फोन नंबर *' : 'Phone Number *'}
+                </label>
+                <input 
+                  type="tel" 
+                  value={inputValue.phone || ''} 
+                  onChange={e => setInputValue({...inputValue, phone: e.target.value})}
+                  className="w-full bg-white border border-outline-variant/50 rounded-xl p-3 text-on-surface focus:ring-2 focus:ring-primary outline-none transition-all shadow-sm"
+                  placeholder={language === 'hi' ? '10-अंकीय मोबाइल नंबर' : '10-digit mobile number'}
+                />
+              </div>
             </div>
             <div>
-              <h3 class="font-bold text-sm leading-tight">{t.chatHeader}</h3>
-              <p class="text-[10px] text-white/80">{t.chatStatus}</p>
+              <label className="block text-sm font-medium mb-2 text-on-surface">
+                {language === 'hi' ? 'संदेश *' : 'Message *'}
+              </label>
+              <textarea 
+                rows="4" 
+                value={inputValue.message || ''} 
+                onChange={e => setInputValue({...inputValue, message: e.target.value})}
+                className="w-full bg-white border border-outline-variant/50 rounded-xl p-3 text-on-surface focus:ring-2 focus:ring-primary outline-none transition-all shadow-sm"
+                placeholder={language === 'hi' ? 'आप क्या जानना चाहते हैं?' : 'How can we help you?'}
+              ></textarea>
             </div>
-          </div>
 
-          {/* Chat message body */}
-          <div class="flex-grow p-4 overflow-y-auto space-y-4 bg-surface-container-low">
-            {messages.map(msg => (
-              <div 
-                key={msg.id} 
-                class={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
-                <div 
-                  class={`max-w-[85%] rounded-2xl p-3 text-sm leading-relaxed shadow-sm ${
-                    msg.sender === 'user' 
-                      ? 'bg-primary text-white rounded-tr-none' 
-                      : 'bg-surface border border-outline-variant/30 text-on-surface rounded-tl-none'
-                  }`}
-                >
-                  {msg.text}
-                </div>
-              </div>
-            ))}
-            
-            {/* Typing Indicator */}
-            {isTyping && (
-              <div class="flex justify-start">
-                <div class="bg-surface border border-outline-variant/30 text-on-surface rounded-2xl rounded-tl-none p-3 text-sm flex items-center gap-1.5 shadow-sm">
-                  <span class="w-2 h-2 bg-on-surface/40 rounded-full animate-bounce"></span>
-                  <span class="w-2 h-2 bg-on-surface/40 rounded-full animate-bounce [animation-delay:0.2s]"></span>
-                  <span class="w-2 h-2 bg-on-surface/40 rounded-full animate-bounce [animation-delay:0.4s]"></span>
-                </div>
+            {messages.length > 0 && messages[0].type && (
+              <div className={`p-4 rounded-lg font-bold text-sm ${messages[0].type === 'error' ? 'bg-error/10 text-error' : 'bg-primary/10 text-primary'}`}>
+                {messages[0].text}
               </div>
             )}
-            <div ref={chatEndRef} />
-          </div>
 
-          {/* Chat Input */}
-          <form onSubmit={handleSendMessage} class="p-3 border-t border-surface-variant/30 bg-surface flex items-center gap-2">
-            <input 
-              type="text" 
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              placeholder={t.chatPlaceholder}
-              class="flex-grow bg-surface-container border border-outline/20 p-3 rounded-xl text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all"
-            />
             <button 
               type="submit" 
-              class="w-11 h-11 bg-primary text-white rounded-xl flex items-center justify-center hover:bg-primary-container active:scale-95 transition-all cursor-pointer"
+              disabled={isTyping}
+              className="w-full bg-primary text-on-primary py-4 rounded-xl font-bold hover:bg-primary/90 active:scale-[0.98] transition-all shadow-sm disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              <span class="material-symbols-outlined text-lg leading-none">{t.sendBtn}</span>
+              {isTyping 
+                ? (language === 'hi' ? 'भेजा जा रहा है...' : 'Sending...') 
+                : (language === 'hi' ? 'संदेश भेजें' : 'Send Message')}
             </button>
           </form>
         </div>
-      </div>
+      </section>
     </main>
   );
 }

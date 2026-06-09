@@ -172,23 +172,63 @@ export default function ProductDetail({ language }) {
   const navigate = useNavigate();
   const t = TRANSLATIONS[language];
 
-  // Retrieve current product or default to zigzag
-  const productKey = id && CATALOG[id] ? id : 'zigzag';
-  const product = CATALOG[productKey];
+  const [liveProduct, setLiveProduct] = useState(null);
 
-  const [activeImage, setActiveImage] = useState(product.images[0]);
-  const [quantity, setQuantity] = useState(product.moq);
+  // Sync state when URL parameter changes
+  useEffect(() => {
+    fetch('./api/get_products.php')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.products) {
+          const found = data.products.find(p => p.product_key === id);
+          if (found) {
+            setLiveProduct({
+              id: found.product_key,
+              nameEn: found.name_en,
+              nameHi: found.name_hi,
+              price: found.price,
+              unit: 'sq.ft',
+              moq: 100,
+              descEn: found.desc_en,
+              descHi: found.desc_hi,
+              images: [found.image_url, found.image_url],
+              specs: {
+                thickness: '60mm - 80mm',
+                weight: 'Varies',
+                strength: 'M30 - M40 Grade',
+                color: 'Various colors',
+                application: found.category,
+                material: 'Concrete Mix'
+              }
+            });
+          } else {
+            setLiveProduct(null);
+          }
+        }
+      })
+      .catch(err => {
+        console.error("Error fetching live product detail:", err);
+        setLiveProduct(null);
+      });
+  }, [id]);
+
+  const productKey = id && CATALOG[id] ? id : 'zigzag';
+  const product = liveProduct || CATALOG[productKey];
+
+  const [activeImage, setActiveImage] = useState('');
+  const [quantity, setQuantity] = useState(100);
   const [formData, setFormData] = useState({ name: '', phone: '', city: '' });
   const [statusMsg, setStatusMsg] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Sync state when URL parameter changes
   useEffect(() => {
-    setActiveImage(product.images[0]);
-    setQuantity(product.moq);
+    if (product) {
+      setActiveImage(product.images ? product.images[0] : '');
+      setQuantity(product.moq || 100);
+    }
     setStatusMsg('');
-  }, [productKey, product]);
+  }, [product]);
 
   const handleQtyChange = (val) => {
     setQuantity(prev => {
@@ -272,9 +312,6 @@ export default function ProductDetail({ language }) {
                 className="w-full h-full object-cover transition-all duration-300" 
                 src={activeImage} 
               />
-              <div className="absolute inset-0 flex items-center justify-center bg-black/5 pointer-events-none">
-                <span className="bg-white/90 px-4 py-2 rounded-lg font-bold text-primary text-xs shadow-sm">Product Image</span>
-              </div>
             </div>
             {product.images.length > 1 && (
               <div className="grid grid-cols-3 gap-4">
@@ -342,14 +379,14 @@ export default function ProductDetail({ language }) {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <a 
-                  href="#quick-quote-section" 
-                  className="flex-1 bg-primary text-on-primary py-4 px-8 rounded-lg font-bold flex items-center justify-center gap-2 hover:bg-primary-container shadow-md transition-all active:scale-[0.98] text-center"
+                <button 
+                  onClick={() => document.getElementById('quick-quote-section')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="flex-1 bg-primary text-on-primary py-4 px-8 rounded-lg font-bold flex items-center justify-center gap-2 hover:bg-primary-container shadow-md transition-all active:scale-[0.98] text-center cursor-pointer"
                 >
                   {t.getQuote} <span className="material-symbols-outlined">arrow_forward</span>
-                </a>
+                </button>
                 <a 
-                  href={`https://wa.me/919876543210?text=I%20am%20interested%20in%20ordering%20${quantity}%20pieces%20of%20${product.nameEn}`}
+                  href={`https://wa.me/917905978260?text=I%20am%20interested%20in%20ordering%20${quantity}%20pieces%20of%20${product.nameEn}`}
                   target="_blank"
                   rel="noreferrer"
                   className="flex-1 bg-[#25D366] text-white py-4 px-8 rounded-lg font-bold flex items-center justify-center gap-2 hover:brightness-105 shadow-md transition-all active:scale-[0.98] text-center"

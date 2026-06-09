@@ -4,18 +4,18 @@ import { Link } from 'react-router-dom';
 const TRANSLATIONS = {
   hi: {
     title: 'हमारे बारे में',
-    subtitle: 'Deesa, Gujarat का विश्वसनीय निर्माण साथी',
+    subtitle: 'Gajpur Kauriram, Uttar Pradesh का विश्वसनीय निर्माण साथी',
     ourStory: 'हमारी कहानी',
     ourStoryTitle: 'हमारी कहानी',
-    storyText1: 'स्वस्तिका इंटरलॉकिंग डीसा, गुजरात के केंद्र में स्थित एक गर्वित पारिवारिक व्यवसाय है। एक दशक से अधिक समय से, हम अपने समुदाय की नींव को अटूट ईमानदारी के साथ बनाने के लिए प्रतिबद्ध हैं।',
+    storyText1: 'स्वस्तिका इंटरलॉकिंग गजपुर कौड़ीराम, उत्तर प्रदेश के केंद्र में स्थित एक गर्वित पारिवारिक व्यवसाय है। 1990 के दशक से, हम अपने समुदाय की नींव को अटूट ईमानदारी के साथ बनाने के लिए प्रतिबद्ध हैं।',
     storyText2: 'हम भारी भार और समय की कसौटी पर खरा उतरने के लिए डिज़ाइन किए गए इंटरलॉकिंग पेवर ब्लॉकों के सटीक विनिर्माण में विशेषज्ञता रखते हैं। पेवर्स के अलावा, हम प्रीमियम रेत, बजरी, उच्च ग्रेड सीमेंट और औद्योगिक क्षमता वाले जल निकासी पाइपों सहित निर्माण आवश्यक वस्तुओं का एक पूरा सूट प्रदान करते हैं।',
     processTitle: 'निर्माण प्रक्रिया',
     processSubtitle: 'हम इसे कैसे बनाते हैं',
     steps: [
-      { num: '1', title: 'कच्चा माल / Raw Materials', desc: 'हम एक मजबूत नींव के लिए उच्चतम गुणवत्ता वाली रेत, बजरी और सीमेंट का स्रोत बनाते हैं।' },
-      { num: '2', title: 'मिश्रण / Mixing', desc: 'कम्प्यूटरीकृत मिश्रण अधिकतम स्थायित्व और मजबूती के लिए सही अनुपात सुनिश्चित करता है।' },
-      { num: '3', title: 'ढलाई / Moulding', desc: 'उच्च दबाव कंपन मोल्डिंग सटीक, इंटरलॉकिंग आकृतियों का निर्माण करता है।' },
-      { num: '4', title: 'क्योरिंग और डिलीवरी / Curing', desc: 'आपके स्थान पर सीधे वितरित होने से पहले 14 दिनों तक पानी की क्योरिंग की जाती है।' }
+      { num: '1', title: 'कच्चा माल', desc: 'हम एक मजबूत नींव के लिए उच्चतम गुणवत्ता वाली रेत, बजरी और सीमेंट का स्रोत बनाते हैं।' },
+      { num: '2', title: 'मिश्रण', desc: 'कम्प्यूटरीकृत मिश्रण अधिकतम स्थायित्व और मजबूती के लिए सही अनुपात सुनिश्चित करता है।' },
+      { num: '3', title: 'ढलाई', desc: 'उच्च दबाव कंपन मोल्डिंग सटीक, इंटरलॉकिंग आकृतियों का निर्माण करता है।' },
+      { num: '4', title: 'क्योरिंग और डिलीवरी', desc: 'आपके स्थान पर सीधे वितरित होने से पहले 14 दिनों तक पानी की क्योरिंग की जाती है।' }
     ],
     whyChooseTitle: 'स्वस्तिका को क्यों चुनें?',
     whyChooseOptions: [
@@ -36,10 +36,10 @@ const TRANSLATIONS = {
   },
   en: {
     title: 'About Us',
-    subtitle: 'Trusted construction partner of Deesa, Gujarat',
+    subtitle: 'Trusted construction partner of Gajpur Kauriram, Uttar Pradesh',
     ourStory: 'Our Story',
     ourStoryTitle: 'Our Story',
-    storyText1: 'Swastika Interlocking is a proud family-run business based in the heart of Deesa, Gujarat. For over a decade, we have been at the forefront of the local construction industry, committed to building the foundations of our community with unshakeable integrity.',
+    storyText1: 'Swastika Interlocking is a proud family-run business based in the heart of Gajpur Kauriram, Uttar Pradesh. Since the 1990s, we have been at the forefront of the local construction industry, committed to building the foundations of our community with unshakeable integrity.',
     storyText2: 'We specialize in the high-precision manufacturing of interlocking paver blocks, designed to withstand heavy loads and the test of time. Beyond pavers, we provide a complete suite of construction essentials including premium sand, gravel, high-grade cement, and industrial-strength drainage pipes.',
     processTitle: 'Manufacturing Process',
     processSubtitle: 'How We Make It',
@@ -73,35 +73,12 @@ export default function About({ language }) {
 
   return (
     <div className="pt-16 bg-surface text-on-surface">
-      {/* Hero Banner */}
-      <section className="w-full bg-[#1C2B1A] py-20 md:py-28 relative overflow-hidden select-none">
-        <div className="absolute inset-0 opacity-10">
-          <div className="grid grid-cols-12 h-full w-full">
-            {[...Array(12)].map((_, i) => (
-              <div key={i} className="col-span-1 border-r border-surface/20"></div>
-            ))}
-          </div>
-        </div>
-        <div className="max-w-container-max mx-auto px-gutter text-center relative z-10">
-          <nav className="flex justify-center gap-2 mb-4 text-surface/60 text-sm font-semibold">
-            <Link to="/" className="hover:text-surface">Home</Link>
-            <span>&gt;</span>
-            <span className="text-primary-fixed">About</span>
-          </nav>
-          <h1 className="font-display-lg text-4xl md:text-5xl text-surface mb-4 leading-tight">
-            {language === 'hi' ? 'हमारे बारे में' : 'About Us'}
-          </h1>
-          <p className="font-body-lg text-lg text-[#FAF7F2] opacity-90 max-w-2xl mx-auto">
-            {t.subtitle}
-          </p>
-        </div>
-      </section>
 
       {/* Our Story */}
       <section className="max-w-container-max mx-auto px-gutter py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
           <div className="space-y-6">
-            <span className="inline-block px-4 py-1 bg-primary-fixed text-on-primary-fixed font-semibold text-xs rounded-full">EST. 2014</span>
+            <span className="inline-block px-4 py-1 bg-primary-fixed text-on-primary-fixed font-semibold text-xs rounded-full">EST. 1990s</span>
             <h2 className="font-display-lg text-3xl md:text-4xl text-primary leading-tight">
               {t.ourStoryTitle}
             </h2>
@@ -111,22 +88,19 @@ export default function About({ language }) {
             </div>
           </div>
           <div className="relative group">
-            <div className="aspect-[4/3] rounded-xl border-2 border-dashed border-primary flex flex-col items-center justify-center p-8 bg-surface-container-low transition-transform duration-500 group-hover:scale-[1.02] overflow-hidden">
+            <div className="aspect-video rounded-tl-[4rem] rounded-br-[4rem] rounded-tr-2xl rounded-bl-2xl shadow-[0_20px_50px_rgba(232,101,10,0.15)] border border-primary/20 flex flex-col items-center justify-center bg-surface-container-low transition-all duration-700 hover:-translate-y-2 hover:shadow-[0_30px_60px_rgba(232,101,10,0.25)] overflow-hidden z-10 relative">
               <img 
                 alt="Manufacturing facility" 
-                className="absolute inset-0 w-full h-full object-cover opacity-80 mix-blend-overlay group-hover:scale-110 transition-transform duration-700" 
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBsvfbx_m77sFmh9wPs3K7wde8H4FKd6iSmi0GkpWukfU7WO1-5K1m-FOWM0Y3MkjXolxIVdOF1YhT6kNaXJVdefCae8klVGAhwGKxgE5UgUSPmLN6sT3A-gFWuoy-whc8Jmz4upqV6B_DORSaOuC4W92g17wxO3_E-fPpETFHNSPRm9652h-IKNXkF5iXccYK4oMbz7JSpoTwGENMUqN9OPCUc5XDa11psJ2Nu1YeXIc0Y5krNe2RoiL701WGJtNxphap12uVuTQ" 
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out" 
+                src="/screen.png" 
               />
-              <div className="relative z-10 text-center text-white bg-black/40 p-4 rounded-lg backdrop-blur-sm">
-                <span className="material-symbols-outlined text-5xl text-primary mb-2">factory</span>
-                <p className="font-headline-md text-lg">{language === 'hi' ? 'हमारी फैक्ट्री / Factory Photo' : 'Factory Photo / हमारी फैक्ट्री'}</p>
-              </div>
             </div>
-            <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-primary rounded-full -z-10 blur-3xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
+            {/* Decorative background blurs */}
+            <div className="absolute -bottom-8 -left-8 w-48 h-48 bg-primary rounded-full -z-0 blur-[60px] opacity-30 group-hover:opacity-50 transition-opacity duration-700"></div>
+            <div className="absolute -top-8 -right-8 w-48 h-48 bg-[#1565C0] rounded-full -z-0 blur-[60px] opacity-20 group-hover:opacity-40 transition-opacity duration-700"></div>
           </div>
         </div>
       </section>
-
       {/* Manufacturing Process */}
       <section className="w-full bg-[#F0EBE0] py-20">
         <div className="max-w-container-max mx-auto px-gutter">
@@ -151,6 +125,91 @@ export default function About({ language }) {
         </div>
       </section>
 
+      {/* Engineering Standards (Bento Grid) */}
+      <section className="w-full bg-[#F6F2EC] py-24">
+        <div className="max-w-container-max mx-auto px-gutter">
+          <div className="mb-12">
+            <h2 className="font-display-lg text-4xl md:text-5xl text-[#2D3748] mb-4">
+              {language === 'hi' ? 'निर्माण प्रक्रिया' : 'Engineering Standards'}
+            </h2>
+            <p className="text-on-surface-variant font-medium">
+              {language === 'hi' ? 'हर माइक्रोन पर सटीकता, हर कण में स्थायित्व।' : 'Precision at every micron, durability in every grain.'}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 auto-rows-fr">
+            
+            {/* Column 1 */}
+            <div className="flex flex-col gap-6">
+              <div className="relative rounded-2xl overflow-hidden shadow-lg group flex-1 min-h-[300px]">
+                <img 
+                  src="/swastika-interlocking-pertol-bricks-3x.jpg" 
+                  alt="Raw Materials" 
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+                <div className="absolute bottom-0 left-0 p-8 w-full text-white">
+                  <div className="text-3xl font-bold text-[#FCD3A1] mb-2">01</div>
+                  <h3 className="text-xl font-bold mb-2">{language === 'hi' ? 'कच्चा माल' : 'Raw Materials'}</h3>
+                  <p className="text-sm text-white/80 leading-relaxed max-w-[90%]">
+                    {language === 'hi' ? 'एक मजबूत नींव के लिए उच्चतम गुणवत्ता वाली रेत और बजरी की सोर्सिंग।' : 'Sourcing high quality sand and gravel for a strong foundation.'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl shadow-lg p-8 group flex-1 min-h-[250px] flex flex-col justify-center border border-black/5">
+                <div className="mb-6">
+                  <span className="material-symbols-outlined text-4xl text-primary">cyclone</span>
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-on-surface">{language === 'hi' ? 'मिश्रण' : 'Mixing'}</h3>
+                <p className="text-sm text-on-surface-variant leading-relaxed">
+                  {language === 'hi' ? 'कम्प्यूटरीकृत मिश्रण अधिकतम स्थायित्व और मजबूती के लिए सही अनुपात सुनिश्चित करता है।' : 'Computerized mixing ensures the perfect ratio for maximum durability and strength.'}
+                </p>
+              </div>
+            </div>
+
+            {/* Column 2 */}
+            <div className="flex flex-col gap-6 lg:h-full">
+              <div className="relative rounded-2xl overflow-hidden shadow-lg group h-full min-h-[500px]">
+                <img 
+                  src="/interlocking-street-image-3x.jpg" 
+                  alt="Moulding" 
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#B04A00]/90 via-black/40 to-transparent mix-blend-multiply"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+                <div className="absolute bottom-0 left-0 p-8 w-full text-white">
+                  <div className="text-4xl font-bold text-white mb-2">03</div>
+                  <h3 className="text-2xl font-bold mb-3 text-white">{language === 'hi' ? 'ढलाई' : 'Moulding'}</h3>
+                  <p className="text-sm text-white/80 leading-relaxed font-medium">
+                    {language === 'hi' ? 'उच्च दबाव कंपन मोल्डिंग सटीक, इंटरलॉकिंग आकृतियों का निर्माण करता है जो सहनशक्ति को फिर से परिभाषित करते हैं।' : 'High-pressure vibration moulding creates precise, interlocking shapes that redefine endurance.'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Column 3 */}
+            <div className="flex flex-col gap-6">
+              <div className="bg-[#38332A] rounded-2xl shadow-lg p-8 group flex-1 min-h-[300px] flex flex-col justify-center">
+                <div className="text-3xl font-bold text-primary mb-4">04</div>
+                <h3 className="text-xl font-bold mb-4 text-white">{language === 'hi' ? 'क्योरिंग और डिलीवरी' : 'Curing & Delivery'}</h3>
+                <p className="text-sm text-white/70 leading-relaxed">
+                  {language === 'hi' ? 'आपके स्थान पर सीधे वितरित होने से पहले 14 दिनों तक पानी की क्योरिंग की जाती है। हमारे गुणवत्ता नियंत्रण से कोई समझौता नहीं।' : 'Water curing for 14 days before being delivered directly to your site. Our quality control is non-negotiable.'}
+                </p>
+              </div>
+
+              <div className="bg-[#F8EFE4] rounded-2xl shadow-lg p-8 group flex-1 min-h-[250px] flex flex-col items-center justify-center text-center border border-[#E8DBC9]">
+                <div className="mb-4">
+                  <span className="material-symbols-outlined text-5xl text-[#C06014]" style={{fontVariationSettings: "'FILL' 0, 'wght' 300"}}>verified</span>
+                </div>
+                <h3 className="text-sm font-bold text-[#2D3748]">{language === 'hi' ? 'आईएसओ मानक प्रमाणित' : 'ISO Standards Compliant'}</h3>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
       {/* Why Choose Us */}
       <section className="max-w-container-max mx-auto px-gutter py-20">
         <h2 className="font-display-lg text-3xl text-center mb-12 text-on-surface">{t.whyChooseTitle}</h2>
@@ -169,45 +228,6 @@ export default function About({ language }) {
         </div>
       </section>
 
-      {/* Stats Bar */}
-      <section className="w-full bg-primary py-12">
-        <div className="max-w-container-max mx-auto px-gutter">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            {t.stats.map((stat, idx) => (
-              <div key={idx} className="text-white">
-                <div className="font-display-lg text-3xl md:text-4xl font-bold mb-1">{stat.value}</div>
-                <div className="text-xs uppercase tracking-widest opacity-90">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Strip */}
-      <section className="w-full bg-[#1C2B1A] py-16">
-        <div className="max-w-container-max mx-auto px-gutter flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="text-center md:text-left">
-            <h2 className="font-display-lg text-2xl md:text-3xl text-white mb-2">{t.ctaTitle}</h2>
-            <p className="text-surface/75 text-sm md:text-base">{t.ctaSub}</p>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-            <Link 
-              to="/order" 
-              className="bg-primary text-white px-8 py-4 rounded font-bold text-center hover:bg-primary-container transition-colors flex items-center justify-center gap-2"
-            >
-              {t.ctaBtn} <span className="material-symbols-outlined">arrow_forward</span>
-            </Link>
-            <a 
-              href="https://wa.me/919876543210" 
-              target="_blank" 
-              rel="noreferrer"
-              className="bg-[#25D366] text-white px-8 py-4 rounded font-bold text-center hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
-            >
-              <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>chat</span> {t.whatsappBtn}
-            </a>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }

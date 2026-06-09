@@ -1,8 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const TRANSLATIONS = {
   hi: {
+    ourBusiness: 'हमारे व्यवसाय',
+    buildingMaterials: 'निर्माण सामग्री',
+    paverBlocks: 'पेवर ब्लॉक',
+    sand: 'रेत',
+    gravel: 'बजरी',
+    cement: 'सीमेंट',
+    pipes: 'पाइप्स',
+    shutteringMaterials: 'शटरिंग सामग्री',
+    steelPlates: 'स्टील प्लेट्स',
+    props: 'प्रॉप्स',
+    hFrames: 'एच-फ्रेम्स',
+    clamps: 'क्लैंप्स',
+    viewShuttering: 'शटरिंग देखें',
+    rccRoadConstruction: 'आरसीसी सड़क निर्माण',
+    survey: 'सर्वेक्षण',
+    estimation: 'अनुमान',
+    construction: 'निर्माण',
+    handover: 'हैंडओवर',
+    viewProjects: 'प्रोजेक्ट्स देखें',
     heroTitle: 'स्वस्तिका इंटरलॉकिंग',
     heroSub: 'निर्माण में विश्वास',
     orderNow: 'अभी ऑर्डर करें',
@@ -47,6 +66,25 @@ const TRANSLATIONS = {
     connErr: 'सर्वर से कनेक्ट करने में त्रुटि हुई। कृपया पुनः प्रयास करें।'
   },
   en: {
+    ourBusiness: 'Our Business Divisions',
+    buildingMaterials: 'Building Materials',
+    paverBlocks: 'Paver Blocks',
+    sand: 'Sand',
+    gravel: 'Gravel',
+    cement: 'Cement',
+    pipes: 'Pipes',
+    shutteringMaterials: 'Shuttering Materials',
+    steelPlates: 'Steel Plates',
+    props: 'Props',
+    hFrames: 'H-Frames',
+    clamps: 'Clamps',
+    viewShuttering: 'View Shuttering',
+    rccRoadConstruction: 'RCC Road Construction',
+    survey: 'Survey',
+    estimation: 'Estimation',
+    construction: 'Construction',
+    handover: 'Handover',
+    viewProjects: 'View Projects',
     heroTitle: 'Swastika Interlocking',
     heroSub: 'Trusted in Construction',
     orderNow: 'Order Now',
@@ -61,18 +99,18 @@ const TRANSLATIONS = {
     materialsDesc: 'Using premium grade cement and aggregates for maximum durability and strength.',
     customTitle: 'Custom Orders',
     customDesc: 'Tailored designs, colors, and patterns to meet your unique architectural requirements.',
-    prodCat: 'Product Categories',
-    prodCatDesc: 'Explore our diverse range of interlocking solutions designed for heavy-duty traffic and elegant landscapes.',
-    viewCatalog: 'View Full Catalog',
+    prodCat: 'Building Materials & Infrastructure Solutions',
+    prodCatDesc: 'Explore our complete range of building materials.',
+    viewCatalog: '250+ Products Available →',
     heavyDuty: 'Heavy Duty',
-    indPaver: 'Industrial Pavers',
+    indPaver: 'Interlocking Street Pavers',
     indPaverDesc: 'Built for high-traffic environments like warehouses, fuel stations, and public plazas.',
-    landscape: 'Landscape',
-    resPaver: 'Residential Garden Blocks',
-    resPaverDesc: 'Aesthetic designs that transform pathways, patios, and gardens into elegant spaces.',
+    landscape: 'Construction',
+    resPaver: 'Different Size Pipes',
+    resPaverDesc: 'High-quality concrete pipes for drainage and infrastructure projects.',
     infrastructure: 'Infrastructure',
-    curbTitle: 'Curbing & Edging',
-    curbDesc: 'Precision-engineered curb stones for road projects and large-scale urban development.',
+    curbTitle: 'Petrol Pump Bricks',
+    curbDesc: 'Durable interlocking bricks specifically designed for petrol stations and heavy load areas.',
     getQuote: 'Get Quote',
     testimonials: 'What Our Partners Say',
     quoteText: '"Swastika Interlocking provided the pavers for our 10,000 sq.ft industrial park. The durability and finish are unmatched. Their delivery was on point even with tight deadlines."',
@@ -95,6 +133,21 @@ const TRANSLATIONS = {
 export default function Home({ language }) {
   const navigate = useNavigate();
   const t = TRANSLATIONS[language];
+
+  const heroImages = [
+    '/images/scroll.jpg',
+    '/images/scroll-2-.jpg',
+    '/images/scroll-cement-.jpg',
+    '/images/scroll-all-.jpg'
+  ];
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % heroImages.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -122,19 +175,15 @@ export default function Home({ language }) {
     setStatusMsg('');
 
     try {
-      const response = await fetch('./api/submit_order.php', {
+      const response = await fetch('/api/submit_contact.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          customer_name: formData.name,
+          name: formData.name,
           phone: formData.phone,
-          city: 'Custom Quote Request',
-          product_type: 'Quote',
-          quantity: 0,
-          address: 'Main Plaza/Plaza Request',
-          special_req: formData.requirements
+          requirements: formData.requirements
         })
       });
       
@@ -157,230 +206,227 @@ export default function Home({ language }) {
   };
 
   return (
-    <div class="pt-16">
-      {/* Hero Section */}
-      <section class="relative h-screen min-h-[700px] flex items-center">
-        <div class="absolute inset-0 z-0 overflow-hidden">
-          <div 
-            class="w-full h-full bg-cover bg-center transition-transform duration-[10s] hover:scale-110" 
-            style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuA4UvKpZAgFtgLCB012KLeBooZrJis4RmGGwhmVzTHXve1qXgNGQe4LDjHrry12YtW8lYkzSnVz1gjKdMygq64d1DlrZYMma1KERu50rMgkhcgSddkHo2Pa0rpoICuDI4EjiOOSlRo-exXrKU1DobKGyR0B_yjvUtQ60Zrufwco7qwQE8PYhR5u1T72T7-gDA0R-b_1oVG1y9K6_hozs1DJJG0wodbAHYvv49Wjhxsc7NqOjPtROtYr-voMbtZDZKrAtJ-C-wh6dPs')" }}
-          ></div>
-          <div class="absolute inset-0 hero-gradient"></div>
-        </div>
-        <div class="relative z-10 max-w-container-max mx-auto px-gutter w-full">
-          <div class="max-w-2xl text-white select-none">
-            <h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg mb-4 leading-tight">
-              {t.heroTitle}<br/>
-              <span class="text-primary-fixed">{language === 'hi' ? 'निर्माण में विश्वास' : 'Trusted in Construction'}</span>
-            </h1>
-            <p class="font-headline-md text-headline-md mb-10 text-surface-variant opacity-90">
-              {t.heroSub}
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4">
-              <Link 
-                to="/order" 
-                class="flex items-center justify-center gap-2 bg-primary text-on-primary px-8 py-4 font-bold text-lg rounded-lg hover:bg-primary-container transition-all group"
-              >
-                {t.orderNow}
-                <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
-              </Link>
-              <Link 
-                to="/products" 
-                class="flex items-center justify-center gap-2 border-2 border-white/40 text-white backdrop-blur-sm px-8 py-4 font-bold text-lg rounded-lg hover:bg-white/10 transition-all"
-              >
-                {t.viewProducts}
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+    <div className="pt-16">
+{/*  Hero Section  */}
+<section className="relative w-full mt-4 group">
+<div className="relative w-full overflow-hidden bg-surface flex items-center justify-center">
+  {/* Invisible spacer to set height based on natural aspect ratio */}
+  <img src={heroImages[0]} alt="spacer" className="w-full h-auto invisible pointer-events-none" />
+  
+  {heroImages.map((img, index) => (
+    <img 
+      key={index} 
+      src={img}
+      alt={`Slide ${index + 1}`}
+      className={`absolute top-0 left-0 w-full h-auto transition-opacity duration-1000 ${index === currentImageIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+    />
+  ))}
+  
+  {/* Navigation Arrows */}
+  <button 
+    onClick={() => setCurrentImageIndex((prev) => (prev - 1 + heroImages.length) % heroImages.length)} 
+    className="absolute left-0 top-1/2 -translate-y-1/2 bg-white text-black w-8 h-12 md:w-10 md:h-16 flex items-center justify-center shadow-md z-20 hover:bg-gray-100 transition-colors opacity-90 hover:opacity-100"
+  >
+    <span className="material-symbols-outlined">chevron_left</span>
+  </button>
+  <button 
+    onClick={() => setCurrentImageIndex((prev) => (prev + 1) % heroImages.length)} 
+    className="absolute right-0 top-1/2 -translate-y-1/2 bg-white text-black w-8 h-12 md:w-10 md:h-16 flex items-center justify-center shadow-md z-20 hover:bg-gray-100 transition-colors opacity-90 hover:opacity-100"
+  >
+    <span className="material-symbols-outlined">chevron_right</span>
+  </button>
+</div>
+</section>
+<section className="py-16 md:py-24 px-gutter max-w-container-max mx-auto">
+<div className="text-center mb-16">
+<h2 className="font-display-lg text-headline-md md:text-display-lg text-on-surface">{t.ourBusiness}</h2>
+</div>
 
-      {/* Features Bento Grid */}
-      <section id="services" class="py-24 px-gutter max-w-container-max mx-auto scroll-mt-16">
-        <div class="text-center mb-16 select-none">
-          <span class="inline-block px-4 py-1 bg-primary-fixed text-on-primary-fixed-variant font-label-sm text-label-sm rounded-full mb-4">{t.whyChoose}</span>
-          <h2 class="font-display-lg text-headline-md md:text-display-lg text-on-surface">{t.excellenceFeatures}</h2>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-gutter">
-          {/* Manufacturing */}
-          <div class="bg-surface-container border border-outline-variant p-card-padding rounded-xl hover:shadow-lg transition-all group">
-            <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-6 text-primary group-hover:bg-primary group-hover:text-on-primary transition-all">
-              <span class="material-symbols-outlined text-3xl">precision_manufacturing</span>
-            </div>
-            <h3 class="font-headline-md text-headline-md mb-3 font-semibold">{t.mfgTitle}</h3>
-            <p class="text-on-surface-variant leading-relaxed">{t.mfgDesc}</p>
-          </div>
-          {/* Fast Delivery */}
-          <div class="bg-surface-container border border-outline-variant p-card-padding rounded-xl hover:shadow-lg transition-all group">
-            <div class="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center mb-6 text-secondary group-hover:bg-secondary group-hover:text-on-secondary transition-all">
-              <span class="material-symbols-outlined text-3xl">local_shipping</span>
-            </div>
-            <h3 class="font-headline-md text-headline-md mb-3 font-semibold">{t.deliveryTitle}</h3>
-            <p class="text-on-surface-variant leading-relaxed">{t.deliveryDesc}</p>
-          </div>
-          {/* Quality Materials */}
-          <div class="bg-surface-container border border-outline-variant p-card-padding rounded-xl hover:shadow-lg transition-all group">
-            <div class="w-12 h-12 bg-tertiary/10 rounded-lg flex items-center justify-center mb-6 text-tertiary group-hover:bg-tertiary group-hover:text-on-tertiary transition-all">
-              <span class="material-symbols-outlined text-3xl">verified</span>
-            </div>
-            <h3 class="font-headline-md text-headline-md mb-3 font-semibold">{t.materialsTitle}</h3>
-            <p class="text-on-surface-variant leading-relaxed">{t.materialsDesc}</p>
-          </div>
-          {/* Custom Orders */}
-          <div class="bg-surface-container border border-outline-variant p-card-padding rounded-xl hover:shadow-lg transition-all group">
-            <div class="w-12 h-12 bg-primary-fixed-dim/20 rounded-lg flex items-center justify-center mb-6 text-primary group-hover:bg-primary-fixed-dim group-hover:text-on-surface transition-all">
-              <span class="material-symbols-outlined text-3xl">dashboard_customize</span>
-            </div>
-            <h3 class="font-headline-md text-headline-md mb-3 font-semibold">{t.customTitle}</h3>
-            <p class="text-on-surface-variant leading-relaxed">{t.customDesc}</p>
-          </div>
-        </div>
-      </section>
+<div className="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+  {/* Building Materials */}
+  <div className="group relative overflow-hidden rounded-2xl bg-surface h-[450px] sm:h-[500px] shadow-xl border-l-4 border-[#E8650A]">
+    <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style={{backgroundImage:"url('/Business-division-Bulding-Material.png')"}}></div>
+    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-black/20"></div>
+    <div className="absolute inset-0 p-6 md:p-8 flex flex-col justify-end">
+      <span className="material-symbols-outlined text-4xl text-[#E8650A] mb-4">bricks</span>
+      <h3 className="text-white font-headline-md text-headline-md mb-2">{t.buildingMaterials}</h3>
+      <p className="text-white/70 text-sm mb-6 line-clamp-2">Premium interlocking paver blocks, sand, gravel, cement, and drainage pipes for all construction needs.</p>
+      <div className="flex flex-wrap gap-2 mb-6">
+        <span className="px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-white text-xs font-medium">{t.paverBlocks}</span>
+        <span className="px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-white text-xs font-medium">{t.sand}</span>
+        <span className="px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-white text-xs font-medium">{t.gravel}</span>
+      </div>
+      <Link to="/products" className="w-full sm:w-auto px-6 py-2.5 bg-transparent border border-white/80 text-white text-sm sm:text-base font-bold rounded-full hover:bg-white/10 transition-all flex items-center justify-center gap-1.5 whitespace-nowrap shadow-sm backdrop-blur-sm">
+        {t.viewProducts} <span className="material-symbols-outlined text-sm sm:text-base">arrow_forward</span>
+      </Link>
+    </div>
+  </div>
 
-      {/* Categories Preview */}
-      <section id="about" class="bg-surface-container-high py-24 px-gutter overflow-hidden scroll-mt-16">
-        <div class="max-w-container-max mx-auto">
-          <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6 select-none">
-            <div class="max-w-xl">
-              <h2 class="font-display-lg text-headline-md md:text-display-lg text-on-surface mb-4">{t.prodCat}</h2>
-              <p class="text-on-surface-variant font-body-lg text-body-lg leading-relaxed">{t.prodCatDesc}</p>
-            </div>
-            <Link 
-              to="/products"
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              class="bg-primary text-white px-6 py-3 font-bold rounded-lg hover:bg-primary-container transition-all"
-            >
-              {t.viewCatalog}
-            </Link>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
-            {/* Heavy Duty */}
-            <div class="group relative overflow-hidden rounded-xl bg-surface h-[450px]">
-              <div 
-                class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110 animate-fade-in" 
-                style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuBZmy34ZxrWxYR9KgModsTk6HDf0pQaik2FLZ1VWGUt5tVLg1CzcA-RuhQUUccK7elkToQBigm_LZtb8rMyP0nEkEh9nFv3FCYG9sWI8BjQw9LJQ2ahZ6qeNmjy7Z8n5dkKqudmN1tb26JVtQYNx8f65Iy2ZPT2NjFWiPO8ccgJfFnLXE9O1C4V1tKNQDF_87_-L-FYjybuxlgs_e7lfbCO6SJpgLDywzo475RRhFBhEnzaYe7T4aaPEemuOB-CR6rcgYioJ35CeiI')" }}
-              ></div>
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-              <div class="absolute bottom-0 p-8 w-full">
-                <span class="inline-block px-3 py-1 bg-secondary text-on-secondary font-label-sm text-label-sm rounded-full mb-4">{t.heavyDuty}</span>
-                <h3 class="text-white font-headline-md text-headline-md mb-4 font-semibold">{t.indPaver}</h3>
-                <p class="text-surface-variant mb-6 line-clamp-2 leading-relaxed">{t.indPaverDesc}</p>
-                <Link to="/products" class="text-primary-fixed font-bold flex items-center gap-2 hover:underline">{t.getQuote} <span class="material-symbols-outlined">chevron_right</span></Link>
-              </div>
-            </div>
-            {/* Landscape */}
-            <div class="group relative overflow-hidden rounded-xl bg-surface h-[450px]">
-              <div 
-                class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110 animate-fade-in" 
-                style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuDPbIV8DyGEp5i4NGEf-F0ZclgmDQ9-oXuxDYmdCVJDtlbEj_cdVF8PN4JnONxvpETJkT6wwsNq4l6QvyBKW1g8nPHwtuFj4F_opdYdKDHO6m-xd7RTozpy4KDBqtOYYQH3u3s9WOpXi6Xdrsm2ahew8X_UtFc6vxunMT6eWjvQ-Br9lj28PCNK9rO7D0QJdXbq5QMmpwj18d8c3pRb3SQ3mmh-tNTFC9WDB32PbWPQpvFxEKovdudtv_SCsspsqnurGHMu_ODqEss')" }}
-              ></div>
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-              <div class="absolute bottom-0 p-8 w-full">
-                <span class="inline-block px-3 py-1 bg-primary-fixed text-on-primary-fixed-variant font-label-sm text-label-sm rounded-full mb-4">{t.landscape}</span>
-                <h3 class="text-white font-headline-md text-headline-md mb-4 font-semibold">{t.resPaver}</h3>
-                <p class="text-surface-variant mb-6 line-clamp-2 leading-relaxed">{t.resPaverDesc}</p>
-                <Link to="/products" class="text-primary-fixed font-bold flex items-center gap-2 hover:underline">{t.getQuote} <span class="material-symbols-outlined">chevron_right</span></Link>
-              </div>
-            </div>
-            {/* Curbing */}
-            <div class="group relative overflow-hidden rounded-xl bg-surface h-[450px]">
-              <div 
-                class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110 animate-fade-in" 
-                style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuBm-_Dret8fLucXjLgX0mh9T0kk2Ysh4gfB2nKcPJNmuyZi14Ztz8CpVkrM9tzmkjIYWHISW87fSvTkUSmnFWUru2tOJZUmj_9VgjblawX4F9UAzDFPOh4nQ4vMAibm6JnhuQCrxmHrRP-cgyajUH8p3U3x3AUQ7M3yn2-qScLEJLPFDcYUeYy6T4DCZ8Aa-kHykJcB62Gtc0hOx_QGsT-wQGPtkhnXq0fawFtWjBw4CHZIQ79TVPDChLTjRKYwVl6VNnOAt0UuPSc')" }}
-              ></div>
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-              <div class="absolute bottom-0 p-8 w-full">
-                <span class="inline-block px-3 py-1 bg-tertiary-fixed text-on-tertiary-fixed-variant font-label-sm text-label-sm rounded-full mb-4">{t.infrastructure}</span>
-                <h3 class="text-white font-headline-md text-headline-md mb-4 font-semibold">{t.curbTitle}</h3>
-                <p class="text-surface-variant mb-6 line-clamp-2 leading-relaxed">{t.curbDesc}</p>
-                <Link to="/products" class="text-primary-fixed font-bold flex items-center gap-2 hover:underline">{t.getQuote} <span class="material-symbols-outlined">chevron_right</span></Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+  {/* Shuttering */}
+  <div className="group relative overflow-hidden rounded-2xl bg-surface h-[450px] sm:h-[500px] shadow-xl border-l-4 border-[#1565C0]">
+    <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style={{backgroundImage:"url('/Business-division-shuttering.png')"}}></div>
+    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-black/20"></div>
+    <div className="absolute inset-0 p-6 md:p-8 flex flex-col justify-end">
+      <span className="material-symbols-outlined text-4xl text-[#1565C0] mb-4">architecture</span>
+      <h3 className="text-white font-headline-md text-headline-md mb-2">{t.shutteringMaterials}</h3>
+      <p className="text-white/70 text-sm mb-6 line-clamp-2">Heavy-duty steel plates, props, H-frames, and clamps available for rent and sale.</p>
+      <div className="flex flex-wrap gap-2 mb-6">
+        <span className="px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-white text-xs font-medium">{t.steelPlates}</span>
+        <span className="px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-white text-xs font-medium">{t.props}</span>
+        <span className="px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-white text-xs font-medium">{t.hFrames}</span>
+      </div>
+      <Link to="/shuttering" className="w-full sm:w-auto px-6 py-2.5 bg-transparent border border-white/80 text-white text-sm sm:text-base font-bold rounded-full hover:bg-white/10 transition-all flex items-center justify-center gap-1.5 whitespace-nowrap shadow-sm backdrop-blur-sm">
+        {t.viewShuttering} <span className="material-symbols-outlined text-sm sm:text-base">arrow_forward</span>
+      </Link>
+    </div>
+  </div>
 
-      {/* Testimonials & Custom Quote */}
-      <section id="process" class="py-24 px-gutter max-w-container-max mx-auto scroll-mt-16">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          {/* Testimonials */}
-          <div>
-            <h2 class="font-display-lg text-headline-md md:text-display-lg text-on-surface mb-8 select-none">{t.testimonials}</h2>
-            <div class="space-y-8">
-              <div class="p-8 bg-surface-container rounded-xl relative border-l-4 border-primary shadow-sm">
-                <span class="material-symbols-outlined absolute top-4 right-4 text-primary/20 text-6xl select-none">format_quote</span>
-                <p class="font-body-lg text-body-lg text-on-surface mb-4 italic leading-relaxed">
-                  {t.quoteText}
-                </p>
-                <div class="flex items-center gap-4 select-none">
-                  <div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center font-bold text-primary">RK</div>
-                  <div>
-                    <p class="font-bold text-on-surface">{t.director}</p>
-                    <p class="text-on-surface-variant text-sm">{t.designation}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Quote Form */}
-          <div class="bg-inverse-surface text-inverse-on-surface p-10 rounded-2xl shadow-2xl border border-surface-variant/10">
-            <h3 class="font-headline-md text-headline-md mb-2 font-semibold text-white">{t.customQuote}</h3>
-            <p class="text-surface-variant mb-8 leading-relaxed">{t.quoteFormDesc}</p>
-            
-            {statusMsg && (
-              <div class={`p-4 rounded-lg mb-6 text-sm font-medium ${isSuccess ? 'bg-secondary/20 text-secondary-fixed-dim border border-secondary/30' : 'bg-error-container text-on-error-container border border-error/30'}`}>
-                {statusMsg}
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} class="space-y-6">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-sm font-medium mb-2 text-surface-variant">{t.nameLabel} <span class="text-primary">*</span></label>
-                  <input 
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    class="w-full bg-white/10 border border-white/20 rounded-lg p-3 text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" 
-                    type="text"
-                    required
-                  />
-                </div>
-                <div>
-                  <label class="block text-sm font-medium mb-2 text-surface-variant">{t.phoneLabel} <span class="text-primary">*</span></label>
-                  <input 
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    class="w-full bg-white/10 border border-white/20 rounded-lg p-3 text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" 
-                    type="tel"
-                    required
-                  />
-                </div>
-              </div>
-              <div>
-                <label class="block text-sm font-medium mb-2 text-surface-variant">{t.reqLabel}</label>
-                <textarea 
-                  name="requirements"
-                  value={formData.requirements}
-                  onChange={handleInputChange}
-                  class="w-full bg-white/10 border border-white/20 rounded-lg p-3 text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" 
-                  rows="4"
-                  placeholder={t.reqPlaceholder}
-                ></textarea>
-              </div>
-              <button 
-                type="submit"
-                disabled={loading}
-                class="w-full bg-primary text-on-primary py-4 rounded-lg font-bold hover:bg-primary-container transition-all cursor-pointer flex items-center justify-center gap-2 shadow-md"
-              >
-                {loading ? t.submitting : (language === 'hi' ? 'अनुरोध भेजें' : 'Submit Request')}
-              </button>
-            </form>
+  {/* RCC Roads */}
+  <div className="group relative overflow-hidden rounded-2xl bg-surface h-[450px] sm:h-[500px] shadow-xl border-l-4 border-[#2E7D32]">
+    <div className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110" style={{backgroundImage:"url('/Business-division-rcc.png')"}}></div>
+    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-black/20"></div>
+    <div className="absolute inset-0 p-6 md:p-8 flex flex-col justify-end">
+      <span className="material-symbols-outlined text-4xl text-[#2E7D32] mb-4">engineering</span>
+      <h3 className="text-white font-headline-md text-headline-md mb-2">{t.rccRoadConstruction}</h3>
+      <p className="text-white/70 text-sm mb-6 line-clamp-2">Complete RCC road construction contracts, from initial survey to finish delivery.</p>
+      <div className="flex flex-wrap gap-2 mb-6">
+        <span className="px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-white text-xs font-medium">{t.survey}</span>
+        <span className="px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-white text-xs font-medium">{t.construction}</span>
+        <span className="px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-white text-xs font-medium">{t.handover}</span>
+      </div>
+      <Link to="/rcc-roads" className="w-full sm:w-auto px-6 py-2.5 bg-transparent border border-white/80 text-white text-sm sm:text-base font-bold rounded-full hover:bg-white/10 transition-all flex items-center justify-center gap-1.5 whitespace-nowrap shadow-sm backdrop-blur-sm">
+        {t.viewProjects} <span className="material-symbols-outlined text-sm sm:text-base">arrow_forward</span>
+      </Link>
+    </div>
+  </div>
+</div>
+</section>
+{/*  Features Bento Grid  */}
+<section className="py-16 md:py-24 px-gutter max-w-container-max mx-auto">
+<div className="text-center mb-16">
+<span className="inline-block px-4 py-1 bg-primary-fixed text-on-primary-fixed-variant font-label-sm text-label-sm rounded-full mb-4">{t.whyChoose}</span>
+<h2 className="font-display-lg text-headline-md md:text-display-lg text-on-surface">{t.excellenceFeatures}</h2>
+</div>
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
+{/*  Manufacturing  */}
+<div className="bg-surface-container border border-outline-variant p-card-padding rounded-xl hover:shadow-lg transition-all group">
+<div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-6 text-primary group-hover:bg-primary group-hover:text-on-primary transition-all">
+<span className="material-symbols-outlined text-3xl">precision_manufacturing</span>
+</div>
+<h3 className="font-headline-md text-headline-md mb-3">{t.mfgTitle}</h3>
+<p className="text-on-surface-variant">{t.mfgDesc}</p>
+</div>
+{/*  Fast Delivery  */}
+<div className="bg-surface-container border border-outline-variant p-card-padding rounded-xl hover:shadow-lg transition-all group">
+<div className="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center mb-6 text-secondary group-hover:bg-secondary group-hover:text-on-secondary transition-all">
+<span className="material-symbols-outlined text-3xl">local_shipping</span>
+</div>
+<h3 className="font-headline-md text-headline-md mb-3">{t.deliveryTitle}</h3>
+<p className="text-on-surface-variant">{t.deliveryDesc}</p>
+</div>
+{/*  Quality Materials  */}
+<div className="bg-surface-container border border-outline-variant p-card-padding rounded-xl hover:shadow-lg transition-all group">
+<div className="w-12 h-12 bg-tertiary/10 rounded-lg flex items-center justify-center mb-6 text-tertiary group-hover:bg-tertiary group-hover:text-on-tertiary transition-all">
+<span className="material-symbols-outlined text-3xl">verified</span>
+</div>
+<h3 className="font-headline-md text-headline-md mb-3">{t.materialsTitle}</h3>
+<p className="text-on-surface-variant">{t.materialsDesc}</p>
+</div>
+{/*  Custom Orders  */}
+<div className="bg-surface-container border border-outline-variant p-card-padding rounded-xl hover:shadow-lg transition-all group">
+<div className="w-12 h-12 bg-primary-fixed-dim/20 rounded-lg flex items-center justify-center mb-6 text-primary group-hover:bg-primary-fixed-dim group-hover:text-on-surface transition-all">
+<span className="material-symbols-outlined text-3xl">dashboard_customize</span>
+</div>
+<h3 className="font-headline-md text-headline-md mb-3">{t.customTitle}</h3>
+<p className="text-on-surface-variant">{t.customDesc}</p>
+</div>
+</div>
+</section>
+{/*  Categories Preview  */}
+<section className="bg-surface-container-high py-16 md:py-24 px-gutter overflow-hidden">
+<div className="max-w-container-max mx-auto">
+<div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 md:mb-12 gap-6">
+<div className="max-w-xl">
+<span className="inline-block px-4 py-1 bg-[#E8650A]/10 text-[#E8650A] font-label-sm text-label-sm font-bold rounded-full mb-4">Product Categories</span>
+<h2 className="font-display-lg text-headline-md md:text-display-lg text-on-surface mb-4">{t.prodCat}</h2>
+<p className="text-on-surface-variant font-body-lg text-body-lg mb-6">{t.prodCatDesc}</p>
+<div className="flex flex-wrap gap-2">
+  {['Interlocking', 'Cement', 'Sand', 'Pipes', 'Shuttering', 'RCC Projects'].map(tag => (
+    <span key={tag} className="px-3 py-1.5 bg-surface border border-outline/20 rounded-full text-xs font-semibold text-on-surface hover:border-[#E8650A] hover:text-[#E8650A] transition-colors cursor-pointer shadow-sm">
+      {tag}
+    </span>
+  ))}
+</div>
+</div>
+<Link to="/products" className="bg-primary text-on-primary px-6 py-3 font-bold rounded-lg hover:bg-primary-container hover:-translate-y-1 active:scale-95 transition-all duration-300 ease-in-out shadow-sm hover:shadow-md inline-block">{t.viewCatalog}</Link>
+</div>
+<div className="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+        {/*  Heavy Duty  */}
+        <div className="group relative overflow-hidden rounded-xl bg-surface h-[350px] md:h-[450px]">
+          <div className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110" style={{backgroundImage:"url('/interlocking-street-image-3x.jpg')"}}></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+          <div className="absolute bottom-0 p-6 md:p-8 w-full">
+            <span className="inline-block px-3 py-1 bg-secondary text-on-secondary font-label-sm text-label-sm rounded-full mb-4">{t.heavyDuty}</span>
+            <h3 className="text-white font-headline-md text-headline-md mb-4">{t.indPaver}</h3>
+            <p className="text-surface-variant mb-6 line-clamp-2">{t.indPaverDesc}</p>
+            <Link to="/products" className="text-primary-fixed font-bold flex items-center gap-2 hover:text-white hover:translate-x-2 transition-all duration-300 active:scale-95">{t.viewProducts || 'View Products'} <span className="material-symbols-outlined transition-transform group-hover:translate-x-1">chevron_right</span></Link>
           </div>
         </div>
-      </section>
+        {/*  Landscape  */}
+        <div className="group relative overflow-hidden rounded-xl bg-surface h-[350px] md:h-[450px]">
+          <div className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110" style={{backgroundImage:"url('/pipe-with-different-size.jpg')"}}></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+          <div className="absolute bottom-0 p-6 md:p-8 w-full">
+            <span className="inline-block px-3 py-1 bg-primary-fixed text-on-primary-fixed-variant font-label-sm text-label-sm rounded-full mb-4">{t.landscape}</span>
+            <h3 className="text-white font-headline-md text-headline-md mb-4">{t.resPaver}</h3>
+            <p className="text-surface-variant mb-6 line-clamp-2">{t.resPaverDesc}</p>
+            <Link to="/products" className="text-primary-fixed font-bold flex items-center gap-2 hover:text-white hover:translate-x-2 transition-all duration-300 active:scale-95">{t.viewProducts || 'View Products'} <span className="material-symbols-outlined transition-transform group-hover:translate-x-1">chevron_right</span></Link>
+          </div>
+        </div>
+        {/*  Curbing  */}
+        <div className="group relative overflow-hidden rounded-xl bg-surface h-[350px] md:h-[450px]">
+          <div className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110" style={{backgroundImage:"url('/swastika-interlocking-pertol-bricks-3x.jpg')"}}></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+          <div className="absolute bottom-0 p-6 md:p-8 w-full">
+            <span className="inline-block px-3 py-1 bg-tertiary-fixed text-on-tertiary-fixed-variant font-label-sm text-label-sm rounded-full mb-4">{t.infrastructure}</span>
+            <h3 className="text-white font-headline-md text-headline-md mb-4">{t.curbTitle}</h3>
+            <p className="text-surface-variant mb-6 line-clamp-2">{t.curbDesc}</p>
+            <Link to="/products" className="text-primary-fixed font-bold flex items-center gap-2 hover:text-white hover:translate-x-2 transition-all duration-300 active:scale-95">{t.viewProducts || 'View Products'} <span className="material-symbols-outlined transition-transform group-hover:translate-x-1">chevron_right</span></Link>
+          </div>
+        </div>
+</div>
+</div>
+</section>
+{/*  Testimonials & Contact Strip  */}
+<section className="py-16 md:py-24 px-gutter max-w-container-max mx-auto">
+<div className="max-w-3xl mx-auto">
+<div className="bg-inverse-surface text-inverse-on-surface p-6 sm:p-10 rounded-2xl shadow-2xl">
+<h3 className="font-headline-md text-headline-md mb-2 text-center">{t.customQuote}</h3>
+<p className="text-surface-variant mb-8 text-center">{t.quoteFormDesc}</p>
+<form className="space-y-6" onSubmit={handleSubmit}>
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div>
+<label className="block text-sm font-medium mb-2">{t.nameLabel}</label>
+<input className="w-full bg-white/10 border border-white/20 rounded-lg p-3 text-white focus:border-primary outline-none transition-all" type="text" name="name" value={formData.name} onChange={handleInputChange} />
+</div>
+<div>
+<label className="block text-sm font-medium mb-2">{t.phoneLabel}</label>
+<input className="w-full bg-white/10 border border-white/20 rounded-lg p-3 text-white focus:border-primary outline-none transition-all" type="tel" name="phone" value={formData.phone} onChange={handleInputChange} />
+</div>
+</div>
+<div>
+<label className="block text-sm font-medium mb-2">{t.reqLabel}</label>
+<textarea className="w-full bg-white/10 border border-white/20 rounded-lg p-3 text-white focus:border-primary outline-none transition-all" rows="4" name="requirements" value={formData.requirements} onChange={handleInputChange}></textarea>
+</div>
+<button type="submit" disabled={loading} className="w-full bg-primary text-on-primary py-4 rounded-lg font-bold hover:bg-primary-container hover:-translate-y-1 active:scale-95 transition-all duration-300 ease-in-out shadow-sm hover:shadow-md">
+  {loading ? t.submitting : t.submitBtn}
+</button>
+{statusMsg && <div className={`mt-4 p-4 rounded-lg font-bold text-center ${isSuccess ? 'bg-primary-fixed/20 text-primary-fixed' : 'bg-error-container text-error'}`}>{statusMsg}</div>}
+</form>
+</div>
+</div>
+</section>
+
     </div>
   );
 }

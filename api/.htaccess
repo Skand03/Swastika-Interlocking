@@ -1,0 +1,13 @@
+# Pass Authorization header through to PHP
+# Required because Apache strips it by default in CGI/mod_rewrite setups
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+
+RewriteEngine On
+
+# Make Authorization available as environment variable for FastCGI/CGI
+RewriteCond %{HTTP:Authorization} .
+RewriteRule ^ - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+# Also expose X-Firebase-Token if used as fallback
+RewriteCond %{HTTP:X-Firebase-Token} .
+RewriteRule ^ - [E=HTTP_X_FIREBASE_TOKEN:%{HTTP:X-Firebase-Token}]

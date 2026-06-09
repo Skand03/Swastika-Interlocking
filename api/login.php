@@ -8,6 +8,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit(0);
 }
 
+// Include secure database connection
+require_once __DIR__ . '/db_connect.php';
+
 $data = json_decode(file_get_contents('php://input'), true);
 
 if (!$data || !isset($data['phone']) || !isset($data['password'])) {
@@ -17,15 +20,12 @@ if (!$data || !isset($data['phone']) || !isset($data['password'])) {
 }
 
 try {
-    $dbFile = __DIR__ . '/database.db';
-    $db = new PDO("sqlite:" . $dbFile);
-    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    $stmt = $db->prepare("SELECT id, full_name, phone, city, role, password FROM users WHERE phone = ?");
+    $stmt = $pdo->prepare("SELECT id, full_name, phone, city, role, password FROM users WHERE phone = ?");
     $stmt->execute([$data['phone']]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($user && $user['password'] === $data['password']) {
+    // Verify hashed password, with fallback to plain text for mock test accounts
+    if ($user && (password_verify($data['password'], $user['password']) || $user['password'] === $data['password'])) {
         unset($user['password']); // Don't return password
         echo json_encode([
             "success" => true,
@@ -39,7 +39,7 @@ try {
         ]);
     }
 
-} catch (PDOException $e) {
+} catch (\PDOException $e) {
     http_response_code(500);
     echo json_encode(["success" => false, "message" => "Server error: " . $e->getMessage()]);
 }

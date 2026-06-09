@@ -8,6 +8,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit(0);
 }
 
+// Include secure database connection
+require_once __DIR__ . '/db_connect.php';
+require_once __DIR__ . '/auth_middleware.php';
+
+// Verify Firebase Auth token and role admin
+$authUser = requireAuth($pdo, ['admin']);
+
 $data = json_decode(file_get_contents('php://input'), true);
 
 if (!$data || !isset($data['id']) || !isset($data['status'])) {
@@ -17,11 +24,7 @@ if (!$data || !isset($data['id']) || !isset($data['status'])) {
 }
 
 try {
-    $dbFile = __DIR__ . '/database.db';
-    $db = new PDO("sqlite:" . $dbFile);
-    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    $stmt = $db->prepare("UPDATE orders SET status = ? WHERE id = ?");
+    $stmt = $pdo->prepare("UPDATE orders SET status = ? WHERE id = ?");
     $stmt->execute([$data['status'], $data['id']]);
 
     if ($stmt->rowCount() > 0) {
@@ -36,7 +39,7 @@ try {
         ]);
     }
 
-} catch (PDOException $e) {
+} catch (\PDOException $e) {
     http_response_code(500);
     echo json_encode(["success" => false, "message" => "Server error: " . $e->getMessage()]);
 }

@@ -1,0 +1,3 @@
+ALTER TABLE `users`
+ADD COLUMN `address` VARCHAR(255) NULL AFTER `city`,
+ADD COLUMN `pincode` VARCHAR(20) NULL AFTER `address`;

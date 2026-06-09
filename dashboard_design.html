@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Swastika Interlocking - Admin Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed": "#a3f69c",
+                    "surface-container-high": "#ede8dd",
+                    "on-tertiary": "#ffffff",
+                    "surface-variant": "#e7e2d8",
+                    "secondary": "#1b6d24",
+                    "inverse-on-surface": "#f6f0e6",
+                    "tertiary-fixed-dim": "#b9ccb3",
+                    "inverse-surface": "#32302a",
+                    "error-container": "#ffdad6",
+                    "tertiary-container": "#687964",
+                    "on-secondary-fixed-variant": "#005312",
+                    "on-background": "#1d1c16",
+                    "surface-container-lowest": "#ffffff",
+                    "surface": "#fef9ee",
+                    "tertiary": "#50604c",
+                    "on-surface": "#1d1c16",
+                    "on-primary-container": "#fffbff",
+                    "on-tertiary-fixed-variant": "#3b4b38",
+                    "on-primary-fixed-variant": "#793000",
+                    "on-surface-variant": "#584237",
+                    "surface-container-highest": "#e7e2d8",
+                    "surface-bright": "#fef9ee",
+                    "secondary-fixed-dim": "#88d982",
+                    "on-error-container": "#93000a",
+                    "primary": "#E8650A",
+                    "primary-container": "#c35200",
+                    "primary-fixed": "#ffdbcb",
+                    "outline": "#8c7165",
+                    "surface-container": "#f3ede3",
+                    "inverse-primary": "#ffb692",
+                    "on-tertiary-container": "#f7fff1",
+                    "surface-container-low": "#f9f3e9",
+                    "on-primary-fixed": "#341100",
+                    "on-primary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "tertiary-fixed": "#d5e8ce",
+                    "primary-fixed-dim": "#ffb692",
+                    "surface-dim": "#dfd9d0",
+                    "secondary-container": "#a0f399",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-container": "#217128",
+                    "background": "#FAF0E6",
+                    "on-error": "#ffffff",
+                    "surface-tint": "#9f4200",
+                    "on-secondary-fixed": "#002204",
+                    "outline-variant": "#e0c0b1",
+                    "on-tertiary-fixed": "#101f0f"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "12px",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "container-max": "1280px",
+                    "gutter": "24px",
+                    "card-padding": "24px",
+                    "base": "8px",
+                    "margin-mobile": "16px"
+            },
+            "fontFamily": {
+                    "display-lg": ["Montserrat", "sans-serif"],
+                    "body-md": ["Plus Jakarta Sans", "sans-serif"],
+                    "headline-md": ["Montserrat", "sans-serif"]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .sidebar-active { background: rgba(232, 101, 10, 0.15); border-left: 3px solid #E8650A; color: #ffdbcb; }
+        .navy-topbar { background-color: #1a1a3e; }
+        .cream-bg { background-color: #FAF0E6; }
+        .dark-green-sidebar { background-color: #1C2B1A; }
+    </style>
+</head>
+<body class="cream-bg font-body-md text-on-surface antialiased overflow-x-hidden">
+<!-- SIDEBAR -->
+<aside class="dark-green-sidebar w-[240px] h-screen fixed left-0 top-0 z-50 flex flex-col py-8 px-4 shadow-lg text-tertiary-fixed-dim/70">
+<div class="mb-10 px-2 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary flex items-center justify-center rounded-xl text-white font-bold text-xl">S</div>
+<div>
+<h1 class="font-display-lg text-body-md text-primary-fixed leading-none">Construx Pro</h1>
+<p class="text-[10px] uppercase tracking-widest mt-1 opacity-60">Admin Dashboard</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1 overflow-y-auto">
+<a class="sidebar-active flex items-center gap-3 px-3 py-3 rounded-r-lg transition-all text-sm font-medium" href="#dashboard">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span>Dashboard / डैशबोर्ड</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-r-lg transition-all text-sm font-medium hover:bg-white/5 hover:text-white" href="#products">
+<span class="material-symbols-outlined">inventory_2</span>
+<span>Products / उत्पाद</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-r-lg transition-all text-sm font-medium hover:bg-white/5 hover:text-white" href="#orders">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span>Orders / आदेश</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-r-lg transition-all text-sm font-medium hover:bg-white/5 hover:text-white" href="#customers">
+<span class="material-symbols-outlined">group</span>
+<span>Customers / ग्राहक</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-r-lg transition-all text-sm font-medium hover:bg-white/5 hover:text-white" href="#inventory">
+<span class="material-symbols-outlined">garage_home</span>
+<span>Inventory / स्टॉक</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-r-lg transition-all text-sm font-medium hover:bg-white/5 hover:text-white" href="#reports">
+<span class="material-symbols-outlined">analytics</span>
+<span>Reports / रिपोर्ट</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-r-lg transition-all text-sm font-medium hover:bg-white/5 hover:text-white" href="#inquiries">
+<span class="material-symbols-outlined">question_answer</span>
+<span>Inquiries / पूछताछ</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-r-lg transition-all text-sm font-medium hover:bg-white/5 hover:text-white" href="#rcc">
+<span class="material-symbols-outlined">foundation</span>
+<span>RCC Projects / आरसीसी</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-r-lg transition-all text-sm font-medium hover:bg-white/5 hover:text-white" href="#settings">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings / सेटिंग्स</span>
+</a>
+</nav>
+<div class="mt-auto px-3 py-4 border-t border-white/10">
+<button class="flex items-center gap-3 text-sm font-medium text-error hover:text-red-400">
+<span class="material-symbols-outlined">logout</span>
+                Logout / लॉगआउट
+            </button>
+</div>
+</aside>
+<!-- MAIN CONTENT WRAPPER -->
+<main class="ml-[240px] min-h-screen">
+<!-- TOP APP BAR -->
+<header class="navy-topbar w-full h-16 sticky top-0 z-40 flex items-center justify-between px-gutter shadow-sm">
+<div class="flex items-center gap-4">
+<h2 class="text-primary font-headline-md text-headline-md flex items-center gap-2">
+                    Admin Panel <span class="text-white/40 font-light text-sm">/ एडमिन पैनल</span>
+</h2>
+</div>
+<div class="flex-1 max-w-xl mx-8">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full pl-10 pr-4 py-2 focus:ring-2 focus:ring-primary/50 text-sm" placeholder="Search orders, customers, products..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="relative hover:bg-white/10 p-2 rounded-full transition-all">
+<span class="material-symbols-outlined text-white">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full ring-2 ring-navy-topbar"></span>
+</button>
+<div class="flex items-center gap-3 pl-4 border-l border-white/10">
+<div class="text-right">
+<p class="text-white text-xs font-bold leading-none">Amit Sharma</p>
+<p class="text-primary text-[10px] uppercase font-bold mt-1">Super Admin</p>
+</div>
+<img alt="Admin Profile" class="w-10 h-10 rounded-full border-2 border-primary object-cover" data-alt="A professional headshot of a middle-aged South Asian man wearing a business casual shirt, with a clean and neutral blurred office background. The lighting is soft and professional, highlighting a reliable and friendly expression to convey trust in a corporate admin setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnPCZerC0IxnGeGVH8PS8XjkgyQSPDcGeTTzLCbL8319MlCL0AIjFPftp7CrQZx2ZtmjbCUYuwB-QNrdRSorMh0Fe8dCFg5E-5MCxd_8m03civ_cAp-iocwn0WImxugWQsBpzX5uvHLFgmBS-dsupkeGLgb7SZMSpTzCtlvXOAt4S_-M3GNg8iFt_Eypl3yhX0OnoOS-3cM4fC6NsFeWDsqRr3j_4-XCptVuS5t1cg25pHCz--7XIGLzgM2UIKen32BX_ADwzPFts"/>
+</div>
+</div>
+</header>
+<!-- CONTENT SCROLL AREA -->
+<div class="p-gutter space-y-12 pb-24">
+<!-- SECTION 1: DASHBOARD OVERVIEW -->
+<section class="scroll-mt-24" id="dashboard">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-headline-md text-headline-md text-on-surface">Overview / अवलोकन</h3>
+<button class="bg-primary text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-sm">download</span> Export PDF
+                    </button>
+</div>
+<!-- Stats Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-8">
+<div class="bg-white p-6 rounded-xl shadow-sm border-b-4 border-primary">
+<p class="text-on-surface-variant text-xs font-semibold uppercase tracking-wider mb-2">Total Orders</p>
+<div class="flex items-end justify-between">
+<span class="text-2xl font-bold text-on-surface">247</span>
+<span class="text-secondary text-xs font-bold">+12% ↑</span>
+</div>
+</div>
+<div class="bg-white p-6 rounded-xl shadow-sm border-b-4 border-secondary">
+<p class="text-on-surface-variant text-xs font-semibold uppercase tracking-wider mb-2">Today's Sales</p>
+<div class="flex items-end justify-between">
+<span class="text-2xl font-bold text-on-surface">8</span>
+<span class="text-secondary text-xs font-bold">+5% ↑</span>
+</div>
+</div>
+<div class="bg-white p-6 rounded-xl shadow-sm border-b-4 border-primary">
+<p class="text-on-surface-variant text-xs font-semibold uppercase tracking-wider mb-2">Total Revenue</p>
+<div class="flex items-end justify-between">
+<span class="text-2xl font-bold text-on-surface">₹1.24L</span>
+<span class="text-error text-xs font-bold">-2% ↓</span>
+</div>
+</div>
+<div class="bg-white p-6 rounded-xl shadow-sm border-b-4 border-blue-500">
+<p class="text-on-surface-variant text-xs font-semibold uppercase tracking-wider mb-2">New Inquiries</p>
+<div class="flex items-end justify-between">
+<span class="text-2xl font-bold text-on-surface">32</span>
+<span class="text-secondary text-xs font-bold">New</span>
+</div>
+</div>
+<div class="bg-white p-6 rounded-xl shadow-sm border-b-4 border-error">
+<p class="text-on-surface-variant text-xs font-semibold uppercase tracking-wider mb-2">Stock Alerts</p>
+<div class="flex items-end justify-between">
+<span class="text-2xl font-bold text-error">5</span>
+<span class="text-on-surface-variant text-xs">Critical</span>
+</div>
+</div>
+<div class="bg-white p-6 rounded-xl shadow-sm border-b-4 border-primary">
+<p class="text-on-surface-variant text-xs font-semibold uppercase tracking-wider mb-2">Customers</p>
+<div class="flex items-end justify-between">
+<span class="text-2xl font-bold text-on-surface">1,102</span>
+<span class="text-secondary text-xs font-bold">+24 ↑</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-12 gap-8">
+<!-- Charts Placeholder Area -->
+<div class="col-span-12 lg:col-span-8 bg-white p-8 rounded-xl shadow-sm">
+<div class="flex items-center justify-between mb-6">
+<h4 class="font-bold text-lg">Monthly Sales Analysis / मासिक बिक्री</h4>
+<select class="text-xs bg-surface border-none rounded-lg ring-1 ring-outline-variant/30">
+<option>Last 6 Months</option>
+</select>
+</div>
+<!-- Simple Mockup of a Bar Chart using Tailwind -->
+<div class="flex items-end gap-6 h-64 border-b border-outline-variant/20 pb-2">
+<div class="flex-1 bg-primary/20 h-[40%] rounded-t relative group"><div class="absolute inset-x-0 bottom-0 bg-primary h-full opacity-0 group-hover:opacity-100 transition-all"></div></div>
+<div class="flex-1 bg-primary/20 h-[65%] rounded-t relative group"><div class="absolute inset-x-0 bottom-0 bg-primary h-full opacity-0 group-hover:opacity-100 transition-all"></div></div>
+<div class="flex-1 bg-primary/20 h-[85%] rounded-t relative group"><div class="absolute inset-x-0 bottom-0 bg-primary h-full opacity-0 group-hover:opacity-100 transition-all"></div></div>
+<div class="flex-1 bg-primary/20 h-[55%] rounded-t relative group"><div class="absolute inset-x-0 bottom-0 bg-primary h-full opacity-0 group-hover:opacity-100 transition-all"></div></div>
+<div class="flex-1 bg-primary/20 h-[75%] rounded-t relative group"><div class="absolute inset-x-0 bottom-0 bg-primary h-full opacity-0 group-hover:opacity-100 transition-all"></div></div>
+<div class="flex-1 bg-primary h-[95%] rounded-t shadow-lg shadow-primary/30"></div>
+</div>
+<div class="flex justify-between mt-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter">
+<span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-4 bg-white p-8 rounded-xl shadow-sm">
+<h4 class="font-bold text-lg mb-6">Product Mix / उत्पाद मिश्रण</h4>
+<div class="relative w-48 h-48 mx-auto mb-8">
+<svg class="w-full h-full transform -rotate-90">
+<circle cx="50%" cy="50%" fill="transparent" r="40%" stroke="#E8650A" stroke-dasharray="251.2" stroke-dashoffset="62.8" stroke-width="20"></circle>
+<circle cx="50%" cy="50%" fill="transparent" r="40%" stroke="#1B6D24" stroke-dasharray="251.2" stroke-dashoffset="188.4" stroke-width="20"></circle>
+<circle cx="50%" cy="50%" fill="transparent" r="40%" stroke="#3b82f6" stroke-dasharray="251.2" stroke-dashoffset="230.2" stroke-width="20"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-2xl font-extrabold">247</span>
+<span class="text-[10px] text-on-surface-variant uppercase">Units</span>
+</div>
+</div>
+<ul class="space-y-3">
+<li class="flex items-center justify-between text-sm">
+<div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-primary"></div><span>Interlocking Blocks</span></div>
+<span class="font-bold">75%</span>
+</li>
+<li class="flex items-center justify-between text-sm">
+<div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-secondary"></div><span>RCC Poles</span></div>
+<span class="font-bold">15%</span>
+</li>
+<li class="flex items-center justify-between text-sm">
+<div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-blue-500"></div><span>Curbs</span></div>
+<span class="font-bold">10%</span>
+</li>
+</ul>
+</div>
+</div>
+</section>
+<!-- SECTION 2: PRODUCT MANAGEMENT -->
+<section class="scroll-mt-24" id="products">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Products Management / उत्पाद प्रबंधन</h3>
+<p class="text-on-surface-variant text-sm mt-1">Manage your catalog, stock levels and pricing rules.</p>
+</div>
+<button class="bg-primary text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-xl shadow-primary/20 hover:scale-105 transition-transform active:scale-95" onclick="document.getElementById('add-product-modal').classList.remove('hidden')">
+<span class="material-symbols-outlined">add</span> Add New Product
+                    </button>
+</div>
+<!-- Filters -->
+<div class="flex gap-4 mb-8 overflow-x-auto pb-2">
+<button class="bg-primary text-white px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap">All Products</button>
+<button class="bg-white text-on-surface-variant px-6 py-2 rounded-full text-sm font-bold border border-outline-variant/30 hover:border-primary whitespace-nowrap">Heavy Duty</button>
+<button class="bg-white text-on-surface-variant px-6 py-2 rounded-full text-sm font-bold border border-outline-variant/30 hover:border-primary whitespace-nowrap">Landscaping</button>
+<button class="bg-white text-on-surface-variant px-6 py-2 rounded-full text-sm font-bold border border-outline-variant/30 hover:border-primary whitespace-nowrap">RCC Pipes</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+<!-- Product Card Loop (Simulated) -->
+<div class="bg-white rounded-xl shadow-sm overflow-hidden group">
+<div class="h-48 relative overflow-hidden">
+<img alt="I-Shape Interlocking" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Close-up of premium gray I-shaped concrete interlocking pavers arranged in a perfectly symmetrical pattern. The lighting highlights the fine texture of the concrete, set in a professional architectural showcase style with neutral warm tones that align with a high-end construction brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQQ0Y3Pl8IekxeXWjxzn5ZD3w1dkOTjnFBZH-mVf8_PFV-LPtJiJEZtlRnIC8FJtLUmLAA0l7Y_7B2KklAuCLeEhppgJK4N7BQDvdAJCR4Wk0x8hl4cu7ZE4xzz7VXrbSJhbk65QnNZQYZW4xMUR9gtSRKWyWwX5C61AGtYLNAUxJJw8Sr9nvSJMwG0UEIhu3ZZmiyjC-VXtPOr2M8RQ2fGQu6N3lFgh8vfaxC0CVoV6AuJd_5EwiVWG58je1MrJaXw67l0nDT2S8"/>
+<span class="absolute top-3 right-3 bg-secondary text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase">In Stock</span>
+</div>
+<div class="p-6">
+<h5 class="font-bold text-lg mb-1">I-Shape Paver (60mm)</h5>
+<p class="text-on-surface-variant text-xs mb-4">Interlocking block for heavy traffic.</p>
+<div class="flex items-center justify-between mb-4">
+<span class="text-primary font-extrabold text-xl">₹18.50 <small class="text-xs font-normal text-on-surface-variant">/ unit</small></span>
+<div class="text-right">
+<p class="text-[10px] uppercase font-bold text-on-surface-variant">Stock</p>
+<p class="font-bold text-sm">4,500 pcs</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 border border-outline-variant/30 py-2 rounded-lg text-xs font-bold hover:bg-surface transition-colors">Edit Product</button>
+<button class="w-10 h-10 border border-outline-variant/30 flex items-center justify-center rounded-lg text-error hover:bg-error/10 transition-colors">
+<span class="material-symbols-outlined text-sm">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Mocking 3 more cards -->
+<div class="bg-white rounded-xl shadow-sm overflow-hidden group">
+<div class="h-48 relative overflow-hidden">
+<img alt="Zig-Zag Paver" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Architectural detail of red and gray zig-zag interlocking concrete blocks used for high-durability road surfacing. The shot is taken from a low angle with sunlight casting soft shadows, emphasizing the interlocking mechanism. The color palette is earthy and professional." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD39OSgjCqQPHwt4T3RcBMg-02Cv-eI1pFvo_4Ij2_fIy8LdYHb-FyCnlnzhljgcGknl6HrhDlHaTQL9GYKdrWPDBn3em9ZMsCE4GIvtj5C20D-FxBvpeHTQWBNnSpVPsiQLiLUnyTzkSXBESzvyrNATn-FBDlB0wYbBDvgZJcN1AmQ9cH5iv4r6aQAkCLqkg5F1cJVDAl_4AteDivpnyDa5HM1arxchDcfjja74BkAyvfKGXeop-JRJWbiGPrqlME3lf_hzJHU-DM"/>
+<span class="absolute top-3 right-3 bg-primary text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase">Low Stock</span>
+</div>
+<div class="p-6">
+<h5 class="font-bold text-lg mb-1">Zig-Zag Heavy Duty</h5>
+<p class="text-on-surface-variant text-xs mb-4">Industrial grade road surfacing.</p>
+<div class="flex items-center justify-between mb-4">
+<span class="text-primary font-extrabold text-xl">₹22.00 <small class="text-xs font-normal text-on-surface-variant">/ unit</small></span>
+<div class="text-right text-error font-bold">
+<p class="text-[10px] uppercase font-bold text-on-surface-variant">Stock</p>
+<p class="text-sm">850 pcs</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 border border-outline-variant/30 py-2 rounded-lg text-xs font-bold hover:bg-surface transition-colors">Edit Product</button>
+<button class="w-10 h-10 border border-outline-variant/30 flex items-center justify-center rounded-lg text-error hover:bg-error/10 transition-colors">
+<span class="material-symbols-outlined text-sm">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Repeat for 9 cards in actual implementation... -->
+</div>
+</section>
+<!-- SECTION 3: ORDERS MANAGEMENT -->
+<section class="scroll-mt-24" id="orders">
+<div class="flex items-center justify-between mb-8">
+<h3 class="font-headline-md text-headline-md text-on-surface">Orders / आदेश</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+<div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-blue-500">
+<p class="text-on-surface-variant text-[10px] uppercase font-bold">New Orders</p>
+<p class="text-2xl font-bold">14</p>
+</div>
+<div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-primary">
+<p class="text-on-surface-variant text-[10px] uppercase font-bold">Processing</p>
+<p class="text-2xl font-bold">23</p>
+</div>
+<div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-secondary">
+<p class="text-on-surface-variant text-[10px] uppercase font-bold">Delivered</p>
+<p class="text-2xl font-bold">186</p>
+</div>
+<div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-error">
+<p class="text-on-surface-variant text-[10px] uppercase font-bold">Returns</p>
+<p class="text-2xl font-bold">2</p>
+</div>
+</div>
+<div class="bg-white rounded-xl shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface text-on-surface-variant text-[10px] uppercase font-bold tracking-widest border-b border-outline-variant/20">
+<tr>
+<th class="px-6 py-4">Order ID</th>
+<th class="px-6 py-4">Customer / ग्राहक</th>
+<th class="px-6 py-4">Date</th>
+<th class="px-6 py-4">Amount / राशि</th>
+<th class="px-6 py-4">Status / स्थिति</th>
+<th class="px-6 py-4 text-right">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr class="hover:bg-surface transition-colors">
+<td class="px-6 py-4 font-bold text-sm">#ORD-2481</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-[10px] font-bold">RK</div>
+<span class="text-sm font-semibold">Rajesh Kumar</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-on-surface-variant">Oct 24, 2023</td>
+<td class="px-6 py-4 text-sm font-bold">₹42,000</td>
+<td class="px-6 py-4">
+<span class="bg-secondary/10 text-secondary text-[10px] font-bold px-3 py-1 rounded-full uppercase">Delivered</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-primary hover:underline text-xs font-bold">View Details</button>
+</td>
+</tr>
+<tr class="bg-surface-container-low hover:bg-surface transition-colors">
+<td class="px-6 py-4 font-bold text-sm">#ORD-2482</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 text-[10px] font-bold">MS</div>
+<span class="text-sm font-semibold">Meera Sharma</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-on-surface-variant">Oct 25, 2023</td>
+<td class="px-6 py-4 text-sm font-bold">₹18,500</td>
+<td class="px-6 py-4">
+<span class="bg-primary/10 text-primary text-[10px] font-bold px-3 py-1 rounded-full uppercase">Pending</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-primary hover:underline text-xs font-bold">View Details</button>
+</td>
+</tr>
+<!-- Extra rows... -->
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- SECTION 4: CUSTOMER MANAGEMENT -->
+<section class="scroll-mt-24" id="customers">
+<div class="flex items-center justify-between mb-8">
+<h3 class="font-headline-md text-headline-md text-on-surface">Customer Directory / ग्राहक सूची</h3>
+</div>
+<div class="grid grid-cols-12 gap-8">
+<!-- Table Section -->
+<div class="col-span-12 lg:col-span-8 bg-white rounded-xl shadow-sm overflow-hidden">
+<table class="w-full text-left">
+<thead class="bg-surface text-on-surface-variant text-[10px] uppercase font-bold border-b border-outline-variant/20">
+<tr>
+<th class="px-6 py-4">Customer</th>
+<th class="px-6 py-4">Contact</th>
+<th class="px-6 py-4">Last Order</th>
+<th class="px-6 py-4">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10 text-sm">
+<tr>
+<td class="px-6 py-4 flex items-center gap-3">
+<img alt="Customer" class="w-10 h-10 rounded-full object-cover" data-alt="Close-up headshot of an Indian male customer in his 30s, smiling warmly, with soft studio lighting that gives a modern and clean profile aesthetic, consistent with a professional CRM dashboard user interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXxGC5fJ7ARPdSg8Veldg9gyps32NF4fpBAonTGtJBjnQxcH3lrKYYfkI-vZkgUsY5RmURkA9m6H-gOSwi8RZZL92G6LMZaTY7DAsaxkrWY3grOcg5jb-xSIs7wWUqB1W3Y12dQrQU9gUrNu7d5FtTOa2U46nc98AvSHOWO__tDAI83zILGUn9-4x9h3WjNspYMRQVceb_fLp0_oIDDhg-BIbkrz_6qpJC50BcT5KxbDzDdiA7Ore2_XShmvgu7Z6yCS2aStKsj-Q"/>
+<div>
+<p class="font-bold">Arun Jaitley</p>
+<p class="text-xs text-on-surface-variant">Ludhiana, Punjab</p>
+</div>
+</td>
+<td class="px-6 py-4">+91 98765 43210</td>
+<td class="px-6 py-4">#ORD-2390</td>
+<td class="px-6 py-4">
+<button class="p-2 hover:bg-surface rounded-lg text-primary"><span class="material-symbols-outlined text-lg">visibility</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Right Panel -->
+<div class="col-span-12 lg:col-span-4 bg-white rounded-xl shadow-sm p-8 flex flex-col items-center">
+<img alt="Customer Detailed" class="w-24 h-24 rounded-full border-4 border-surface shadow-md mb-4 object-cover" data-alt="Detailed portrait of a professional Indian male customer, wearing a button-down shirt, set against a warm minimalist background that highlights reliability and professionalism in a customer management context." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHDMcfJh0lUWgqlSkoXWvnJ3R5LL9TMtwEt-sSa3Wk6A8oyLC9PSs02yEZQKoScScjUgbFCYrL5qBXH2F7M5TWTn0J6XqjJ1m1ifn_W8CN97WFe1rkgFVur1m-yIpQrgbCA_O0eHSuDlbyyutrrlWZt54ficunB_hGzLzQmE79YnSy9B846gaoPEmPlLkC9JFCv8zK2hLqoGj64Afssz62UN0f5OwaFMWPLlyVfYI54564ADso8mEDNw0va4HwoSAn6g_gxhBG1MA"/>
+<h4 class="font-bold text-xl mb-1">Arun Jaitley</h4>
+<p class="text-on-surface-variant text-sm mb-6">Tier 1 Customer / प्राथमिकता ग्राहक</p>
+<div class="w-full space-y-4 mb-8">
+<div class="flex justify-between text-sm"><span class="text-on-surface-variant">Total Spent</span><span class="font-bold">₹2,45,000</span></div>
+<div class="flex justify-between text-sm"><span class="text-on-surface-variant">Completed Orders</span><span class="font-bold">12</span></div>
+<div class="flex justify-between text-sm"><span class="text-on-surface-variant">Join Date</span><span class="font-bold">Mar 12, 2022</span></div>
+</div>
+<button class="w-full bg-[#25D366] text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-green-500/20 hover:scale-[1.02] transition-transform">
+<span class="material-symbols-outlined">chat</span> Message on WhatsApp
+                        </button>
+</div>
+</div>
+</section>
+<!-- SECTION 5: INVENTORY & SHUTTERING -->
+<section class="scroll-mt-24" id="inventory">
+<div class="flex items-center justify-between mb-8">
+<h3 class="font-headline-md text-headline-md text-on-surface">Inventory &amp; Rentals / स्टॉक और किराया</h3>
+</div>
+<div class="bg-error/10 border-l-4 border-error p-4 rounded-r-xl mb-8 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-error">warning</span>
+<p class="text-error font-bold text-sm">Low Stock Alert: Zig-Zag Pavers below threshold! (850/1000)</p>
+</div>
+<button class="text-error text-[10px] uppercase font-bold underline">Reorder Now</button>
+</div>
+<div class="grid grid-cols-12 gap-8">
+<div class="col-span-12 lg:col-span-7 bg-white p-8 rounded-xl shadow-sm">
+<h4 class="font-bold text-lg mb-6">Material Inventory</h4>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between mb-2 text-sm"><span class="font-semibold">Cement (UltraTech)</span><span>450 Bags / 500</span></div>
+<div class="w-full bg-surface rounded-full h-2"><div class="bg-secondary h-2 rounded-full" style="width: 90%;"></div></div>
+</div>
+<div>
+<div class="flex justify-between mb-2 text-sm"><span class="font-semibold">Crushed Stone (Grit)</span><span>28 Tons / 50</span></div>
+<div class="w-full bg-surface rounded-full h-2"><div class="bg-primary h-2 rounded-full" style="width: 56%;"></div></div>
+</div>
+<div>
+<div class="flex justify-between mb-2 text-sm"><span class="font-semibold">Sand (Fine)</span><span>12 Tons / 40</span></div>
+<div class="w-full bg-surface rounded-full h-2"><div class="bg-error h-2 rounded-full" style="width: 30%;"></div></div>
+</div>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-5 bg-white p-8 rounded-xl shadow-sm">
+<h4 class="font-bold text-lg mb-6">Shuttering Rental Tracker</h4>
+<div class="space-y-4">
+<div class="p-4 border border-outline-variant/20 rounded-xl hover:border-primary transition-colors cursor-pointer">
+<div class="flex justify-between items-start mb-2">
+<h5 class="font-bold text-sm">Sunil Const. <span class="text-on-surface-variant font-normal">- Site A</span></h5>
+<span class="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded font-bold">DUE TODAY</span>
+</div>
+<p class="text-xs text-on-surface-variant">40x Iron Plates, 120x Jack Props</p>
+</div>
+<div class="p-4 border border-outline-variant/20 rounded-xl hover:border-primary transition-colors cursor-pointer">
+<div class="flex justify-between items-start mb-2">
+<h5 class="font-bold text-sm">Apex Builders <span class="text-on-surface-variant font-normal">- Mall Project</span></h5>
+<span class="text-[10px] bg-secondary/10 text-secondary px-2 py-0.5 rounded font-bold">7 DAYS LEFT</span>
+</div>
+<p class="text-xs text-on-surface-variant">200x Iron Plates, 450x Props</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 6: SALES REPORTS -->
+<section class="scroll-mt-24" id="reports">
+<div class="flex items-center justify-between mb-8">
+<h3 class="font-headline-md text-headline-md text-on-surface">Reports / रिपोर्ट</h3>
+<div class="flex gap-2">
+<input class="bg-white border-outline-variant/30 rounded-lg text-sm px-4" type="date"/>
+<button class="bg-white border border-outline-variant/30 px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">filter_alt</span> Filter
+                        </button>
+</div>
+</div>
+<div class="grid grid-cols-12 gap-8">
+<div class="col-span-12 bg-white p-8 rounded-xl shadow-sm h-96 relative flex flex-col">
+<h4 class="font-bold text-lg mb-8">Revenue vs Order Volume</h4>
+<div class="flex-1 flex items-end gap-1">
+<!-- Visual placeholder for a line/area chart -->
+<div class="h-full w-full bg-gradient-to-t from-primary/5 to-transparent relative overflow-hidden">
+<svg class="absolute inset-0 w-full h-full" preserveaspectratio="none" viewbox="0 0 1000 200">
+<path d="M0,150 C100,120 200,180 300,100 C400,20 500,140 600,110 C700,80 800,160 900,40 L1000,90 L1000,200 L0,200 Z" fill="rgba(232,101,10,0.1)"></path>
+<path d="M0,150 C100,120 200,180 300,100 C400,20 500,140 600,110 C700,80 800,160 900,40 L1000,90" fill="none" stroke="#E8650A" stroke-width="3"></path>
+</svg>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 7: INQUIRIES -->
+<section class="scroll-mt-24" id="inquiries">
+<div class="flex items-center justify-between mb-8">
+<h3 class="font-headline-md text-headline-md text-on-surface">Customer Inquiries / पूछताछ</h3>
+</div>
+<div class="grid grid-cols-12 gap-8 h-[600px]">
+<!-- List -->
+<div class="col-span-12 lg:col-span-4 bg-white rounded-xl shadow-sm overflow-hidden flex flex-col">
+<div class="p-4 border-b border-outline-variant/10 bg-surface">
+<input class="w-full bg-white border-outline-variant/30 rounded-lg text-sm px-4 py-2" placeholder="Search inquiries..." type="text"/>
+</div>
+<div class="flex-1 overflow-y-auto">
+<div class="p-4 border-b border-primary/20 bg-primary/5 cursor-pointer">
+<div class="flex justify-between items-center mb-1">
+<h5 class="font-bold text-sm">Vikram Sethi</h5>
+<span class="text-[10px] text-on-surface-variant">10:45 AM</span>
+</div>
+<p class="text-xs text-on-surface-variant truncate">Need quote for 2500 sqft interlocking pavers...</p>
+<span class="mt-2 inline-block px-2 py-0.5 bg-blue-500 text-white text-[9px] rounded uppercase font-bold">WhatsApp</span>
+</div>
+<div class="p-4 border-b border-outline-variant/10 hover:bg-surface cursor-pointer">
+<div class="flex justify-between items-center mb-1">
+<h5 class="font-bold text-sm">Sunita Gupta</h5>
+<span class="text-[10px] text-on-surface-variant">Yesterday</span>
+</div>
+<p class="text-xs text-on-surface-variant truncate">How much for RCC pipes 12 inch diameter?</p>
+<span class="mt-2 inline-block px-2 py-0.5 bg-primary text-white text-[9px] rounded uppercase font-bold">AI Chat</span>
+</div>
+</div>
+</div>
+<!-- Chat Box -->
+<div class="col-span-12 lg:col-span-8 bg-white rounded-xl shadow-sm flex flex-col">
+<div class="p-6 border-b border-outline-variant/10 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center font-bold text-primary">VS</div>
+<div>
+<h5 class="font-bold text-sm">Vikram Sethi</h5>
+<p class="text-[10px] text-secondary font-bold">Online / ऑनलाइन</p>
+</div>
+</div>
+<button class="bg-primary text-white px-4 py-2 rounded-lg text-xs font-bold">Create Quote</button>
+</div>
+<div class="flex-1 p-6 overflow-y-auto space-y-4 bg-surface/30">
+<div class="max-w-[70%] bg-white p-3 rounded-xl rounded-tl-none shadow-sm text-sm">
+                                Hello, I saw your Interlocking Blocks on Instagram. I need a quotation for a driveway project in Jaipur.
+                            </div>
+<div class="max-w-[70%] ml-auto bg-primary text-white p-3 rounded-xl rounded-tr-none shadow-sm text-sm">
+                                Sure Vikram! We can help with that. Could you please specify the total area in square feet and the type of load (heavy vehicle or regular)?
+                            </div>
+<div class="max-w-[70%] bg-white p-3 rounded-xl rounded-tl-none shadow-sm text-sm">
+                                It is for a residential villa, so regular cars only. Around 2500 sqft.
+                            </div>
+</div>
+<div class="p-6 border-t border-outline-variant/10 flex gap-4">
+<input class="flex-1 bg-surface border-none rounded-lg text-sm px-4 py-2" placeholder="Type your message..." type="text"/>
+<button class="bg-primary text-white p-2 rounded-lg flex items-center justify-center"><span class="material-symbols-outlined">send</span></button>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 8: RCC PROJECTS -->
+<section class="scroll-mt-24" id="rcc">
+<div class="flex items-center justify-between mb-8">
+<h3 class="font-headline-md text-headline-md text-on-surface">RCC Projects Kanban / परियोजनाएँ</h3>
+</div>
+<div class="flex gap-6 overflow-x-auto pb-4 items-start h-[700px]">
+<!-- Column 1 -->
+<div class="min-w-[300px] flex-1 bg-surface-container-high/50 p-4 rounded-xl space-y-4">
+<div class="flex items-center justify-between mb-2">
+<h5 class="text-xs uppercase font-extrabold tracking-widest text-on-surface-variant">Enquiry (3)</h5>
+<span class="w-6 h-6 bg-white rounded-full flex items-center justify-center text-[10px] font-bold">3</span>
+</div>
+<div class="bg-white p-4 rounded-xl shadow-sm cursor-move border-t-4 border-blue-400">
+<h6 class="font-bold text-sm mb-2">Park Avenue Boundary</h6>
+<p class="text-[10px] text-on-surface-variant mb-4">Boundary Wall - 1200 sqft</p>
+<div class="flex justify-between items-center">
+<span class="material-symbols-outlined text-sm text-on-surface-variant">attach_money</span>
+<span class="text-[10px] font-bold">₹1.5L</span>
+</div>
+</div>
+</div>
+<!-- Column 2 -->
+<div class="min-w-[300px] flex-1 bg-surface-container-high/50 p-4 rounded-xl space-y-4">
+<div class="flex items-center justify-between mb-2">
+<h5 class="text-xs uppercase font-extrabold tracking-widest text-on-surface-variant">Site Visit (1)</h5>
+</div>
+<div class="bg-white p-4 rounded-xl shadow-sm border-t-4 border-primary">
+<h6 class="font-bold text-sm mb-2">Metro Station Pole Install</h6>
+<div class="flex items-center gap-2 mb-4">
+<img class="w-6 h-6 rounded-full object-cover" data-alt="A small thumbnail of a construction site with concrete pillars being erected under clear daylight, used as a project progress image in a Kanban dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSXMx_GYm72vJuW5NSGJYDtqRq8OCcg3t0lUCJSPO_PMw8QwTdVmojXbp6-4Vwm36mgVOEqK0OY6UlkyJuWRuJumrxyC6A9OEIrZoWOpeJTRYrVzCM2b59dRSoIpcBf-vmOEM5Fdb9_l4Q4b4psl_TiMgCgbqKOFFXSXCnIjpc6Q2d03buahkr3ujQ56aPHMTtRh6QH2DciO-o7U1WYTSZbNe6QZZoKvMzJkdq5hzgZYZJUuMTamvpUTLVBKqL6kmpNp4iuLy1jSA"/>
+<span class="text-[10px] text-primary font-bold">Scheduled Oct 28</span>
+</div>
+</div>
+</div>
+<!-- Column 3 -->
+<div class="min-w-[300px] flex-1 bg-surface-container-high/50 p-4 rounded-xl space-y-4">
+<div class="flex items-center justify-between mb-2">
+<h5 class="text-xs uppercase font-extrabold tracking-widest text-on-surface-variant">In Progress (2)</h5>
+</div>
+<div class="bg-white p-4 rounded-xl shadow-sm border-t-4 border-secondary">
+<h6 class="font-bold text-sm mb-2">NH-8 Service Road Curbs</h6>
+<div class="w-full bg-surface rounded-full h-1.5 mt-4 mb-2"><div class="bg-secondary h-1.5 rounded-full" style="width: 65%;"></div></div>
+<span class="text-[9px] font-bold text-secondary">65% COMPLETED</span>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 9: SETTINGS -->
+<section class="scroll-mt-24" id="settings">
+<div class="flex items-center justify-between mb-8">
+<h3 class="font-headline-md text-headline-md text-on-surface">Settings / सेटिंग्स</h3>
+</div>
+<div class="bg-white rounded-xl shadow-sm flex min-h-[500px]">
+<div class="w-64 border-r border-outline-variant/10 p-6 space-y-2">
+<button class="w-full text-left px-4 py-2 rounded-lg bg-primary/10 text-primary font-bold text-sm">Business Info</button>
+<button class="w-full text-left px-4 py-2 rounded-lg text-on-surface-variant hover:bg-surface font-semibold text-sm">Delivery Zones</button>
+<button class="w-full text-left px-4 py-2 rounded-lg text-on-surface-variant hover:bg-surface font-semibold text-sm">Pricing Rules</button>
+<button class="w-full text-left px-4 py-2 rounded-lg text-on-surface-variant hover:bg-surface font-semibold text-sm">Staff Access</button>
+</div>
+<div class="flex-1 p-10">
+<h4 class="font-bold text-xl mb-8">Business Information</h4>
+<div class="grid grid-cols-2 gap-8 max-w-3xl">
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase text-on-surface-variant">Company Name</label>
+<input class="w-full bg-surface border-outline-variant/30 rounded-lg py-2 px-4 focus:ring-primary" type="text" value="Swastika Interlocking &amp; RCC"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase text-on-surface-variant">GST Number</label>
+<input class="w-full bg-surface border-outline-variant/30 rounded-lg py-2 px-4 focus:ring-primary" type="text" value="08AAAAA0000A1Z5"/>
+</div>
+<div class="col-span-2 space-y-2">
+<label class="text-xs font-bold uppercase text-on-surface-variant">Registered Office Address</label>
+<textarea class="w-full bg-surface border-outline-variant/30 rounded-lg py-2 px-4 focus:ring-primary" rows="3">Plot No. 45, Industrial Area Phase II, Ludhiana, Punjab 141003</textarea>
+</div>
+</div>
+<button class="mt-10 bg-primary text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform">Save Changes</button>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- MODAL: ADD PRODUCT (HIDDEN) -->
+<div class="hidden fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center p-6" id="add-product-modal">
+<div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+<div class="p-6 border-b border-outline-variant/10 flex justify-between items-center bg-surface">
+<h3 class="font-bold text-xl">Add New Product / नया उत्पाद जोड़ें</h3>
+<button class="text-on-surface-variant hover:text-error" onclick="document.getElementById('add-product-modal').classList.add('hidden')"><span class="material-symbols-outlined">close</span></button>
+</div>
+<div class="p-8 grid grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase text-on-surface-variant">Product Name (EN)</label>
+<input class="w-full bg-surface border-outline-variant/30 rounded-lg py-2 px-4" placeholder="e.g. Grass Paver" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase text-on-surface-variant">Product Name (HI)</label>
+<input class="w-full bg-surface border-outline-variant/30 rounded-lg py-2 px-4" placeholder="उदाहरण: ग्रास पेवर" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase text-on-surface-variant">Base Price (₹)</label>
+<input class="w-full bg-surface border-outline-variant/30 rounded-lg py-2 px-4" placeholder="0.00" type="number"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase text-on-surface-variant">Initial Stock</label>
+<input class="w-full bg-surface border-outline-variant/30 rounded-lg py-2 px-4" placeholder="1000" type="number"/>
+</div>
+<div class="col-span-2 space-y-2">
+<label class="text-xs font-bold uppercase text-on-surface-variant">Product Description</label>
+<textarea class="w-full bg-surface border-outline-variant/30 rounded-lg py-2 px-4" rows="3"></textarea>
+</div>
+<div class="col-span-2">
+<label class="text-xs font-bold uppercase text-on-surface-variant mb-2 block">Upload Image</label>
+<div class="w-full h-32 border-2 border-dashed border-outline-variant/30 rounded-xl flex flex-col items-center justify-center text-on-surface-variant bg-surface hover:bg-white transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-3xl mb-1">upload_file</span>
+<p class="text-[10px] font-bold uppercase">Click to browse files</p>
+</div>
+</div>
+</div>
+<div class="p-6 bg-surface flex justify-end gap-4">
+<button class="px-6 py-2 rounded-lg font-bold text-on-surface-variant hover:bg-white transition-colors" onclick="document.getElementById('add-product-modal').classList.add('hidden')">Cancel</button>
+<button class="bg-primary text-white px-8 py-2 rounded-lg font-bold shadow-lg shadow-primary/20">Add Product</button>
+</div>
+</div>
+</div>
+<script>
+        // Smooth scrolling for sidebar links
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                document.querySelector(targetId).scrollIntoView({ behavior: 'smooth' });
+                
+                // Update active state
+                document.querySelectorAll('nav a').forEach(a => a.classList.remove('sidebar-active'));
+                this.classList.add('sidebar-active');
+            });
+        });
+    </script>
+</body></html>

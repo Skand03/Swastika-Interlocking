@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Admin Dashboard | Swastika Interlocking</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-nav-item {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid #E8650A;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #6B6860;
+            border-radius: 10px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "secondary-fixed-dim": "#88d982",
+                      "surface-container-highest": "#e7e2d8",
+                      "secondary-fixed": "#a3f69c",
+                      "primary-container": "#c35200",
+                      "on-tertiary-fixed": "#101f0f",
+                      "surface-container-low": "#f9f3e9",
+                      "on-background": "#1d1c16",
+                      "surface-container": "#f3ede3",
+                      "on-surface": "#1d1c16",
+                      "on-error-container": "#93000a",
+                      "on-error": "#ffffff",
+                      "tertiary-container": "#687964",
+                      "outline-variant": "#e0c0b1",
+                      "primary": "#9b4000",
+                      "on-tertiary": "#ffffff",
+                      "surface-container-high": "#ede8dd",
+                      "secondary": "#1b6d24",
+                      "on-secondary-container": "#217128",
+                      "on-primary-fixed-variant": "#793000",
+                      "tertiary": "#50604c",
+                      "on-secondary-fixed-variant": "#005312",
+                      "tertiary-fixed-dim": "#b9ccb3",
+                      "on-primary": "#ffffff",
+                      "secondary-container": "#a0f399",
+                      "error-container": "#ffdad6",
+                      "tertiary-fixed": "#d5e8ce",
+                      "surface": "#fef9ee",
+                      "inverse-surface": "#32302a",
+                      "surface-tint": "#9f4200",
+                      "primary-fixed": "#ffdbcb",
+                      "surface-bright": "#fef9ee",
+                      "on-primary-container": "#fffbff",
+                      "on-surface-variant": "#584237",
+                      "inverse-primary": "#ffb692",
+                      "on-tertiary-fixed-variant": "#3b4b38",
+                      "on-secondary": "#ffffff",
+                      "primary-fixed-dim": "#ffb692",
+                      "on-primary-fixed": "#341100",
+                      "inverse-on-surface": "#f6f0e6",
+                      "surface-dim": "#dfd9d0",
+                      "on-tertiary-container": "#f7fff1",
+                      "error": "#ba1a1a",
+                      "on-secondary-fixed": "#002204",
+                      "background": "#FAF0E6",
+                      "surface-variant": "#e7e2d8",
+                      "surface-container-lowest": "#ffffff",
+                      "outline": "#8c7165"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "container-max": "1280px",
+                      "margin-mobile": "16px",
+                      "gutter": "24px",
+                      "base": "8px",
+                      "card-padding": "24px"
+              },
+              "fontFamily": {
+                      "body-lg": ["Plus Jakarta Sans"],
+                      "display-lg": ["Montserrat"],
+                      "headline-md": ["Montserrat"],
+                      "body-md": ["Plus Jakarta Sans"],
+                      "label-sm": ["Plus Jakarta Sans"]
+              },
+              "fontSize": {
+                      "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "display-lg": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                      "headline-md": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "label-sm": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-[#FAF0E6] text-on-surface font-body-md min-h-screen flex">
+<!-- Sidebar Navigation (Mandatory Style: bg-[#1C2B1A]) -->
+<aside class="dark-green-sidebar w-[240px] h-screen fixed left-0 top-0 z-50 flex flex-col py-8 px-4 shadow-lg text-tertiary-fixed-dim/70">
+<div class="mb-10 px-2 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary flex items-center justify-center rounded-xl text-white font-bold text-xl">S</div>
+<div>
+<h1 class="font-display-lg text-body-md text-primary-fixed leading-none">Construx Pro</h1>
+<p class="text-[10px] uppercase tracking-widest mt-1 opacity-60">Admin Dashboard</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1 overflow-y-auto">
+<a class="flex items-center gap-3 px-3 py-3 rounded-r-lg transition-all text-sm font-medium hover:bg-white/5 hover:text-white" href="#dashboard">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard / डैशबोर्ड</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-r-lg transition-all text-sm font-medium hover:bg-white/5 hover:text-white" href="#products">
+<span class="material-symbols-outlined">inventory_2</span>
+<span>Products / उत्पाद</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-r-lg transition-all text-sm font-medium hover:bg-white/5 hover:text-white" href="#orders">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span>Orders / आदेश</span>
+</a>
+<a class="sidebar-active flex items-center gap-3 px-3 py-3 rounded-r-lg transition-all text-sm font-medium" href="#customers">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">group</span>
+<span>Customers / ग्राहक</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-r-lg transition-all text-sm font-medium hover:bg-white/5 hover:text-white" href="#inventory">
+<span class="material-symbols-outlined">garage_home</span>
+<span>Inventory / स्टॉक</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-r-lg transition-all text-sm font-medium hover:bg-white/5 hover:text-white" href="#reports">
+<span class="material-symbols-outlined">analytics</span>
+<span>Reports / रिपोर्ट</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-r-lg transition-all text-sm font-medium hover:bg-white/5 hover:text-white" href="#inquiries">
+<span class="material-symbols-outlined">question_answer</span>
+<span>Inquiries / पूछताछ</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-r-lg transition-all text-sm font-medium hover:bg-white/5 hover:text-white" href="#rcc">
+<span class="material-symbols-outlined">foundation</span>
+<span>RCC Projects / आरसीसी</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-r-lg transition-all text-sm font-medium hover:bg-white/5 hover:text-white" href="#settings">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings / सेटिंग्स</span>
+</a>
+</nav>
+<div class="mt-auto px-3 py-4 border-t border-white/10">
+<button class="flex items-center gap-3 text-sm font-medium text-error hover:text-red-400">
+<span class="material-symbols-outlined">logout</span>
+                Logout / लॉगआउट
+            </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-[240px] min-h-screen flex flex-col">
+<!-- Top Bar (Mandatory Style: bg-[#1a1a3e]) -->
+<header class="navy-topbar w-full h-16 sticky top-0 z-40 flex items-center justify-between px-gutter shadow-sm">
+<div class="flex items-center gap-4">
+<h2 class="text-primary font-headline-md text-headline-md flex items-center gap-2">
+                    Customers &amp; Inquiries <span class="text-white/40 font-light text-sm">/ ग्राहक और पूछताछ</span>
+</h2>
+</div>
+<div class="flex-1 max-w-xl mx-8">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full pl-10 pr-4 py-2 focus:ring-2 focus:ring-primary/50 text-sm" placeholder="Search orders, customers, products..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="relative hover:bg-white/10 p-2 rounded-full transition-all">
+<span class="material-symbols-outlined text-white">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full ring-2 ring-navy-topbar"></span>
+</button>
+<div class="flex items-center gap-3 pl-4 border-l border-white/10">
+<div class="text-right">
+<p class="text-white text-xs font-bold leading-none">Amit Sharma</p>
+<p class="text-primary text-[10px] uppercase font-bold mt-1">Super Admin</p>
+</div>
+<img alt="Admin Profile" class="w-10 h-10 rounded-full border-2 border-primary object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnPCZerC0IxnGeGVH8PS8XjkgyQSPDcGeTTzLCbL8319MlCL0AIjFPftp7CrQZx2ZtmjbCUYuwB-QNrdRSorMh0Fe8dCFg5E-5MCxd_8m03civ_cAp-iocwn0WImxugWQsBpzX5uvHLFgmBS-dsupkeGLgb7SZMSpTzCtlvXOAt4S_-M3GNg8iFt_Eypl3yhX0OnoOS-3cM4fC6NsFeWDsqRr3j_4-XCptVuS5t1cg25pHCz--7XIGLzgM2UIKen32BX_ADwzPFts"/>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="p-8 space-y-8 overflow-y-auto custom-scrollbar flex-1">
+<!-- Dashboard Stats -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<div class="bg-white p-6 rounded-xl shadow-sm border border-surface-container-highest flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-[#E8650A]/10 flex items-center justify-center text-[#E8650A]">
+<span class="material-symbols-outlined">person_add</span>
+</div>
+<div>
+<p class="text-xs text-on-surface-variant font-semibold">New This Week (नए)</p>
+<h4 class="text-2xl font-bold">124</h4>
+</div>
+</div>
+<div class="bg-white p-6 rounded-xl shadow-sm border border-surface-container-highest flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-[#1C2B1A]/10 flex items-center justify-center text-[#1C2B1A]">
+<span class="material-symbols-outlined">pending_actions</span>
+</div>
+<div>
+<p class="text-xs text-on-surface-variant font-semibold">Open Inquiries (पूछताछ)</p>
+<h4 class="text-2xl font-bold">48</h4>
+</div>
+</div>
+<div class="bg-white p-6 rounded-xl shadow-sm border border-surface-container-highest flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center text-green-700">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<div>
+<p class="text-xs text-on-surface-variant font-semibold">Total Revenue (कुल राजस्व)</p>
+<h4 class="text-2xl font-bold">₹24.8L</h4>
+</div>
+</div>
+<div class="bg-white p-6 rounded-xl shadow-sm border border-surface-container-highest flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center text-blue-700">
+<span class="material-symbols-outlined">local_shipping</span>
+</div>
+<div>
+<p class="text-xs text-on-surface-variant font-semibold">Active Jobs (सक्रिय कार्य)</p>
+<h4 class="text-2xl font-bold">18</h4>
+</div>
+</div>
+</div>
+<!-- Main Layout: Table and Chat -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 h-full">
+<!-- Customer Table (8 Columns) -->
+<div class="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-surface-container-highest overflow-hidden flex flex-col">
+<div class="p-6 border-b border-surface-container flex justify-between items-center">
+<h3 class="font-headline-md text-lg">Recent Customers (हाल के ग्राहक)</h3>
+<button class="text-[#E8650A] text-sm font-semibold hover:underline">View All</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low text-on-surface-variant text-[11px] uppercase tracking-wider font-bold">
+<tr>
+<th class="px-6 py-4">Customer (ग्राहक)</th>
+<th class="px-6 py-4">Total Orders</th>
+<th class="px-6 py-4">Spent (खर्च)</th>
+<th class="px-6 py-4">Activity</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container">
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-dim flex-shrink-0 relative overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of an Indian middle-aged businessman wearing a tailored suit, set against a blurred office background with warm afternoon sunlight filtering through large windows. The image has a clean, corporate aesthetic with a sophisticated and trustworthy mood, emphasizing sharp focus and natural skin tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuACv1kx9hZlKpyhr8lKfpTS1WuuOBSJqRVQP0DQOnVyL6HNHwPIwaxbZtqvqiDslxHobsXp1Ng6mMkzjYvLFP7UChz1n28easM7VTYia85rHj5Pg-0MfKXuAW9ODNuLfwFjxIuDkEIyrE1-H4QnnPdDdgj8ChDsKxjYLCjE97SQj3M0PrLIf-abJSbL2lMCmqLJEX0OFTgu10DNEuV41_IqiABoDkNylgP0g23opZuM5AzQdEIKC3R001tN4U8GvqcYMR-0xG6x5RM"/>
+</div>
+<div class="flex flex-col">
+<span class="font-semibold text-sm">Vikram Sethi</span>
+<span class="text-xs text-on-surface-variant">+91 98765 43210</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm">04 Projects</td>
+<td class="px-6 py-4 text-sm font-bold text-[#E8650A]">₹4,55,000</td>
+<td class="px-6 py-4">
+<span class="text-[10px] bg-green-100 text-green-700 px-2 py-1 rounded-full font-bold">ACTIVE</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-dim flex-shrink-0 relative overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A corporate portrait of a professional female architect of Indian descent, smiling confidently. She is standing in a modern, brightly lit office space with architectural blueprints and models visible in the background. The lighting is high-key and soft, creating a clean, modern atmosphere with a focus on professional excellence." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmLI7yHZW6haav7zgSSKZRURfWLOYq6t5gUx7DXp0b9cAMLz97YJ_4G7DPHvUGwkwpZqupVUkagPOrIBHPvkr4KOAEvAujHnxKCbakaYTzHUISOzyWzt22JvXO9THjeuLXvfXfdKTNVjPj-CzsTCiStCSfVxWHPDF6X3bv3C6pB3POlKXlTMOwnS8EJ4KDKseFu0FAhlHEC-uVHWt9eqUYd58rO2TuSRIv0ZltxM9uN6OsE5dwFELzWB3HklEUOilNYW0Jh_X7aos"/>
+</div>
+<div class="flex flex-col">
+<span class="font-semibold text-sm">Ananya Sharma</span>
+<span class="text-xs text-on-surface-variant">+91 91234 56789</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm">02 Projects</td>
+<td class="px-6 py-4 text-sm font-bold text-[#E8650A]">₹2,10,000</td>
+<td class="px-6 py-4">
+<span class="text-[10px] bg-surface-container-highest text-on-surface-variant px-2 py-1 rounded-full font-bold">2H AGO</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-dim flex-shrink-0 relative overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A portrait of a male real estate developer in India, dressed in business casual attire, looking directly at the camera with a friendly and approachable expression. The background is a crisp, modern building facade with warm stone textures. The lighting is bright and natural, reflecting a clean, high-end professional UI style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4w79sgoEBdfWHCv7UAraQ_qzIlRW8xDepjUuBJc_HfZCXYhYeTGMH03aXY8Pq1rs2vaTPAm88k9p1Ay1TJu1csSPUThN0aoWz39kXjfy_wOx6EUdcyeiTGprjTS2gi3OYvrzw_sWsOm7XrEjVShVsn93Kb1t84_OSePXWW3sbAEwWD5QvZIOiQKx59icjFxf2eO0JkjMl9wJdF8DGI7CF7tfkx8RnIkR7eLTSh6JMQ4iRKhKQKcEyQiciv6chYR6ph_QG0jLdGCQ"/>
+</div>
+<div class="flex flex-col">
+<span class="font-semibold text-sm">Rajesh Gupta</span>
+<span class="text-xs text-on-surface-variant">+91 99887 76655</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm">07 Projects</td>
+<td class="px-6 py-4 text-sm font-bold text-[#E8650A]">₹12,80,000</td>
+<td class="px-6 py-4">
+<span class="text-[10px] bg-surface-container-highest text-on-surface-variant px-2 py-1 rounded-full font-bold">YESTERDAY</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-dim flex-shrink-0 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A high-quality professional photograph of a young Indian entrepreneur, looking engaged and attentive. The setting is a minimalist, light-toned co-working space with wooden accents. The lighting is diffused and even, creating a calm and professional mood suitable for a premium business application." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUAi_IT75vEj4NpRxRPvJOQOShODB-MCKQg7GQBWdXhzXF_nPFHLnYu7PmO_0g627vN7JY1lAQ0lupqOXotKOrrILfQTyTHK4tBj7fpQpYG5KobbAo-Z-YSIVQIvNFcz4rqxk3OzqLmwXTyD74LGRz34XFs0-z2JKCNvy4tXfjUPhI34ZKmCNY5CGVRbPY_7SnxdDC1H0ODnSKm8IS5ph2LgeYRimmU0KgGPLP6iW7_0_6BygjGU-kyt9PTfuO2z7mjSg7mhRSyzc"/>
+</div>
+<div class="flex flex-col">
+<span class="font-semibold text-sm">Meera Iyer</span>
+<span class="text-xs text-on-surface-variant">+91 90000 11111</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm">01 Project</td>
+<td class="px-6 py-4 text-sm font-bold text-[#E8650A]">₹85,000</td>
+<td class="px-6 py-4">
+<span class="text-[10px] bg-surface-container-highest text-on-surface-variant px-2 py-1 rounded-full font-bold">3D AGO</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Chat Interface (4 Columns) -->
+<div class="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-surface-container-highest overflow-hidden flex h-[600px]">
+<!-- Chat Sidebar (Sources) -->
+<div class="w-16 sm:w-20 bg-surface-container-low border-r border-surface-container flex flex-col items-center py-6 gap-6">
+<button class="w-10 h-10 rounded-xl bg-green-500 text-white flex items-center justify-center shadow-lg shadow-green-200">
+<span class="material-symbols-outlined">chat</span>
+</button>
+<button class="w-10 h-10 rounded-xl bg-blue-500 text-white flex items-center justify-center opacity-40 grayscale hover:opacity-100 hover:grayscale-0 transition-all">
+<span class="material-symbols-outlined">smart_toy</span>
+</button>
+<button class="w-10 h-10 rounded-xl bg-[#1a1a3e] text-white flex items-center justify-center opacity-40 grayscale hover:opacity-100 hover:grayscale-0 transition-all">
+<span class="material-symbols-outlined">mail</span>
+</button>
+</div>
+<!-- Chat Body -->
+<div class="flex-1 flex flex-col min-w-0">
+<!-- Chat Header -->
+<div class="p-4 border-b border-surface-container flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-dim overflow-hidden border-2 border-[#E8650A]">
+<img class="w-full h-full object-cover" data-alt="Close up portrait of Vikram Sethi, showing professional confidence. The lighting is warm, focusing on the eyes and a slight professional smile. The background is a soft-focus office environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgoJ99rGgdju7fLjBe37Gw2d_5c-4avGn3--7r9N790hXE0XcziTWobmkFx_0W_31CfLkLwFI_0TqKcevM3qicwL_0ALjp3o5RDe5Z_FpUI3jJvlYWwpg-G2N2u0qE4HFRSh1RbKFKtNKm1_C1j9rIJGyDAmU710zeIaW-VuZxJe7VIxXSUartiLUfeNtuDlHy8VaUc8KM79a5__1kVT6fs5pqfkekOm6NcYQtjY3jqRur3DUQtlWBOCvysxK1MjN2ReZujRk77i4"/>
+</div>
+<div class="flex flex-col">
+<span class="font-bold text-sm">Vikram Sethi</span>
+<span class="text-[10px] text-green-600 font-bold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-green-600 animate-pulse"></span>
+                                        Online (ऑनलाइन)
+                                    </span>
+</div>
+</div>
+<button class="p-2 hover:bg-surface-container rounded-full text-on-surface-variant">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<!-- Messages Thread -->
+<div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-surface-container-low/30">
+<div class="flex flex-col items-center">
+<span class="text-[10px] bg-surface-container text-on-surface-variant px-3 py-1 rounded-full uppercase font-bold tracking-widest mb-4">Today</span>
+</div>
+<!-- Received Message -->
+<div class="flex items-start gap-3 max-w-[85%]">
+<div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm text-sm border border-surface-container">
+<p>Namaste! I need a quote for 5000 sq ft of Zig-Zag interlocking tiles for my parking lot in Gurugram.</p>
+<p class="mt-1 font-hindi text-xs text-on-surface-variant italic">नमस्ते! मुझे अपने गुरुग्राम वाले पार्किंग स्थल के लिए 5000 वर्ग फुट ज़िग-ज़ैग इंटरलॉकिंग टाइल्स का कोट चाहिए।</p>
+<span class="text-[10px] opacity-50 block mt-2 text-right">10:45 AM</span>
+</div>
+</div>
+<!-- Sent Message -->
+<div class="flex items-end justify-end gap-3 max-w-[85%] ml-auto">
+<div class="bg-[#1C2B1A] text-white p-3 rounded-2xl rounded-tr-none shadow-md text-sm">
+<p>Sure Vikram, I'll help you with that. Do you need the 60mm or 80mm heavy-duty variant?</p>
+<p class="mt-1 text-white/70 text-xs italic">जरूर विक्रम, मैं आपकी मदद करूँगा। क्या आपको 60mm या 80mm हैवी-ड्यूटी वैरिएंट चाहिए?</p>
+<span class="text-[10px] opacity-60 block mt-2">10:48 AM</span>
+</div>
+</div>
+<!-- Received Message -->
+<div class="flex items-start gap-3 max-w-[85%]">
+<div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm text-sm border border-surface-container">
+<p>80mm please. Also, suggest some grey and red patterns.</p>
+<p class="mt-1 font-hindi text-xs text-on-surface-variant italic">80mm कृपया। साथ ही, कुछ ग्रे और रेड पैटर्न सुझाएं।</p>
+<span class="text-[10px] opacity-50 block mt-2 text-right">10:50 AM</span>
+</div>
+</div>
+</div>
+<!-- Chat Input -->
+<div class="p-4 bg-white border-t border-surface-container">
+<div class="flex items-center gap-2 bg-surface-container rounded-full px-4 py-2 border border-surface-container-highest focus-within:border-[#E8650A] transition-all">
+<button class="text-on-surface-variant hover:text-[#E8650A]">
+<span class="material-symbols-outlined">add_circle</span>
+</button>
+<input class="flex-1 bg-transparent border-none focus:ring-0 text-sm py-1" placeholder="Type your message... (संदेश लिखें...)" type="text"/>
+<button class="bg-[#E8650A] text-white w-8 h-8 rounded-full flex items-center justify-center shadow-md active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-sm">send</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Action Grid (Bento Style) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="bg-[#1a1a3e] text-white p-8 rounded-2xl shadow-xl flex flex-col justify-between group overflow-hidden relative">
+<div class="relative z-10">
+<span class="material-symbols-outlined text-4xl text-[#E8650A] mb-4">architecture</span>
+<h4 class="font-headline-md mb-2">Technical Specs</h4>
+<p class="text-sm text-white/70">View product durability ratings and interlocking patterns for client quotes.</p>
+</div>
+<button class="mt-6 border border-white/20 w-max px-4 py-2 rounded font-label-sm group-hover:bg-white group-hover:text-[#1a1a3e] transition-all relative z-10">Download Catalog</button>
+<!-- Background Decoration -->
+<div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/5 rounded-full blur-3xl group-hover:bg-[#E8650A]/20 transition-all"></div>
+</div>
+<div class="md:col-span-2 bg-white border border-surface-container-highest rounded-2xl p-8 flex flex-col md:flex-row items-center gap-8">
+<div class="w-full md:w-1/3">
+<div class="aspect-square bg-surface-container rounded-xl overflow-hidden relative">
+<img class="w-full h-full object-cover" data-alt="A macro photograph of premium grey interlocking pavers stacked neatly on a wooden pallet. The textures are sharp and gritty, highlighting the durability and quality of the construction material. The lighting is bright and clear, emphasizing the industrial reliability of Swastika Interlocking products." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD64q0cDd7ZzYvEQXYiT-PssExiFc7DNmvibRuioaSc1k7NM_rheZdPVFsc7dEMQ-27wMNt22qhBwq4y1Xl3PJC6FHfEXMK1_wUYl9ShykI07Wz5cvHNjufmN43KcvJ9hkkikNlpHD-MNKeBCArZb3ap_HMHTfd-BkcX-B-03BC0jVUYY2KQOoXJiR8jBqEHEu6LoM3QEQAOYhFNzew4HfmPkrBA_JJR4E7cgN3eg7Rr1aohpCuNff17nTwX5e7hBf0svNx3R1NHyk"/>
+</div>
+</div>
+<div class="flex-1">
+<span class="bg-[#E8650A]/10 text-[#E8650A] text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">Live Quote Suggestion</span>
+<h4 class="font-headline-md mt-4 text-xl">Zig-Zag Heavy Duty (80mm)</h4>
+<p class="text-on-surface-variant text-sm mt-2 leading-relaxed">Perfect for high-traffic zones like parking lots and freight yards. Current inventory available in Gurugram warehouse.</p>
+<div class="mt-6 flex gap-4">
+<button class="bg-[#E8650A] text-white px-6 py-2 rounded-full font-label-sm shadow-lg hover:shadow-[#E8650A]/30 transition-all">Add to Vikram's Quote</button>
+<button class="border border-[#1C2B1A] text-[#1C2B1A] px-6 py-2 rounded-full font-label-sm hover:bg-[#1C2B1A] hover:text-white transition-all">View Variations</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer (Bilingual) -->
+<footer class="bg-white border-t border-surface-container-highest px-8 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
+<div class="flex flex-col items-center md:items-start">
+<p class="text-xs text-on-surface-variant">© 2024 Swastika Interlocking. Build with Trust.</p>
+<p class="text-[10px] text-on-surface-variant/60">2024 स्वास्तिका इंटरलॉकिंग। भरोसे के साथ निर्माण।</p>
+</div>
+<div class="flex items-center gap-6">
+<a class="text-xs text-on-surface-variant hover:text-[#E8650A] transition-colors" href="#">Privacy Policy</a>
+<a class="text-xs text-on-surface-variant hover:text-[#E8650A] transition-colors" href="#">Terms of Service</a>
+<a class="text-xs text-on-surface-variant hover:text-[#E8650A] transition-colors" href="#">Documentation</a>
+</div>
+</footer>
+</main>
+<!-- Support Floating Action Cluster -->
+<div class="fixed bottom-8 right-8 flex flex-col gap-4 z-50">
+<button class="w-14 h-14 bg-green-500 text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform active:scale-95 group relative">
+<span class="material-symbols-outlined">chat</span>
+<span class="absolute right-full mr-4 bg-white text-on-surface px-3 py-1 rounded-lg text-xs whitespace-nowrap shadow-xl border border-surface-container-highest opacity-0 group-hover:opacity-100 transition-opacity">WhatsApp Support</span>
+</button>
+<button class="w-14 h-14 bg-[#E8650A] text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform active:scale-95 group relative">
+<span class="material-symbols-outlined">call</span>
+<span class="absolute right-full mr-4 bg-white text-on-surface px-3 py-1 rounded-lg text-xs whitespace-nowrap shadow-xl border border-surface-container-highest opacity-0 group-hover:opacity-100 transition-opacity">Call Sales Manager</span>
+</button>
+</div>
+<!-- Micro-interactions Script -->
+<script>
+        // Simple hover effect for table rows
+        document.querySelectorAll('tr').forEach(row => {
+            row.addEventListener('click', () => {
+                // In a real app, this would load the chat for that user
+                console.log('Row clicked');
+            });
+        });
+
+        // Chat input simulation
+        const chatInput = document.querySelector('input[placeholder*="Type your message"]');
+        const chatSendBtn = chatInput.nextElementSibling;
+        
+        chatSendBtn.addEventListener('click', () => {
+            if(chatInput.value.trim() !== "") {
+                const thread = document.querySelector('.custom-scrollbar.flex-1');
+                const newMessage = document.createElement('div');
+                newMessage.className = "flex items-end justify-end gap-3 max-w-[85%] ml-auto animate-in fade-in slide-in-from-bottom-2 duration-300";
+                newMessage.innerHTML = `
+                    <div class="bg-[#1C2B1A] text-white p-3 rounded-2xl rounded-tr-none shadow-md text-sm">
+                        <p>${chatInput.value}</p>
+                        <span class="text-[10px] opacity-60 block mt-2 text-right">Just now</span>
+                    </div>
+                `;
+                thread.appendChild(newMessage);
+                chatInput.value = "";
+                thread.scrollTop = thread.scrollHeight;
+            }
+        });
+
+        chatInput.addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') chatSendBtn.click();
+        });
+    </script>
+</body></html>
