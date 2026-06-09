@@ -25,9 +25,16 @@ export default function Products({ language }) {
   const [productList, setProductList] = useState([]);
 
   useEffect(() => {
+    console.log("API_BASE =", API_BASE);
+
     fetch(`${API_BASE}/api/get_products.php`)
-      .then(res => res.json())
+      .then(res => {
+        console.log("RAW RESPONSE =", res);
+        return res.json();
+      })
       .then(data => {
+        console.log("API RESPONSE =", data);
+
         if (data.success && data.products) {
           const mapped = data.products
             .filter(p => p.category !== 'RCC' && p.category !== 'Shuttering')
@@ -43,13 +50,41 @@ export default function Products({ language }) {
               variants: p.variants || [],
               db: true
             }));
+
           setProductList(mapped);
         }
       })
       .catch(err => {
-        console.error("Error fetching products from DB:", err);
+        console.error("FETCH ERROR =", err);
       });
   }, [language]);
+
+  // useEffect(() => {
+  //   fetch(`${API_BASE}/api/get_products.php`)
+  //     .then(res => res.json())
+  //     .then(data => {
+  //       if (data.success && data.products) {
+  //         const mapped = data.products
+  //           .filter(p => p.category !== 'RCC' && p.category !== 'Shuttering')
+  //           .map(p => ({
+  //             id: p.product_key,
+  //             name: language === 'hi' ? p.name_hi : p.name_en,
+  //             desc: language === 'hi' ? p.desc_hi : p.desc_en,
+  //             price: p.price,
+  //             tag: p.category,
+  //             tagColor: 'bg-primary/10 text-primary',
+  //             image: p.image_url,
+  //             value: p.name_en,
+  //             variants: p.variants || [],
+  //             db: true
+  //           }));
+  //         setProductList(mapped);
+  //       }
+  //     })
+  //     .catch(err => {
+  //       console.error("Error fetching products from DB:", err);
+  //     });
+  // }, [language]);
 
   const handleBookNow = (productName) => {
     navigate('/order', { state: { selectedProduct: productName } });
@@ -66,7 +101,7 @@ export default function Products({ language }) {
         <p className="font-body-lg text-lg md:text-xl text-on-surface-variant max-w-3xl mx-auto leading-relaxed">
           {t.desc}
         </p>
-      
+
       </header>
 
       {/* Product Grid */}
@@ -76,10 +111,10 @@ export default function Products({ language }) {
             <article key={product.id} className="bg-surface-container-low rounded-2xl overflow-hidden flex flex-col shadow-md hover:shadow-2xl border border-surface-variant/20 transition-all duration-500 hover:-translate-y-2 group">
               <div className="aspect-[4/3] overflow-hidden select-none">
                 <div className="block w-full h-full">
-                  <img 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                    alt={product.name} 
-                    src={selectedColors[product.id] || product.image} 
+                  <img
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    alt={product.name}
+                    src={selectedColors[product.id] || product.image}
                   />
                 </div>
               </div>
@@ -132,13 +167,13 @@ export default function Products({ language }) {
                     <p className="text-primary font-bold text-sm sm:text-base md:text-lg leading-tight truncate" title={product.price}>{product.price}</p>
                   </div>
                   <div className="flex gap-2">
-                    <Link 
+                    <Link
                       to={`/products/${product.id}`}
                       className="border border-primary text-primary px-3 py-2 rounded-lg font-bold hover:bg-primary/5 transition-colors text-xs md:text-sm whitespace-nowrap flex items-center justify-center cursor-pointer active:scale-95"
                     >
                       {language === 'hi' ? 'विवरण' : 'Details'}
                     </Link>
-                    <button 
+                    <button
                       onClick={() => handleBookNow(product.value)}
                       className="bg-primary text-on-primary px-3 sm:px-4 md:px-5 py-2 rounded-lg font-bold flex items-center gap-1.5 hover:bg-primary-container transition-colors cursor-pointer active:scale-95 text-xs md:text-sm whitespace-nowrap shrink-0"
                     >
@@ -151,7 +186,7 @@ export default function Products({ language }) {
             </article>
           ))}
         </div>
-        
+
 
       </section>
     </main>
