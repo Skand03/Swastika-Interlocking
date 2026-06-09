@@ -1,8 +1,8 @@
 -- Swastika Interlocking - MySQL Database Schema
 -- Run this script in phpMyAdmin or MySQL CLI to set up the production database.
 
-CREATE DATABASE IF NOT EXISTS `swastika_db` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `swastika_db`;
+-- CREATE DATABASE IF NOT EXISTS `swastika_interlocking` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+-- USE `swastika_interlocking`;
 
 -- 1. Users Table (Admin & Customers)
 CREATE TABLE IF NOT EXISTS `users` (

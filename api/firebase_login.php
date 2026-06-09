@@ -88,8 +88,9 @@ function decodeFirebaseToken(string $jwt, string $projectId): array {
 /** Rate limiting: max $max attempts per $windowSec seconds per IP */
 function checkRateLimit(PDO $pdo, string $ip, int $max = 10, int $windowSec = 900): void {
     // Clean old entries
-    $pdo->prepare("DELETE FROM failed_login_attempts WHERE attempt_time < DATE_SUB(NOW(), INTERVAL ? SECOND)")
-        ->execute([$windowSec]);
+    $cutoff = date('Y-m-d H:i:s', time() - $windowSec);
+    $pdo->prepare("DELETE FROM failed_login_attempts WHERE attempt_time < ?")
+        ->execute([$cutoff]);
 
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM failed_login_attempts WHERE ip_address = ?");
     $stmt->execute([$ip]);
@@ -209,7 +210,7 @@ try {
         }
 
         // Update last_login_at
-        $pdo->prepare("UPDATE users SET last_login_at = NOW() WHERE id = ?")
+        $pdo->prepare("UPDATE users SET last_login_at = CURRENT_TIMESTAMP WHERE id = ?")
             ->execute([$user['id']]);
 
         audit($pdo, $user['id'], 'login_success', $firebase_uid);
