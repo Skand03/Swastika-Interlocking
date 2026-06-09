@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { API_BASE } from "../config";
 
 // Google Font import can be added in index.html; here we just use class names.
 
@@ -13,7 +14,7 @@ export default function OrderDetails({ language }) {
     if (!id) return;
     const fetchOrder = async () => {
       try {
-        const res = await fetch(`./api/get_order.php?id=${id}`);
+        const res = await fetch(`${API_BASE}/api/get_order.php?id=${id}`);
         const data = await res.json();
         if (data.success && data.order) {
           setOrder(data.order);

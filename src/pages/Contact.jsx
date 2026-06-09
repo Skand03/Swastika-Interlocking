@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { API_BASE } from "../config";
 
 const TRANSLATIONS = {
   hi: {
@@ -87,7 +88,7 @@ export default function Contact({ language }) {
     setIsTyping(true);
 
     try {
-      const response = await fetch('/api/chat.php', {
+      const response = await fetch(`${API_BASE}/api/chat.php`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -244,7 +245,7 @@ export default function Contact({ language }) {
             }
             setIsTyping(true);
             try {
-              const res = await fetch('/api/submit_contact.php', {
+              const res = await fetch(`${API_BASE}/api/submit_contact.php`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: inputValue.name, phone: inputValue.phone, requirements: inputValue.message })

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE } from "../config";
 
 const TRANSLATIONS = {
   hi: {
@@ -104,7 +105,7 @@ export default function ShutteringEnquiry({ language }) {
     }
     setLoading(true); setStatusMsg('');
     try {
-      const response = await fetch('/api/submit_order.php', {
+      const response = await fetch(`${API_BASE}/api/submit_order.php`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
           ...formData,
           product_type: `${formData.product_type} - [WANTS TO ${orderType.toUpperCase()}]`

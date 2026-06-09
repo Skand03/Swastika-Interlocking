@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { API_BASE } from "../config";
 
 const TRANSLATIONS = {
   hi: {
@@ -57,7 +58,7 @@ export default function RCCEnquiry({ language }) {
       if (selectedFile) {
         payload.append('site_photo', selectedFile);
       }
-      const response = await fetch('/api/submit_order.php', {
+      const response = await fetch(`${API_BASE}/api/submit_order.php`, {
         method: 'POST',
         body: payload
       });

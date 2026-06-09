@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE } from "../../config";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Settings({ user, language }) {
+  const { authFetch } = useAuth();
   const [settings, setSettings] = useState({
     companyName: '',
     gstNumber: '',
@@ -12,7 +15,7 @@ export default function Settings({ user, language }) {
 
   // Load settings on mount
   useEffect(() => {
-    fetch('./api/get_settings.php')
+    authFetch(`${API_BASE}/api/get_settings.php`)
       .then(r => r.json())
       .then(data => {
         if (data.success) setSettings(data.settings);
@@ -26,7 +29,7 @@ export default function Settings({ user, language }) {
 
   const handleSave = async () => {
     try {
-      const res = await fetch('./api/save_settings.php', {
+      const res = await authFetch(`${API_BASE}/api/save_settings.php`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ settings })

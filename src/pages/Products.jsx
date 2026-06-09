@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { API_BASE } from "../config";
 
 
 const TRANSLATIONS = {
@@ -24,7 +25,7 @@ export default function Products({ language }) {
   const [productList, setProductList] = useState([]);
 
   useEffect(() => {
-    fetch('./api/get_products.php')
+    fetch(`${API_BASE}/api/get_products.php`)
       .then(res => res.json())
       .then(data => {
         if (data.success && data.products) {

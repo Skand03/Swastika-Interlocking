@@ -93,6 +93,7 @@ CREATE TABLE IF NOT EXISTS `products` (
   `desc_en` text NOT NULL,
   `desc_hi` text NOT NULL,
   `image_url` text NOT NULL,
+  `variants` text NULL,
   `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

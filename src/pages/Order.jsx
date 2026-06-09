@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE } from "../config";
 
 const TRANSLATIONS = {
   hi: {
@@ -111,7 +112,7 @@ export default function Order({ language }) {
 
   useEffect(() => {
     // Fetch products dynamically from the database
-    fetch('./api/get_products.php')
+    fetch(`${API_BASE}/api/get_products.php`)
       .then(res => res.json())
       .then(data => {
         if (data.success && data.products) {
@@ -245,7 +246,7 @@ export default function Order({ language }) {
       // Total quantity representation for DB fallback
       const totalQty = finalCart.reduce((acc, item) => acc + parseInt(item.quantity || 0), 0);
 
-      const response = await fetch('./api/submit_order.php', {
+      const response = await fetch(`${API_BASE}/api/submit_order.php`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

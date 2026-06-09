@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { API_BASE } from "../config";
 
 const CATALOG = {
   zigzag: {
@@ -176,7 +177,7 @@ export default function ProductDetail({ language }) {
 
   // Sync state when URL parameter changes
   useEffect(() => {
-    fetch('./api/get_products.php')
+    fetch(`${API_BASE}/api/get_products.php`)
       .then(res => res.json())
       .then(data => {
         if (data.success && data.products) {
@@ -255,7 +256,7 @@ export default function ProductDetail({ language }) {
 
     try {
       // Send inquiry to contact messages API
-      const response = await fetch('./api/submit_order.php', {
+      const response = await fetch(`${API_BASE}/api/submit_order.php`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

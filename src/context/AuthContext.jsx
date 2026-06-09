@@ -8,6 +8,7 @@ import {
   updateProfile,
 } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase';
+import { API_BASE } from "../config";
 
 const AuthContext = createContext(null);
 
@@ -21,7 +22,7 @@ export function useAuth() {
 
 /** Call firebase_login.php with a fresh ID token */
 async function callLoginApi(idToken, extraBody = {}) {
-  const res = await fetch('/api/firebase_login.php', {
+  const res = await fetch(`${API_BASE}/api/firebase_login.php`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -125,7 +126,7 @@ export function AuthProvider({ children }) {
       const cred = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(cred.user, { displayName: fullName });
 
-      const res = await fetch('/api/firebase_register.php', {
+      const res = await fetch(`${API_BASE}/api/firebase_register.php`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -241,7 +242,7 @@ export function AuthProvider({ children }) {
     if (!fbUser) return { success: false, message: 'Not authenticated. Please sign in again.' };
 
     try {
-      const res = await fetch('/api/firebase_register.php', {
+      const res = await fetch(`${API_BASE}/api/firebase_register.php`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

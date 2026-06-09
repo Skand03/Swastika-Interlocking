@@ -24,6 +24,7 @@ $options = [
         try { $pdo->exec("ALTER TABLE users ADD COLUMN provider VARCHAR(30) DEFAULT 'email'"); } catch (\PDOException $e) { }
         try { $pdo->exec("ALTER TABLE users ADD COLUMN last_login_at TIMESTAMP NULL"); } catch (\PDOException $e) { }
         try { $pdo->exec("ALTER TABLE users ADD COLUMN deleted_at TIMESTAMP NULL"); } catch (\PDOException $e) { }
+        try { $pdo->exec("ALTER TABLE products ADD COLUMN variants TEXT NULL"); } catch (\PDOException $e) { }
 
         // Remove duplicates and add unique constraint on firebase_uid
         try {

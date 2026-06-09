@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { API_BASE } from "../config";
 
 const TRANSLATIONS = {
   hi: {
@@ -175,7 +176,7 @@ export default function Home({ language }) {
     setStatusMsg('');
 
     try {
-      const response = await fetch('/api/submit_contact.php', {
+      const response = await fetch(`${API_BASE}/api/submit_contact.php`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

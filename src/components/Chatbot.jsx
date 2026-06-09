@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE } from "../config";
 
 const TRANSLATIONS = {
   hi: {
@@ -82,7 +83,7 @@ export default function Chatbot({ language }) {
     setIsTyping(true);
 
     try {
-      const response = await fetch('./api/chat.php', {
+      const response = await fetch(`${API_BASE}/api/chat.php`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

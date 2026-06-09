@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE } from "../../config";
+import { useAuth } from "../../context/AuthContext";
 
 export default function RCCProjectsManagement({ language, user }) {
+  const { authFetch } = useAuth();
   const isHindi = language === 'hi';
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,7 +28,7 @@ export default function RCCProjectsManagement({ language, user }) {
 
   const fetchProjects = () => {
     setLoading(true);
-    fetch('./api/get_products.php')
+    authFetch(`${API_BASE}/api/get_products.php`)
       .then(res => res.json())
       .then(data => {
         if (data.success) {
@@ -56,7 +59,7 @@ export default function RCCProjectsManagement({ language, user }) {
       if (form.imageFile) {
         const formData = new FormData();
         formData.append('image', form.imageFile);
-        const uploadRes = await fetch('./api/upload_image.php', { method: 'POST', body: formData });
+        const uploadRes = await authFetch(`${API_BASE}/api/upload_image.php`, { method: 'POST', body: formData });
         const uploadData = await uploadRes.json();
         if (uploadData.success) {
           finalImageUrl = uploadData.url;
@@ -73,7 +76,7 @@ export default function RCCProjectsManagement({ language, user }) {
           if (v.imageFile) {
             const formData = new FormData();
             formData.append('image', v.imageFile);
-            const uploadRes = await fetch('./api/upload_image.php', { method: 'POST', body: formData });
+            const uploadRes = await authFetch(`${API_BASE}/api/upload_image.php`, { method: 'POST', body: formData });
             const uploadData = await uploadRes.json();
             if (uploadData.success) {
               vImageUrl = uploadData.url;
@@ -83,7 +86,7 @@ export default function RCCProjectsManagement({ language, user }) {
         }
       }
 
-      const response = await fetch('./api/save_product.php', {
+      const response = await authFetch(`${API_BASE}/api/save_product.php`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -130,7 +133,7 @@ export default function RCCProjectsManagement({ language, user }) {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this project?')) return;
     try {
-      const response = await fetch('./api/delete_product.php', {
+      const response = await authFetch(`${API_BASE}/api/delete_product.php`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, admin_phone: user?.phone })
