@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createInquiry } from '../services/inquiryService';
+import SEOHead from '../components/SEO/SEOHead';
+import { faqSchema, getBreadcrumbSchema } from '../components/SEO/schemas';
 import { useAuth } from '../auth/AuthContext';
 import AuthGate from '../components/AuthGate';
 
@@ -202,6 +204,15 @@ export default function Home({ language }) {
 
   return (
     <div className="pt-16">
+      <SEOHead
+        title="Swastika Interlocking | Paver Blocks & RCC Roads - Deesa, Gujarat"
+        description="Swastika Interlocking - Leading manufacturer of interlocking paver blocks in Deesa, Gujarat. Quality RCC road construction, shuttering materials rental. Call now for best prices."
+        keywords="पेवर ब्लॉक देसा, interlocking blocks Gujarat, RCC roads Banaskantha, shuttering materials Deesa, cement blocks manufacturer Gujarat"
+        url="/"
+        schema={[faqSchema]}
+        breadcrumb={getBreadcrumbSchema([{ name: 'Home', path: '/' }])}
+        language={language}
+      />
 {/*  Hero Section  */}
 <section className="relative w-full mt-4 group">
 <div className="relative w-full overflow-hidden bg-surface flex items-center justify-center">

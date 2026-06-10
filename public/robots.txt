@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Block private/authenticated pages
+Disallow: /admin-dashboard/
+Disallow: /customer-dashboard/
+Disallow: /auth
+Disallow: /order/
+
+# Block API and utility paths
+Disallow: /api/
+
+Sitemap: https://www.swastikainterlocking.live/sitemap.xml

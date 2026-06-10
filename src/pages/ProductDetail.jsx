@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { getAllProducts } from '../services/productService';
 import { createInquiry } from '../services/inquiryService';
+import SEOHead from '../components/SEO/SEOHead';
+import { getBreadcrumbSchema, getProductSchema } from '../components/SEO/schemas';
 
 const CATALOG = {
   zigzag: {
@@ -290,6 +292,20 @@ export default function ProductDetail({ language }) {
 
   return (
     <div className="pt-16 bg-surface text-on-surface">
+      <SEOHead
+        title={`${language === 'hi' ? product.nameHi : product.nameEn} - Swastika Interlocking Deesa Gujarat`}
+        description={`Buy ${product.nameEn} from Swastika Interlocking, Deesa, Gujarat. ${language === 'hi' ? product.descHi : product.descEn} Price: ${product.price}/${product.unit}. Min order: ${product.moq} pieces.`}
+        keywords={`${product.nameEn} Deesa, ${product.nameEn} price Gujarat, buy ${product.nameEn} Banaskantha, interlocking paver blocks Gujarat`}
+        url={`/products/${id}`}
+        image={product.images?.[0] || ''}
+        schema={[getProductSchema({ nameEn: product.nameEn, descEn: language === 'hi' ? product.descHi : product.descEn, images: product.images, priceMin: parseFloat((product.price || '0').replace(/[^0-9.]/g, '')) })]}
+        breadcrumb={getBreadcrumbSchema([
+          { name: 'Home', path: '/' },
+          { name: 'Products', path: '/products' },
+          { name: language === 'hi' ? product.nameHi : product.nameEn, path: `/products/${id}` },
+        ])}
+        language={language}
+      />
       {/* Breadcrumb Navigation */}
       <section className="max-w-container-max mx-auto px-gutter py-6 select-none">
         <nav className="flex items-center gap-2 text-xs font-semibold text-on-surface-variant">

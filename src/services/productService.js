@@ -44,7 +44,12 @@ export const getAllProducts = async (filters = {}) => {
 
   if (filters.division) query = query.eq('division', filters.division);
   if (filters.category_id) query = query.eq('category_id', filters.category_id);
-  if (filters.is_active !== undefined) query = query.eq('is_active', filters.is_active);
+  if (filters.is_active !== undefined) {
+    query = query.eq('is_active', filters.is_active);
+  } else {
+    // By default only show active products
+    query = query.eq('is_active', true);
+  }
 
   const { data, error } = await query.order('created_at', { ascending: false });
   if (error) {
@@ -91,7 +96,8 @@ export const getProductsByDivision = async (division) => {
   const { data, error } = await supabase
     .from('products')
     .select('*')
-    .eq('division', division);
+    .eq('division', division)
+    .eq('is_active', true);
   if (error) {
     return getProductsData('en').map(p => convertFallbackToSupabaseFormat(p, division));
   }

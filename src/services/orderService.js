@@ -1,60 +1,58 @@
 import { supabase } from '../supabase/client';
 
 export const createOrder = async (orderData) => {
-  const year = new Date().getFullYear();
+  try {
+    // Clean items — strip local `id` field, ensure price is numeric
+    const cleanItems = (orderData.items || []).map(item => ({
+      product_id: item.product_id || null,
+      product_name: item.product_name || '',
+      sub_type: item.sub_type || '',
+      quantity: parseInt(item.quantity) || 1,
+      price: parseFloat(item.price) || 0,
+      image_url: item.image_url || '',
+    }));
 
-  // Get last order number for this year (ignore errors — first order of year)
-  const { data: lastOrder } = await supabase
-    .from('orders')
-    .select('order_number')
-    .ilike('order_number', `SW-${year}-%`)
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .maybeSingle(); // use maybeSingle to avoid throwing when no row found
+    const subtotal = cleanItems.reduce((sum, i) => sum + (i.price * i.quantity), 0);
 
-  let nextNum = 1;
-  if (lastOrder?.order_number) {
-    const parts = lastOrder.order_number.split('-');
-    if (parts.length === 3) nextNum = parseInt(parts[2], 10) + 1;
+    // Build clean payload — NO order_number at all
+    // Database trigger will generate it automatically
+    const orderPayload = {
+      customer_id: orderData.customer_id,
+      customer_name: orderData.customer_name || '',
+      customer_phone: orderData.customer_phone || '',
+      delivery_address: orderData.delivery_address || '',
+      delivery_city: orderData.delivery_city || '',
+      items: cleanItems,
+      subtotal: subtotal,
+      total_amount: orderData.total_amount || subtotal,
+      admin_notes: orderData.admin_notes || null,
+      status: 'new',
+      payment_status: 'pending',
+      // ⚠️ DO NOT include order_number here — NOT even as null
+      // Database trigger handles it completely
+    };
+
+    console.log('Inserting order payload:', orderPayload);
+    console.log('order_number in payload?', 'order_number' in orderPayload); // Must be FALSE
+
+    const { data, error } = await supabase
+      .from('orders')
+      .insert(orderPayload)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Supabase error:', error);
+      throw new Error(error.message);
+    }
+
+    console.log('Order created successfully:', data.order_number);
+    return data;
+
+  } catch (err) {
+    console.error('createOrder failed:', err);
+    throw err;
   }
-
-  const orderNumber = `SW-${year}-${String(nextNum).padStart(3, '0')}`;
-
-  // Clean items — strip local `id` field, ensure price is numeric
-  const cleanItems = (orderData.items || []).map(item => ({
-    product_id: item.product_id || null,
-    product_name: item.product_name || '',
-    sub_type: item.sub_type || '',
-    quantity: parseInt(item.quantity) || 1,
-    price: parseFloat(item.price) || 0,
-    image_url: item.image_url || '',
-  }));
-
-  const subtotal = cleanItems.reduce((sum, i) => sum + (i.price * i.quantity), 0);
-
-  const finalOrderData = {
-    order_number: orderNumber,
-    customer_id: orderData.customer_id,  // required — policy rejects if null or mismatched
-    customer_name: orderData.customer_name || '',
-    customer_phone: orderData.customer_phone || '',
-    delivery_address: orderData.delivery_address || '',
-    delivery_city: orderData.delivery_city || '',
-    items: cleanItems,
-    subtotal: subtotal,
-    total_amount: subtotal,
-    admin_notes: orderData.admin_notes || null,
-    status: 'new',
-    payment_status: 'pending',
-  };
-
-  const { data, error } = await supabase
-    .from('orders')
-    .insert([finalOrderData])
-    .select()
-    .single();
-
-  if (error) throw new Error(error.message);
-  return data;
 };
 
 export const getOrderById = async (id) => {
@@ -110,14 +108,14 @@ export const updateOrderStatus = async (id, status, adminNotes = null) => {
   const dbStatus = statusMap[status] || 'new';
   const updates = { status: dbStatus };
   if (adminNotes !== null) updates.admin_notes = adminNotes;
-  
+
   const { data, error } = await supabase
     .from('orders')
     .update(updates)
     .eq('id', id)
     .select()
     .single();
-    
+
   if (error) throw error;
   return data;
 };
@@ -127,7 +125,7 @@ export const getOrderStats = async () => {
     .from('orders')
     .select('status');
   if (error) throw error;
-  
+
   return data.reduce((acc, order) => {
     acc[order.status] = (acc[order.status] || 0) + 1;
     return acc;
@@ -137,7 +135,7 @@ export const getOrderStats = async () => {
 export const getTodayOrders = async () => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  
+
   const { data, error } = await supabase
     .from('orders')
     .select('*')
@@ -149,24 +147,24 @@ export const getTodayOrders = async () => {
 export const getMonthlyRevenue = async () => {
   const date = new Date();
   const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
-  
+
   const { data, error } = await supabase
     .from('orders')
     .select('total_amount')
     .not('status', 'eq', 'cancelled')
     .gte('created_at', firstDay.toISOString());
   if (error) throw error;
-  
+
   return data.reduce((sum, order) => sum + Number(order.total_amount || 0), 0);
 };
 
 export const exportOrdersCSV = async (filters = {}) => {
   const data = await getAllOrders(filters);
   if (!data.length) return null;
-  
+
   const headers = ['Order Number', 'Date', 'Customer', 'Phone', 'Total', 'Status'];
   const csvRows = [headers.join(',')];
-  
+
   data.forEach(row => {
     const date = new Date(row.created_at).toLocaleDateString();
     csvRows.push([
@@ -178,6 +176,6 @@ export const exportOrdersCSV = async (filters = {}) => {
       row.status
     ].join(','));
   });
-  
+
   return csvRows.join('\n');
 };

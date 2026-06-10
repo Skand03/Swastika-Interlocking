@@ -19,10 +19,10 @@ const isSupabaseConfigured = () => {
 // Function to create a profile if it doesn't exist, with error handling for RLS issues
 const createProfileIfNotExists = async (userId, userData) => {
   try {
-    // Try to insert directly first (avoids SELECT that causes recursion)
+    // Try to upsert directly (works even if trigger already created the profile)
     const { data: newProfile, error: insertError } = await supabase
       .from('profiles')
-      .insert([{
+      .upsert([{
         id: userId,
         full_name: userData.full_name || userData.name || 'User',
         email: userData.email,
@@ -182,17 +182,35 @@ export function AuthProvider({ children }) {
         .select('id')
         .eq('phone', phone)
         .maybeSingle();
-      
+
       if (error) {
-        // If we get an RLS error or something, we can still proceed with the database unique constraint
         console.warn('Error checking phone number:', error);
         return false;
       }
-      
-      return !!data; // Return true if data exists, false otherwise
+
+      return !!data;
     } catch (err) {
       console.warn('Error checking phone number:', err);
       return false;
+    }
+  };
+
+  // Check if an email is already in use (for Login and Forgot Password UX)
+  const checkEmailExists = async (email) => {
+    if (!isSupabaseConfigured()) return false;
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('email', email)
+        .maybeSingle();
+      if (error) {
+        console.warn('Error checking email:', error);
+        return true; // Assume it exists if we can't verify, to fall back to Supabase's native auth errors
+      }
+      return !!data;
+    } catch (err) {
+      return true; // Fallback to native errors on exception
     }
   };
 
@@ -205,13 +223,18 @@ export function AuthProvider({ children }) {
     }
     setAuthError('');
     try {
-      // First check if phone is already in use
+      // First check if phone is already in use (but don't block signup if check fails)
       if (userData.phone) {
-        const phoneInUse = await isPhoneInUse(userData.phone);
-        if (phoneInUse) {
-          const msg = 'यह फोन नंबर पहले से पंजीकृत है! कृपया दूसरा फोन नंबर उपयोग करें या लॉगिन करें।';
-          setAuthError(msg);
-          return { success: false, message: msg };
+        try {
+          const phoneInUse = await isPhoneInUse(userData.phone);
+          if (phoneInUse) {
+            const msg = 'यह फोन नंबर पहले से पंजीकृत है! कृपया दूसरा फोन नंबर उपयोग करें या लॉगिन करें।';
+            setAuthError(msg);
+            return { success: false, message: msg };
+          }
+        } catch (phoneCheckErr) {
+          console.warn('Phone check failed, proceeding with signup:', phoneCheckErr);
+          // Ignore any errors from phone check, continue with signup
         }
       }
 
@@ -222,17 +245,34 @@ export function AuthProvider({ children }) {
           data: {
             full_name: userData.full_name,
             phone: userData.phone,
-          }
+          },
+          emailRedirectTo: window.location.origin,
         }
       });
       if (error) throw error;
 
       // Create profile
       if (data.user) {
-        await createProfileIfNotExists(data.user.id, {
-          ...userData,
-          email: email
-        });
+        try {
+          await createProfileIfNotExists(data.user.id, {
+            ...userData,
+            email: email
+          });
+          
+          // Trigger welcome email asynchronously (don't await so it doesn't block UI)
+          import('../services/emailService').then(({ sendWelcomeEmail }) => {
+            sendWelcomeEmail(email, userData.full_name);
+          }).catch(e => console.error('Failed to load email service', e));
+
+        } catch (profileError) {
+          // If profile creation fails with unique phone error, throw that
+          if (profileError.message && profileError.message.includes('फोन नंबर')) {
+            setAuthError(profileError.message);
+            return { success: false, message: profileError.message };
+          }
+          // For other errors, still return success since auth account was created
+          console.error('Profile creation error:', profileError);
+        }
       }
       return { success: true, user: data.user };
     } catch (err) {
@@ -360,6 +400,8 @@ export function AuthProvider({ children }) {
       updateProfile,
       isSupabaseConfigured,
       isPhoneInUse,
+      checkEmailExists,
+      supabase,
     }}>
       {children}
     </AuthContext.Provider>

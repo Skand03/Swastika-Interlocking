@@ -34,10 +34,16 @@ const CompleteProfileModal = ({ isOpen, onClose, onComplete }) => {
       setPhoneError('');
       return;
     }
-    const inUse = await isPhoneInUse(formData.phone);
-    if (inUse) {
-      setPhoneError('This phone number is already registered. Please use a different number.');
-    } else {
+    try {
+      const inUse = await isPhoneInUse(formData.phone);
+      if (inUse) {
+        setPhoneError('This phone number is already registered. Please use a different number.');
+      } else {
+        setPhoneError('');
+      }
+    } catch (err) {
+      console.warn('Error checking phone uniqueness:', err);
+      // Ignore any errors, just clear any previous errors
       setPhoneError('');
     }
   };
@@ -138,7 +144,8 @@ const CompleteProfileModal = ({ isOpen, onClose, onComplete }) => {
               onBlur={handlePhoneBlur}
               maxLength={10}
               placeholder="10-digit mobile number"
-              className={`w-full bg-surface border rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none ${phoneError ? 'border-red-400 bg-red-50' : 'border-outline-variant/50'}`}
+              className={`w-full bg-surface border rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none ${phoneError ? 'border-red-400 bg-red-50' : 'border-outline-variant/50'} ${profile?.phone ? 'opacity-70 cursor-not-allowed' : ''}`}
+              disabled={!!profile?.phone}
               required
             />
             {phoneError && (

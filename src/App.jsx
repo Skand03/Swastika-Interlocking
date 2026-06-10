@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { HashRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './auth/AuthContext';
-import { Toaster } from 'react-hot-toast';
-import Navbar from './components/Navbar';
+import { Toaster } from 'react-hot-toast';import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Chatbot from './components/Chatbot';
 import Home from './pages/Home';
@@ -28,62 +27,7 @@ import AuthGate from './components/AuthGate';
 import CompleteProfileModal from './components/CompleteProfileModal';
 import { useNewOrders, useNewInquiries, useLowStock, useRentalsDueToday } from './hooks/useRealtime';
 
-// Scroll restoration and section anchor scroll helper
-function SEOUpdater({ language }) {
-  const { pathname } = useLocation();
-
-  useEffect(() => {
-    const metaDescriptions = {
-      hi: {
-        '/': 'स्वस्तिका इंटरलॉकिंग - उच्च गुणवत्ता वाले पेवर ब्लॉक्स और आरसीसी सड़कों के अग्रणी निर्माता।',
-        '/products': 'ड्राइववे, रास्ते और औद्योगिक उपयोग के लिए हमारे प्रीमियम इंटरलॉकिंग पेवर ब्लॉक्स का अन्वेषण करें।',
-        '/rcc-roads': 'भारी-भरकम आरसीसी सड़क निर्माण सेवाएं, मजबूती और दीर्घायु के लिए।',
-        '/contact': 'अपनी सभी कंक्रीट पेविंग और शटरिंग जरूरतों के लिए स्वस्तिका इंटरलॉकिंग से संपर्क करें।',
-        '/shuttering': 'उच्च भार वहन क्षमता वाली शीर्ष श्रेणी की स्टील शटरिंग सामग्री और मचान।'
-      },
-      en: {
-        '/': 'Swastika Interlocking - Leading manufacturer of high-quality paver blocks and RCC roads.',
-        '/products': 'Explore our premium interlocking paver blocks for driveways, pathways, and industrial use.',
-        '/rcc-roads': 'Heavy-duty RCC road construction services tailored for strength and longevity.',
-        '/contact': 'Contact Swastika Interlocking for all your concrete paving and shuttering needs.',
-        '/shuttering': 'Top-grade steel shuttering materials and scaffolding with high load-bearing capacity.'
-      }
-    };
-
-    const titles = {
-      hi: {
-        '/': 'होम | स्वस्तिका इंटरलॉकिंग',
-        '/products': 'उत्पाद | स्वस्तिका इंटरलॉकिंग',
-        '/rcc-roads': 'आरसीसी सड़कें | स्वस्तिका',
-        '/contact': 'संपर्क करें | स्वस्तिका',
-        '/shuttering': 'शटरिंग सामग्री | स्वस्तिका'
-      },
-      en: {
-        '/': 'Home | Swastika Interlocking',
-        '/products': 'Products | Swastika Interlocking',
-        '/rcc-roads': 'RCC Roads | Swastika',
-        '/contact': 'Contact Us | Swastika',
-        '/shuttering': 'Shuttering Materials | Swastika'
-      }
-    };
-
-    const tMap = titles[language] || titles.en;
-    const dMap = metaDescriptions[language] || metaDescriptions.en;
-    
-    document.title = tMap[pathname] || 'Swastika Interlocking | निर्माण में विश्वास';
-    
-    let metaTag = document.querySelector('meta[name="description"]');
-    if (!metaTag) {
-      metaTag = document.createElement('meta');
-      metaTag.name = "description";
-      document.head.appendChild(metaTag);
-    }
-    metaTag.content = dMap[pathname] || dMap['/'];
-  }, [pathname, language]);
-
-  return null;
-}
-
+// Scroll restoration helper
 function ScrollToTop() {
   const { pathname, hash } = useLocation();
 
@@ -118,7 +62,7 @@ function RealtimeManager() {
 
 function AppContent({ language, handleLanguageChange }) {
   const location = useLocation();
-  const { profile, updateProfile, loading: authLoading } = useAuth();
+  const { profile, updateProfile, loading: authLoading, user } = useAuth();
   const isAdminPath = location.pathname.startsWith('/admin-dashboard');
   const [showCompleteProfile, setShowCompleteProfile] = useState(false);
 
@@ -134,12 +78,13 @@ function AppContent({ language, handleLanguageChange }) {
   };
 
   useEffect(() => {
-    if (!authLoading && profile && !isProfileComplete(profile) && !isAdminPath && location.pathname !== '/auth') {
+    const isGoogleUser = user?.app_metadata?.provider === 'google';
+    if (!authLoading && profile && isGoogleUser && !isProfileComplete(profile) && !isAdminPath && location.pathname !== '/auth') {
       setShowCompleteProfile(true);
     } else {
       setShowCompleteProfile(false);
     }
-  }, [profile, authLoading, location.pathname, isAdminPath]);
+  }, [profile, authLoading, location.pathname, isAdminPath, user]);
 
   const handleProfileComplete = async (formData) => {
     await updateProfile(formData);
@@ -253,7 +198,6 @@ function App() {
       <Router>
         <OAuthRedirectHandler />
         <ScrollToTop />
-        <SEOUpdater language={language} />
         <Toaster position="top-right" />
         <AppContent language={language} handleLanguageChange={handleLanguageChange} />
       </Router>

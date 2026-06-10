@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getAllProducts } from '../services/productService';
+import SEOHead from '../components/SEO/SEOHead';
+import { getBreadcrumbSchema } from '../components/SEO/schemas';
 
 const TRANSLATIONS = {
   hi: {
@@ -177,6 +179,14 @@ export default function RCCRoads({ language }) {
 
   return (
     <div className="">
+      <SEOHead
+        title="RCC Road Construction Contractor - Deesa Banaskantha Gujarat | Swastika"
+        description="Expert RCC road construction in Deesa, Banaskantha, Gujarat. Village roads, colony roads, M20/M25/M30 grade concrete. 25+ roads completed. Call for free survey."
+        keywords="RCC road contractor Deesa, road construction Gujarat, gram panchayat road Banaskantha, concrete road contractor Gujarat, RCC सड़क निर्माण देसा"
+        url="/rcc-roads"
+        breadcrumb={getBreadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'RCC Roads', path: '/rcc-roads' }])}
+        language={language}
+      />
       
 
     <main className="pt-20 md:pt-24 min-h-screen">

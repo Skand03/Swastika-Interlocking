@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
+import SEOHead from '../components/SEO/SEOHead';
+import { getBreadcrumbSchema } from '../components/SEO/schemas';
 
 
 const TRANSLATIONS = {
@@ -229,6 +231,8 @@ export default function Order({ language }) {
       setCurrentItem({ product_type: '', sub_type: '', quantity: '' });
     }
 
+    if (loading) return;
+
     if (finalCart.length === 0) {
       setStatusMsg(language === 'hi' ? 'कृपया कम से कम एक उत्पाद जोड़ें।' : 'Please add at least one product to the list.');
       setIsSuccess(false);
@@ -292,6 +296,14 @@ export default function Order({ language }) {
 
   return (
     <main className="pt-32 pb-20 px-gutter max-w-container-max mx-auto min-h-screen">
+      <SEOHead
+        title="Book Order - Paver Blocks & Building Materials | Swastika Interlocking Deesa"
+        description="Book your order for interlocking paver blocks, sand, gravel, cement or shuttering materials from Swastika Interlocking, Deesa. Fast delivery in Banaskantha, Gujarat."
+        keywords="order paver blocks Deesa, buy interlocking blocks Gujarat, book building materials Banaskantha, shuttering on rent Deesa"
+        url="/order"
+        breadcrumb={getBreadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'Book Order', path: '/order' }])}
+        language={language}
+      />
       {/* Page Header */}
       <div className="mb-12 text-center md:text-left select-none">
         <h1 className="font-display-lg text-display-lg-mobile md:text-display-lg text-primary mb-2">{t.title}</h1>

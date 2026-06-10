@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createInquiry } from '../services/inquiryService';
 import { useAuth } from '../auth/AuthContext';
+import SEOHead from '../components/SEO/SEOHead';
+import { getBreadcrumbSchema } from '../components/SEO/schemas';
 
 // Local AI chatbot — rule-based responses, no PHP needed
 const getChatbotResponse = (message, language) => {
@@ -169,6 +171,14 @@ export default function Contact({ language }) {
 
   return (
     <main className="pt-32 pb-20 px-gutter max-w-container-max mx-auto min-h-screen">
+      <SEOHead
+        title="Contact Swastika Interlocking - Deesa Gujarat | Call WhatsApp"
+        description="Contact Swastika Interlocking in Deesa, Gujarat. Call or WhatsApp for paver blocks, shuttering rental, RCC roads. Girdharpur Uncher, Kauriram, Uttar Pradesh."
+        keywords="Swastika Interlocking contact, paver blocks Deesa address, construction materials phone number Deesa Gujarat, WhatsApp interlocking blocks"
+        url="/contact"
+        breadcrumb={getBreadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'Contact', path: '/contact' }])}
+        language={language}
+      />
       {/* Hero Section */}
       <section className="mb-16 text-center md:text-left select-none animate-fade-in">
         <h1 className="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-4">{t.title}</h1>

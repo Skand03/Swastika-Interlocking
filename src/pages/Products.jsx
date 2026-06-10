@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getProductsByDivision } from '../services/productService';
+import SEOHead from '../components/SEO/SEOHead';
+import { getBreadcrumbSchema } from '../components/SEO/schemas';
 
 const TRANSLATIONS = {
   hi: {
@@ -69,6 +71,14 @@ export default function Products({ language }) {
 
   return (
     <main className="pt-32 pb-16 md:pt-40 md:pb-24 bg-surface min-h-screen">
+      <SEOHead
+        title="Paver Blocks & Building Materials - Swastika Interlocking Deesa Gujarat"
+        description="Buy premium interlocking paver blocks, river sand, crushed gravel, cement and drainage pipes in Deesa Gujarat. Best quality at wholesale prices. ₹18-32 per piece."
+        keywords="buy paver blocks Deesa, interlocking blocks price Gujarat, building materials Deesa, river sand gravel cement Banaskantha, पेवर ब्लॉक गुजरात"
+        url="/products"
+        breadcrumb={getBreadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'Products', path: '/products' }])}
+        language={language}
+      />
       {/* Header */}
       <header className="max-w-container-max mx-auto px-gutter mb-12 md:mb-20 text-center select-none">
         <h1 className="font-display-lg text-4xl md:text-5xl lg:text-6xl text-on-surface mb-6 leading-tight">

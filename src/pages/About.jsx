@@ -1,5 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import SEOHead from '../components/SEO/SEOHead';
+import { getBreadcrumbSchema } from '../components/SEO/schemas';
 
 const TRANSLATIONS = {
   hi: {
@@ -73,6 +75,14 @@ export default function About({ language }) {
 
   return (
     <div className="pt-16 bg-surface text-on-surface">
+      <SEOHead
+        title="About Swastika Interlocking - Paver Block Manufacturer Deesa Gujarat Since 2010"
+        description="Learn about Swastika Interlocking, trusted manufacturer of paver blocks and construction materials in Deesa, Banaskantha, Gujarat. Family business with 10+ years experience."
+        keywords="Swastika Interlocking Deesa, paver block manufacturer Gujarat, construction company Banaskantha, interlocking blocks history"
+        url="/about"
+        breadcrumb={getBreadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'About', path: '/about' }])}
+        language={language}
+      />
 
       {/* Our Story */}
       <section className="max-w-container-max mx-auto px-gutter py-20">

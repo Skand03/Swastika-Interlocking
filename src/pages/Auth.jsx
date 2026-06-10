@@ -16,27 +16,30 @@ const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
 // Map raw Supabase error messages → user-friendly text
 const parseAuthError = (message, isHi) => {
-  const m = (message || '').toLowerCase();
+  if (!message) return isHi ? 'अज्ञात त्रुटि।' : 'An unknown error occurred.';
+  const m = message.toLowerCase();
+
+  // Specifically handle the "Registration setup issue" error
+  if (m.includes('registration setup issue') || m.includes('database error saving new user')) {
+    return isHi
+      ? 'रजिस्ट्रेशन सेटअप समस्या। कृपया Supabase डैशबोर्ड में "Confirm email" बंद करें।'
+      : 'Registration setup issue. Please disable "Confirm email" in your Supabase Auth settings -> Providers -> Email, or configure SMTP.';
+  }
 
   if (m.includes('invalid login credentials') || m.includes('invalid credentials') || m.includes('no password')) {
     return isHi
-      ? 'लॉगिन विफल। अगर आपने Google से साइन अप किया है तो "Continue with Google" बटन का उपयोग करें। या "Forgot password?" पर क्लिक करके पासवर्ड सेट करें।'
-      : 'Login failed. If you signed up with Google, use "Continue with Google". Or click "Forgot password?" to set a password for email login.';
-  }
-  if (m.includes('row-level security') || m.includes('rls') || m.includes('violates row')) {
-    return isHi
-      ? 'रजिस्ट्रेशन सेटअप में समस्या आई। कृपया पेज रिफ्रेश करें और दोबारा कोशिश करें। अगर समस्या बनी रहे तो Google से साइन अप करें।'
-      : 'Registration setup issue. Please refresh the page and try again. If it persists, try signing up with Google.';
+      ? 'गलत पासवर्ड। कृपया पुनः प्रयास करें।'
+      : 'Incorrect password. Please try again.';
   }
   if (m.includes('email rate limit') || m.includes('rate limit') || m.includes('too many requests')) {
     return isHi
       ? 'बहुत अधिक प्रयास किए गए। कृपया 5-10 मिनट बाद दोबारा कोशिश करें।'
       : 'Too many attempts. Please wait 5-10 minutes and try again.';
   }
-  if (m.includes('email not confirmed')) {
+  if (m.includes('user not found') || m.includes('no such user')) {
     return isHi
-      ? 'ईमेल सत्यापित नहीं है। कृपया अपना ईमेल इनबॉक्स चेक करें और लिंक पर क्लिक करें।'
-      : 'Email not confirmed. Please check your inbox and click the confirmation link.';
+      ? 'खाता नहीं मिला। कृपया पहले खाता बनाएं।'
+      : 'Account not found. Please create an account first.';
   }
   if (m.includes('user already registered') || m.includes('already registered')) {
     return isHi
@@ -45,8 +48,8 @@ const parseAuthError = (message, isHi) => {
   }
   if ((m.includes('unique') || m.includes('duplicate') || m.includes('23505')) && m.includes('phone')) {
     return isHi
-      ? 'यह फोन नंबर पहले से पंजीकृत है। कृपया दूसरा नंबर उपयोग करें।'
-      : 'This phone number is already registered. Please use a different number.';
+      ? 'यह फोन नंबर पहले से पंजीकृत है! कृपया दूसरा फोन नंबर उपयोग करें।'
+      : 'This phone number is already registered. Please use a different phone number.';
   }
   if (m.includes('password') && (m.includes('weak') || m.includes('short'))) {
     return isHi
@@ -72,10 +75,13 @@ export default function Auth({ language }) {
     resetPassword,
     authError,
     setAuthError,
+    session,
+    checkEmailExists,
+    supabase,
   } = useAuth();
 
   const isHi = language === 'hi';
-  const [panel, setPanel] = useState('login'); // 'login' | 'register' | 'forgot'
+  const [panel, setPanel] = useState('login'); // 'login' | 'register' | 'forgot' | 'reset'
 
   // Login fields
   const [loginEmail, setLoginEmail] = useState('');
@@ -97,16 +103,30 @@ export default function Auth({ language }) {
   // Forgot password
   const [forgotEmail, setForgotEmail] = useState('');
 
+  // Reset password
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [resetLoading, setResetLoading] = useState(false);
+
   const [statusMsg, setStatusMsg] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // Check if we're in password reset mode (only if URL has recovery token)
+  useEffect(() => {
+    // Only show reset password form if URL has recovery params (from email link)
+    const hash = window.location.hash;
+    if (hash && (hash.includes('type=recovery') || hash.includes('access_token'))) {
+      setPanel('reset');
+    }
+  }, []);
+
   // Redirect if already logged in
   useEffect(() => {
-    if (profile) {
+    if (profile && panel !== 'reset') {
       navigate(profile.role === 'admin' ? '/admin-dashboard' : '/customer-dashboard', { replace: true });
     }
-  }, [profile, navigate]);
+  }, [profile, navigate, panel]);
 
   // Sync auth errors from context
   useEffect(() => {
@@ -139,6 +159,15 @@ export default function Auth({ language }) {
       return;
     }
     setLoading(true);
+
+    const emailExists = await checkEmailExists(loginEmail);
+    if (!emailExists) {
+      setLoading(false);
+      setIsSuccess(false);
+      setStatusMsg(isHi ? 'खाता नहीं मिला। कृपया पहले खाता बनाएं।' : 'No account exists with this email address. Please create an account first.');
+      return;
+    }
+
     const result = await signInWithEmail(loginEmail, loginPassword);
     setLoading(false);
     if (!result.success) {
@@ -209,9 +238,13 @@ export default function Auth({ language }) {
       setIsSuccess(true);
       setStatusMsg(
         isHi
-          ? 'रजिस्ट्रेशन सफल! कृपया अपना ईमेल सत्यापित करें।'
-          : 'Registration successful! Please verify your email to continue.'
+          ? 'रजिस्ट्रेशन सफल! आपका स्वागत है।'
+          : 'Registration successful! Welcome to Swastika Interlocking.'
       );
+      // Explicitly navigate since auth listener might miss the newly created profile initially
+      setTimeout(() => {
+        navigate('/customer-dashboard', { replace: true });
+      }, 1500);
     } else {
       setIsSuccess(false);
       setStatusMsg(parseAuthError(result.message, isHi));
@@ -233,18 +266,58 @@ export default function Auth({ language }) {
       return;
     }
     setLoading(true);
+
     const result = await resetPassword(forgotEmail);
     setLoading(false);
     if (result.success) {
       setIsSuccess(true);
       setStatusMsg(
         isHi
-          ? 'पासवर्ड रीसेट लिंक भेज दिया गया है! ईमेल चेक करें। अगर आपने Google से लॉगिन किया था, तो यह लिंक आपको पासवर्ड सेट करने देगा।'
-          : 'Password reset link sent! Check your email. If you previously signed in with Google, this link lets you set a password for email login too.'
+          ? 'पासवर्ड रीसेट लिंक सफलतापूर्वक भेजा गया! अपना ईमेल चेक करें।'
+          : 'Password reset link sent successfully. Please check your email.'
       );
     } else {
       setIsSuccess(false);
       setStatusMsg(parseAuthError(result.message, isHi));
+    }
+  };
+
+  // ── Reset Password ────────────────────────────────────────
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    setStatusMsg('');
+    if (!newPassword || !confirmNewPassword) {
+      setStatusMsg(isHi ? 'कृपया दोनों फ़ील्ड भरें।' : 'Please fill in both fields.');
+      setIsSuccess(false);
+      return;
+    }
+    if (newPassword.length < 6) {
+      setStatusMsg(isHi ? 'पासवर्ड कम से कम 6 अक्षरों का होना चाहिए।' : 'Password must be at least 6 characters.');
+      setIsSuccess(false);
+      return;
+    }
+    if (newPassword !== confirmNewPassword) {
+      setStatusMsg(isHi ? 'पासवर्ड मेल नहीं खाते।' : 'Passwords do not match.');
+      setIsSuccess(false);
+      return;
+    }
+    setResetLoading(true);
+    try {
+      if (!supabase) throw new Error('Supabase not configured');
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw error;
+      setIsSuccess(true);
+      setStatusMsg(isHi ? 'पासवर्ड सफलतापूर्वक बदला गया! लॉगिन करें।' : 'Password updated successfully! Please log in.');
+      // Sign out the user after password reset
+      await supabase.auth.signOut();
+      setPanel('login');
+      setNewPassword('');
+      setConfirmNewPassword('');
+    } catch (err) {
+      setIsSuccess(false);
+      setStatusMsg(parseAuthError(err.message, isHi));
+    } finally {
+      setResetLoading(false);
     }
   };
 
@@ -541,6 +614,65 @@ export default function Auth({ language }) {
                   {loading
                     ? <><span className="material-symbols-outlined animate-spin text-lg">progress_activity</span>{isHi ? 'भेजा जा रहा है...' : 'Sending...'}</>
                     : <><span className="material-symbols-outlined text-lg">send</span>{isHi ? 'रीसेट लिंक भेजें' : 'Send Reset Link'}</>
+                  }
+                </button>
+              </form>
+
+              <p className="mt-4 text-center text-xs text-on-surface-variant">
+                <button onClick={() => setPanel('login')} className="text-[#E8650A] font-bold hover:underline cursor-pointer flex items-center gap-1 mx-auto">
+                  <span className="material-symbols-outlined text-sm">arrow_back</span>
+                  {isHi ? 'वापस लॉगिन पर जाएं' : 'Back to Login'}
+                </button>
+              </p>
+            </>
+          )}
+
+          {/* ── RESET PASSWORD ── */}
+          {panel === 'reset' && (
+            <>
+              <div className="text-center mb-6">
+                <span className="material-symbols-outlined text-4xl text-primary" style={{ fontVariationSettings: "'FILL' 0" }}>lock</span>
+                <h2 className="text-xl text-[#E8650A] mt-2 font-bold">
+                  {isHi ? 'नया पासवर्ड सेट करें' : 'Set New Password'}
+                </h2>
+                <p className="text-xs text-on-surface-variant mt-1">
+                  {isHi
+                    ? 'कृपया अपना नया पासवर्ड डालें।'
+                    : "Please enter your new password."}
+                </p>
+              </div>
+
+              <form onSubmit={handleResetPassword} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold text-on-surface-variant mb-1">{isHi ? 'नया पासवर्ड' : 'New Password'}</label>
+                  <input
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className={inputCls}
+                    type="password"
+                    placeholder={isHi ? 'कम से कम 6 अक्षर' : 'Min 6 characters'}
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-on-surface-variant mb-1">{isHi ? 'पासवर्ड पुष्टि करें' : 'Confirm New Password'}</label>
+                  <input
+                    value={confirmNewPassword}
+                    onChange={(e) => setConfirmNewPassword(e.target.value)}
+                    className={inputCls}
+                    type="password"
+                    placeholder={isHi ? 'पासवर्ड फिर से डालें' : 'Re-enter password'}
+                    required
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={resetLoading}
+                  className="bg-[#E8650A] hover:brightness-110 text-white w-full py-3.5 rounded-full font-bold transition-all active:scale-95 cursor-pointer shadow-md text-sm disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {resetLoading
+                    ? <><span className="material-symbols-outlined animate-spin text-lg">progress_activity</span>{isHi ? 'अपडेट हो रहा है...' : 'Updating...'}</>
+                    : <><span className="material-symbols-outlined text-lg">check_circle</span>{isHi ? 'पासवर्ड बदलें' : 'Update Password'}</>
                   }
                 </button>
               </form>

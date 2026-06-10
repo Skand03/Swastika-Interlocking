@@ -77,15 +77,24 @@ export const useRentalsDueToday = (isAdmin) => {
     // Instead, you would typically run a cron edge function to email admins or push a notification.
     // But for the frontend, we can fetch on load.
     const checkDueRentals = async () => {
-      const today = new Date().toISOString().split('T')[0];
-      const { data } = await supabase
-        .from('shuttering_rentals')
-        .select('rental_number, customer_name')
-        .eq('end_date', today)
-        .eq('status', 'active');
-        
-      if (data && data.length > 0) {
-        toast.error(`⏰ ${data.length} shuttering rentals are due for return today!`);
+      try {
+        const today = new Date().toISOString().split('T')[0];
+        const { data, error } = await supabase
+          .from('shuttering_rentals')
+          .select('rental_number, customer_name')
+          .eq('end_date', today)
+          .eq('status', 'active');
+          
+        if (error) {
+          console.error('Error checking due rentals:', error);
+          return;
+        }
+          
+        if (data && data.length > 0) {
+          toast.error(`⏰ ${data.length} shuttering rentals are due for return today!`);
+        }
+      } catch (err) {
+        console.error('Error checking due rentals:', err);
       }
     };
     

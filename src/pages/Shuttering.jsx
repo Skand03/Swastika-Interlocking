@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getAllProducts } from '../services/productService';
+import SEOHead from '../components/SEO/SEOHead';
+import { getBreadcrumbSchema } from '../components/SEO/schemas';
 
 const TRANSLATIONS = {
   hi: {
@@ -84,6 +86,14 @@ export default function Shuttering({ language }) {
 
   return (
     <div className="pt-16">
+      <SEOHead
+        title="Shuttering Materials on Rent & Sale - Deesa Gujarat | Swastika Interlocking"
+        description="Steel shuttering plates, adjustable props, H-frames, beam clamps on rent and sale in Deesa, Gujarat. Best rental rates starting ₹45/day. Call for availability."
+        keywords="shuttering materials Deesa, steel plates on rent Gujarat, scaffolding rental Banaskantha, शटरिंग सामग्री देसा, formwork Gujarat"
+        url="/shuttering"
+        breadcrumb={getBreadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'Shuttering', path: '/shuttering' }])}
+        language={language}
+      />
       {/*  */}
 <header className="relative h-[480px] w-full flex items-center overflow-hidden"><img alt="Construction Scaffolding" className="absolute inset-0 w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCiH_XHsGY_rQbd3r8j5olaPCuTrIGHdamNPOwE4KBnygkdzyBGotAvOkA4Ft_fJ8JO6ZfpvqeKJ39IsyOUVZQs8610kRiKPFmpf2FPrn0RJKj1fQ15AKSs1CeFfdD5HggLDNbBe3TMXcUlZVkz8gpNLnauYQAPP4dzA6-UlQR-TzVfIqrWVgmEPkHYlPDY8RdCPEh0VqY_-Kf8xVvQ8h-kdGla0i1UMqcQof3nbN9n1qLQmclVNzRtUhZwefTime9Ha25rvEiCCZ0"/><div className="absolute inset-0 shuttering-overlay"></div><div className="relative max-w-container-max mx-auto px-gutter w-full pt-20"><h1 className="font-display-lg text-display-lg-mobile md:text-display-lg text-white mb-2">{t.heroTitle}</h1><p className="font-body-lg text-body-lg text-surface-variant/80 max-w-xl mb-8">{t.heroSub}</p><div className="flex flex-wrap gap-4 mb-8"><Link to="/shuttering-enquiry" className="bg-[#8B1A00] text-white px-8 py-4 font-bold rounded-lg flex items-center gap-2 hover:brightness-110 transition-all">{t.requestQuote} <span className="material-symbols-outlined">arrow_forward</span></Link></div></div></header>
 {/*  */}
