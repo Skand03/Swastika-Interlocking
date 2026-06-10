@@ -23,6 +23,11 @@ const parseAuthError = (message, isHi) => {
       ? 'लॉगिन विफल। अगर आपने Google से साइन अप किया है तो "Continue with Google" बटन का उपयोग करें। या "Forgot password?" पर क्लिक करके पासवर्ड सेट करें।'
       : 'Login failed. If you signed up with Google, use "Continue with Google". Or click "Forgot password?" to set a password for email login.';
   }
+  if (m.includes('row-level security') || m.includes('rls') || m.includes('violates row')) {
+    return isHi
+      ? 'रजिस्ट्रेशन सेटअप में समस्या आई। कृपया पेज रिफ्रेश करें और दोबारा कोशिश करें। अगर समस्या बनी रहे तो Google से साइन अप करें।'
+      : 'Registration setup issue. Please refresh the page and try again. If it persists, try signing up with Google.';
+  }
   if (m.includes('email rate limit') || m.includes('rate limit') || m.includes('too many requests')) {
     return isHi
       ? 'बहुत अधिक प्रयास किए गए। कृपया 5-10 मिनट बाद दोबारा कोशिश करें।'

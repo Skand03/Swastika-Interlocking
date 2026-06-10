@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../auth/AuthContext';
 
 const CompleteProfileModal = ({ isOpen, onClose, onComplete }) => {
-  const { profile, isPhoneInUse } = useAuth();
+  const { profile, isPhoneInUse, updateProfile } = useAuth();
   const [formData, setFormData] = useState({
     full_name: '',
     phone: '',
@@ -60,13 +60,10 @@ const CompleteProfileModal = ({ isOpen, onClose, onComplete }) => {
     }
 
     try {
-      const { supabase } = await import('../supabase/client');
-      const { error: updateError } = await supabase
-        .from('profiles')
-        .update(formData)
-        .eq('id', profile.id);
-
-      if (updateError) throw updateError;
+      const result = await updateProfile(formData);
+      if (!result.success) {
+        throw new Error(result.message);
+      }
 
       onComplete(formData);
       onClose();
