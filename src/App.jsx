@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
+import { AuthProvider, useAuth } from './auth/AuthContext';
+import { Toaster } from 'react-hot-toast';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Chatbot from './components/Chatbot';
@@ -21,6 +22,11 @@ import ShutteringEnquiry from './pages/ShutteringEnquiry';
 import RCCRoads from './pages/RCCRoads';
 import RCCEnquiry from './pages/RCCEnquiry';
 import NotFound from './pages/NotFound';
+import ProtectedRoute from './auth/ProtectedRoute';
+import AdminRoute from './auth/AdminRoute';
+import AuthGate from './components/AuthGate';
+import CompleteProfileModal from './components/CompleteProfileModal';
+import { useNewOrders, useNewInquiries, useLowStock, useRentalsDueToday } from './hooks/useRealtime';
 
 // Scroll restoration and section anchor scroll helper
 function SEOUpdater({ language }) {
@@ -98,38 +104,50 @@ function ScrollToTop() {
   return null;
 }
 
-function SessionGuard() {
-  const navigate = useNavigate();
-  const { pathname } = useLocation();
-  const { dbUser, loading } = useAuth();
-
-  useEffect(() => {
-    if (loading) return; // wait for Firebase + backend verification to complete
-
-    if (!dbUser) {
-      if (pathname.startsWith('/admin-dashboard') || pathname.startsWith('/customer-dashboard')) {
-        navigate('/auth');
-      }
-      return;
-    }
-
-    // Role-based access control
-    if (pathname.startsWith('/admin-dashboard')) {
-      if (!['super_admin', 'admin', 'manager', 'dealer'].includes(dbUser.role)) {
-        navigate('/customer-dashboard');
-      }
-    }
-  }, [pathname, navigate, dbUser, loading]);
-
+function RealtimeManager() {
+  const { profile } = useAuth();
+  const isAdmin = profile?.role === 'admin';
+  
+  useNewOrders(isAdmin);
+  useNewInquiries(isAdmin);
+  useLowStock(isAdmin);
+  useRentalsDueToday(isAdmin);
+  
   return null;
 }
 
 function AppContent({ language, handleLanguageChange }) {
   const location = useLocation();
+  const { profile, updateProfile, loading: authLoading } = useAuth();
   const isAdminPath = location.pathname.startsWith('/admin-dashboard');
+  const [showCompleteProfile, setShowCompleteProfile] = useState(false);
+
+  // Check if profile is complete (has required fields)
+  const isProfileComplete = (prof) => {
+    if (!prof) return false;
+    return !!(
+      prof.full_name &&
+      prof.phone &&
+      prof.city &&
+      prof.address
+    );
+  };
+
+  useEffect(() => {
+    if (!authLoading && profile && !isProfileComplete(profile) && !isAdminPath && location.pathname !== '/auth') {
+      setShowCompleteProfile(true);
+    } else {
+      setShowCompleteProfile(false);
+    }
+  }, [profile, authLoading, location.pathname, isAdminPath]);
+
+  const handleProfileComplete = async (formData) => {
+    await updateProfile(formData);
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-surface">
+      <RealtimeManager />
       {/* Navigation Bar */}
       {!isAdminPath && <Navbar language={language} setLanguage={handleLanguageChange} />}
 
@@ -139,22 +157,49 @@ function AppContent({ language, handleLanguageChange }) {
           <Route path="/" element={<Home language={language} />} />
           <Route path="/products" element={<Products language={language} />} />
           <Route path="/products/:id" element={<ProductDetail language={language} />} />
-          <Route path="/order" element={<Order language={language} />} />
-          <Route path="/order/:id" element={<OrderDetails language={language} />} />
-          <Route path="/contact" element={<Contact language={language} />} />
+          <Route path="/order" element={
+            <AuthGate language={language}>
+              <Order language={language} />
+            </AuthGate>
+          } />
+          <Route path="/order/:id" element={
+            <ProtectedRoute>
+              <OrderDetails language={language} />
+            </ProtectedRoute>
+          } />
+          <Route path="/contact" element={
+            <AuthGate language={language}>
+              <Contact language={language} />
+            </AuthGate>
+          } />
           <Route path="/about" element={<About language={language} />} />
           <Route path="/shuttering" element={<Shuttering language={language} />} />
           <Route path="/shuttering/:productId" element={<ShutteringDetail language={language} />} />
-          <Route path="/shuttering-enquiry" element={<ShutteringEnquiry language={language} />} />
+          <Route path="/shuttering-enquiry" element={
+            <AuthGate language={language}>
+              <ShutteringEnquiry language={language} />
+            </AuthGate>
+          } />
           <Route path="/rcc-roads" element={<RCCRoads language={language} />} />
-          <Route path="/rcc-enquiry" element={<RCCEnquiry language={language} />} />
+          <Route path="/rcc-enquiry" element={
+            <AuthGate language={language}>
+              <RCCEnquiry language={language} />
+            </AuthGate>
+          } />
           <Route path="/auth" element={<Auth language={language} />} />
-          <Route path="/customer-dashboard" element={<CustomerDashboard language={language} />} />
+          
+          <Route path="/customer-dashboard" element={
+            <ProtectedRoute>
+              <CustomerDashboard language={language} />
+            </ProtectedRoute>
+          } />
           
           <Route path="/admin-dashboard/*" element={
-            <AdminShell>
-              <AdminRoutes language={language} />
-            </AdminShell>
+            <AdminRoute>
+              <AdminShell>
+                <AdminRoutes language={language} />
+              </AdminShell>
+            </AdminRoute>
           } />
 
           {/* Fallback route for undefined paths */}
@@ -167,8 +212,29 @@ function AppContent({ language, handleLanguageChange }) {
 
       {/* Footer */}
       {!isAdminPath && !location.pathname.startsWith('/customer-dashboard') && <Footer language={language} />}
+
+      {/* Complete Profile Modal */}
+      <CompleteProfileModal
+        isOpen={showCompleteProfile}
+        onClose={() => setShowCompleteProfile(false)}
+        onComplete={handleProfileComplete}
+      />
     </div>
   );
+}
+
+function OAuthRedirectHandler() {
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    // Check if URL has OAuth hash params
+    if (window.location.hash.includes('access_token') || window.location.hash.includes('error')) {
+      // Supabase's auth library will process the hash automatically, so just redirect to home
+      navigate('/', { replace: true });
+    }
+  }, [navigate]);
+  
+  return null;
 }
 
 function App() {
@@ -185,9 +251,10 @@ function App() {
   return (
     <AuthProvider>
       <Router>
+        <OAuthRedirectHandler />
         <ScrollToTop />
         <SEOUpdater language={language} />
-        <SessionGuard />
+        <Toaster position="top-right" />
         <AppContent language={language} handleLanguageChange={handleLanguageChange} />
       </Router>
     </AuthProvider>

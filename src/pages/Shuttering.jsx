@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { API_BASE } from "../config";
+import { Link } from 'react-router-dom';
+import { getAllProducts } from '../services/productService';
 
 const TRANSLATIONS = {
   hi: {
@@ -15,7 +15,7 @@ const TRANSLATIONS = {
     scaffolding: 'एच-फ्रेम मचान (Scaffolding)',
     scaffoldingDesc: 'विभिन्न ऊंचाइयों पर बाहरी और आंतरिक कार्यों के लिए उपयोग में आसान मचान प्रणाली।',
     clamps: 'शटरिंग क्लैंप और सहायक उपकरण',
-    clampsDesc: 'लीक-प्रूफ और मजबूत कास्टिंग सुनिश्चित करने के लिए सभी आवश्यक फिटिंग।',
+    clampsDesc: 'लीक-प्रूफ और मजबूत कास्टिंग सुनিশ्चित करने के लिए सभी आवश्यक फिटिंग।',
     whyUs: 'स्वस्तिका शटरिंग क्यों चुनें?',
     whyUs1: 'टिकाऊ और मजबूत स्टील सामग्री',
     whyUs2: 'सटीक आयाम और आसान फिटिंग',
@@ -47,32 +47,39 @@ const TRANSLATIONS = {
 
 export default function Shuttering({ language }) {
   const t = TRANSLATIONS[language] || TRANSLATIONS.en;
-  const navigate = useNavigate();
   const [selectedImages, setSelectedImages] = useState({});
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${API_BASE}/api/get_products.php`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.success && data.products) {
-          const mapped = data.products
-            .filter(p => p.category === 'Shuttering')
-            .map(p => ({
-              id: p.product_key,
-              name: language === 'hi' ? p.name_hi : p.name_en,
-              desc: language === 'hi' ? p.desc_hi : p.desc_en,
-              price: p.price,
-              tag: parseInt(p.stock) > 0 ? (language === 'hi' ? 'उपलब्ध' : 'Available') : (language === 'hi' ? 'स्टॉक से बाहर' : 'Out of Stock'),
-              image: p.image_url,
-              value: p.name_en,
-              variants: p.variants || [],
-              db: true
-            }));
-          setProducts(mapped);
-        }
-      })
-      .catch(err => console.error("Error fetching shuttering products:", err));
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        const data = await getAllProducts();
+        const mapped = (data || [])
+          .filter(p => p.division === 'shuttering')
+          .map(p => ({
+            id: p.id,
+            name: language === 'hi' ? (p.name_hi || p.name_en) : p.name_en,
+            desc: language === 'hi' ? (p.description_hi || p.description_en) : p.description_en,
+            price: p.price_min && p.price_max
+              ? `₹${p.price_min} – ₹${p.price_max}`
+              : (p.price_min ? `₹${p.price_min}` : '—'),
+            tag: (p.stock_quantity || 0) > 0
+              ? (language === 'hi' ? 'उपलब्ध' : 'Available')
+              : (language === 'hi' ? 'स्टॉक से बाहर' : 'Out of Stock'),
+            image: p.images && p.images.length > 0 ? p.images[0] : null,
+            variants: p.specifications?.variants || [],
+          }));
+        setProducts(mapped);
+      } catch (err) {
+        console.error('Error fetching shuttering products:', err);
+        setProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
   }, [language]);
 
   return (
@@ -90,6 +97,22 @@ export default function Shuttering({ language }) {
 </div></div></section>
 {/*  */}
 <main className="max-w-container-max mx-auto px-gutter py-16">
+{loading && (
+  <div className="flex justify-center items-center py-20">
+    <div className="flex flex-col items-center gap-3">
+      <span className="material-symbols-outlined text-5xl text-primary animate-spin">autorenew</span>
+      <p className="text-on-surface-variant font-medium">{language === 'hi' ? 'उत्पाद लोड हो रहे हैं...' : 'Loading products...'}</p>
+    </div>
+  </div>
+)}
+{!loading && products.length === 0 && (
+  <div className="flex justify-center items-center py-20 text-on-surface-variant">
+    <div className="flex flex-col items-center gap-3">
+      <span className="material-symbols-outlined text-6xl opacity-30">inventory_2</span>
+      <p className="font-medium">{language === 'hi' ? 'अभी कोई शटरिंग उत्पाद उपलब्ध नहीं है।' : 'No shuttering products available right now.'}</p>
+    </div>
+  </div>
+)}
 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
   {products.map(product => (
     <article key={product.id} id={product.id} style={{ scrollMarginTop: '160px' }} className="bg-surface-container-low rounded-2xl overflow-hidden flex flex-col shadow-md hover:shadow-2xl border border-surface-variant/20 transition-all duration-500 hover:-translate-y-2 group">
@@ -99,7 +122,9 @@ export default function Shuttering({ language }) {
             <img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={product.name} src={selectedImages[product.id] || product.image} />
           </div>
         ) : (
-          <span className="material-symbols-outlined text-6xl text-outline-variant">{product.icon}</span>
+          <div className="w-full h-full flex items-center justify-center text-outline-variant">
+            <span className="material-symbols-outlined text-6xl">image_not_supported</span>
+          </div>
         )}
       </div>
       <div className="p-card-padding flex flex-col flex-grow">

@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { API_BASE } from "../config";
-
-// Google Font import can be added in index.html; here we just use class names.
+import { getOrderById } from '../services/orderService';
 
 export default function OrderDetails({ language }) {
   const { id } = useParams();
@@ -14,16 +12,11 @@ export default function OrderDetails({ language }) {
     if (!id) return;
     const fetchOrder = async () => {
       try {
-        const res = await fetch(`${API_BASE}/api/get_order.php?id=${id}`);
-        const data = await res.json();
-        if (data.success && data.order) {
-          setOrder(data.order);
-        } else {
-          setError(data.message || 'Failed to load order');
-        }
+        const data = await getOrderById(id);
+        setOrder(data);
       } catch (err) {
         console.error('Error fetching order:', err);
-        setError('Network error while fetching order');
+        setError('Order not found');
       } finally {
         setLoading(false);
       }
@@ -39,60 +32,82 @@ export default function OrderDetails({ language }) {
     );
   }
 
-  if (error) {
+  if (error || !order) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <p className="text-red-600 text-lg">{error}</p>
+        <p className="text-red-600 text-lg">{error || 'Order not found'}</p>
       </div>
     );
   }
 
-  // Destructure order fields; adjust based on DB schema
-  const {
-    order_id,
-    customer_name,
-    phone,
-    city,
-    address,
-    special_req,
-    product_id,
-    quantity,
-    image_path,
-    status,
-    created_at,
-  } = order;
+  const { order_number, customer_name, customer_phone, delivery_city, delivery_address, admin_notes, items, total_amount, status, created_at } = order;
 
-  // Helper to format date
   const formatDate = (dateStr) => {
     const d = new Date(dateStr);
     return d.toLocaleString(language === 'hi' ? 'hi-IN' : 'en-US');
   };
 
+  const statusColors = {
+    new: 'bg-blue-100 text-blue-700',
+    confirmed: 'bg-purple-100 text-purple-700',
+    processing: 'bg-yellow-100 text-yellow-700',
+    dispatched: 'bg-orange-100 text-orange-700',
+    delivered: 'bg-green-100 text-green-700',
+    cancelled: 'bg-red-100 text-red-700',
+  };
+
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white bg-opacity-70 backdrop-filter backdrop-blur-lg rounded-xl shadow-lg my-8">
-      <h1 className="text-3xl font-bold mb-4 text-gray-800">{language === 'hi' ? 'ऑर्डर विवरण' : 'Order Details'}</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <p><span className="font-semibold">{language === 'hi' ? 'ऑर्डर ID' : 'Order ID'}:</span> {order_id}</p>
-          <p><span className="font-semibold">{language === 'hi' ? 'ग्राहक' : 'Customer'}:</span> {customer_name}</p>
-          <p><span className="font-semibold">{language === 'hi' ? 'फ़ोन' : 'Phone'}:</span> {phone}</p>
-          <p><span className="font-semibold">{language === 'hi' ? 'शहर/गाँव' : 'City/Village'}:</span> {city}</p>
-          <p><span className="font-semibold">{language === 'hi' ? 'पता' : 'Address'}:</span> {address}</p>
-          <p><span className="font-semibold">{language === 'hi' ? 'विशेष अनुरोध' : 'Special Request'}:</span> {special_req || '-'}
-          </p>
-          <p><span className="font-semibold">{language === 'hi' ? 'उत्पाद ID' : 'Product ID'}:</span> {product_id}</p>
-          <p><span className="font-semibold">{language === 'hi' ? 'मात्रा' : 'Quantity'}:</span> {quantity}</p>
-          <p><span className="font-semibold">{language === 'hi' ? 'स्थिति' : 'Status'}:</span> {status || '-'}
-          </p>
-          <p><span className="font-semibold">{language === 'hi' ? 'बनाने की तिथि' : 'Created At'}:</span> {formatDate(created_at)}</p>
+    <div className="max-w-4xl mx-auto p-6 pt-28 min-h-screen">
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-orange-600 to-orange-500 p-6 text-white">
+          <h1 className="text-2xl font-bold">{language === 'hi' ? 'ऑर्डर विवरण' : 'Order Details'}</h1>
+          <p className="text-orange-100 text-sm mt-1">{order_number}</p>
         </div>
-        {image_path && (
-          <div className="flex items-center justify-center">
-            <img
-              src={image_path.startsWith('http') ? image_path : `./uploads/orders/${image_path}`}
-              alt="Order"
-              className="max-w-full h-auto rounded-lg shadow-md object-cover"
-            />
+
+        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Customer Info */}
+          <div className="space-y-3">
+            <h2 className="font-bold text-gray-700 border-b pb-2">{language === 'hi' ? 'ग्राहक जानकारी' : 'Customer Info'}</h2>
+            <p><span className="font-semibold text-gray-600">{language === 'hi' ? 'नाम:' : 'Name:'}</span> {customer_name}</p>
+            <p><span className="font-semibold text-gray-600">{language === 'hi' ? 'फ़ोन:' : 'Phone:'}</span> {customer_phone}</p>
+            <p><span className="font-semibold text-gray-600">{language === 'hi' ? 'शहर:' : 'City:'}</span> {delivery_city}</p>
+            <p><span className="font-semibold text-gray-600">{language === 'hi' ? 'पता:' : 'Address:'}</span> {delivery_address}</p>
+            {admin_notes && <p><span className="font-semibold text-gray-600">{language === 'hi' ? 'नोट:' : 'Note:'}</span> {admin_notes}</p>}
+          </div>
+
+          {/* Order Info */}
+          <div className="space-y-3">
+            <h2 className="font-bold text-gray-700 border-b pb-2">{language === 'hi' ? 'ऑर्डर जानकारी' : 'Order Info'}</h2>
+            <p>
+              <span className="font-semibold text-gray-600">{language === 'hi' ? 'स्थिति:' : 'Status:'}</span>{' '}
+              <span className={`inline-block px-2 py-0.5 rounded-full text-sm font-medium ${statusColors[status] || 'bg-gray-100 text-gray-700'}`}>
+                {status}
+              </span>
+            </p>
+            <p><span className="font-semibold text-gray-600">{language === 'hi' ? 'कुल राशि:' : 'Total:'}</span> ₹{total_amount?.toLocaleString('en-IN') || '—'}</p>
+            <p><span className="font-semibold text-gray-600">{language === 'hi' ? 'दिनांक:' : 'Date:'}</span> {formatDate(created_at)}</p>
+          </div>
+        </div>
+
+        {/* Items */}
+        {items && Array.isArray(items) && items.length > 0 && (
+          <div className="px-6 pb-6">
+            <h2 className="font-bold text-gray-700 border-b pb-2 mb-4">{language === 'hi' ? 'आइटम' : 'Items'}</h2>
+            <div className="space-y-2">
+              {items.map((item, i) => (
+                <div key={i} className="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
+                  <div>
+                    <p className="font-medium text-gray-800">{item.product_name}</p>
+                    {item.sub_type && <p className="text-xs text-gray-500">{item.sub_type}</p>}
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-gray-600">{language === 'hi' ? 'मात्रा:' : 'Qty:'} {item.quantity}</p>
+                    {item.price > 0 && <p className="text-sm font-medium text-orange-600">₹{(item.price * item.quantity).toLocaleString('en-IN')}</p>}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>

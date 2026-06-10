@@ -1,14 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../auth/AuthContext';
 
 export default function Header({ toggleSidebar }) {
   const navigate = useNavigate();
-  const { logout } = useAuth();
-  const userName = localStorage.getItem('admin_name') || 'Admin';
+  const { profile, signOut } = useAuth();
 
   const handleLogout = async () => {
-    await logout();
+    await signOut();
     navigate('/auth');
   };
 
@@ -22,10 +21,10 @@ export default function Header({ toggleSidebar }) {
         <h1 className="text-lg md:text-xl font-bold text-gray-800">Swastika Admin</h1>
       </div>
       <div className="flex items-center gap-2 md:gap-4">
-        <span className="text-xs md:text-sm text-gray-600 hidden sm:block">{userName}</span>
+        <span className="text-xs md:text-sm text-gray-600 hidden sm:block">{profile?.full_name || 'Admin'}</span>
         <button
           onClick={handleLogout}
-          className="px-3 md:px-4 py-2 bg-orange-600 text-white text-sm md:text-base rounded-lg md:rounded-xl hover:bg-orange-700 transition"
+          className="px-3 md:px-4 py-2 bg-orange-600 text-white text-sm rounded-lg hover:bg-orange-700 transition"
         >
           Logout
         </button>

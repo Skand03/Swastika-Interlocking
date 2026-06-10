@@ -1,5 +1,58 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { API_BASE } from "../config";
+import { createInquiry } from '../services/inquiryService';
+import { useAuth } from '../auth/AuthContext';
+
+// Local AI chatbot — rule-based responses, no PHP needed
+const getChatbotResponse = (message, language) => {
+  const msg = message.toLowerCase();
+  
+  const responses = {
+    hi: [
+      { keywords: ['price', 'cost', 'rate', 'कीमत', 'दाम', 'रेट'], 
+        response: 'हमारे इंटरलॉकिंग ब्लॉक की कीमत साइज़ और क्वालिटी के अनुसार अलग होती है। सटीक कोटेशन के लिए कृपया हमें कॉल करें: +91 84009 36290 या WhatsApp पर संपर्क करें।' },
+      { keywords: ['order', 'book', 'ऑर्डर', 'बुक'], 
+        response: 'ऑर्डर बुक करने के लिए आप हमारी "Order" पेज पर जाएं या सीधे +91 84009 36290 पर कॉल करें।' },
+      { keywords: ['delivery', 'deliver', 'डिलीवरी', 'शिपिंग'], 
+        response: 'हम पूरे उत्तर प्रदेश में डिलीवरी करते हैं। ऑर्डर कन्फर्म होने के बाद 3-5 कार्य दिवसों में डिलीवरी होती है।' },
+      { keywords: ['shuttering', 'shutter', 'शटरिंग'], 
+        response: 'हम स्टील प्लेट्स, H-फ्रेम, प्रॉप्स और क्लैंप्स किराए और बिक्री के लिए उपलब्ध करते हैं। जानकारी के लिए /shuttering पेज देखें।' },
+      { keywords: ['rcc', 'road', 'सड़क', 'आरसीसी'], 
+        response: 'हम RCC सड़क निर्माण का पूरा काम करते हैं — सर्वे से लेकर हैंडओवर तक। enquiry के लिए /rcc-enquiry पर जाएं।' },
+      { keywords: ['product', 'products', 'उत्पाद', 'सामान'], 
+        response: 'हमारे पास इंटरलॉकिंग पेवर ब्लॉक, सीमेंट, रेत, बजरी और पाइप्स उपलब्ध हैं। पूरी सूची के लिए /products पेज देखें।' },
+      { keywords: ['contact', 'address', 'location', 'संपर्क', 'पता'], 
+        response: 'हमारा पता: गिरधरपुर ऊंचर, कौड़ीराम, उत्तर प्रदेश। फोन: +91 84009 36290, +91 79059 87260' },
+    ],
+    en: [
+      { keywords: ['price', 'cost', 'rate', 'how much', 'pricing'], 
+        response: 'Our interlocking block prices vary by size and quality. For an accurate quote, please call us at +91 84009 36290 or WhatsApp us.' },
+      { keywords: ['order', 'book', 'purchase', 'buy'], 
+        response: 'To book an order, visit our "Order" page or call us directly at +91 84009 36290.' },
+      { keywords: ['delivery', 'deliver', 'shipping', 'dispatch'], 
+        response: 'We deliver across Uttar Pradesh. Delivery takes 3-5 working days after order confirmation.' },
+      { keywords: ['shuttering', 'shutter', 'scaffold', 'formwork'], 
+        response: 'We offer steel plates, H-frames, props and clamps for rent and sale. Check our /shuttering page for details.' },
+      { keywords: ['rcc', 'road', 'construction', 'project'], 
+        response: 'We handle complete RCC road construction from survey to handover. Submit an enquiry at /rcc-enquiry.' },
+      { keywords: ['product', 'products', 'catalogue', 'catalog'], 
+        response: 'We offer interlocking paver blocks, cement, sand, gravel, and pipes. See our full catalog at /products.' },
+      { keywords: ['contact', 'address', 'location', 'where'], 
+        response: 'Address: Girdharpur Unchar, Kauriram, Uttar Pradesh. Phone: +91 84009 36290, +91 79059 87260' },
+    ]
+  };
+
+  const langResponses = responses[language] || responses.en;
+  
+  for (const item of langResponses) {
+    if (item.keywords.some(k => msg.includes(k))) {
+      return item.response;
+    }
+  }
+  
+  return language === 'hi'
+    ? 'मैं इस सवाल का जवाब नहीं दे सकता। कृपया हमें +91 84009 36290 पर कॉल करें या WhatsApp करें।'
+    : 'I am not sure about that. Please call us at +91 84009 36290 or WhatsApp for a quick response!';
+};
 
 const TRANSLATIONS = {
   hi: {
@@ -52,10 +105,23 @@ const TRANSLATIONS = {
 
 export default function Contact({ language }) {
   const t = TRANSLATIONS[language];
+  const { profile } = useAuth();
+  
+  // Chatbot state
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const chatEndRef = useRef(null);
+
+  // Contact form state (separate from chatbot)
+  const [contactForm, setContactForm] = useState({ 
+    name: profile?.full_name || '', 
+    phone: profile?.phone || '', 
+    message: '' 
+  });
+  const [formStatus, setFormStatus] = useState('');
+  const [formSuccess, setFormSuccess] = useState(false);
+  const [formLoading, setFormLoading] = useState(false);
 
   useEffect(() => {
     setMessages([
@@ -87,46 +153,18 @@ export default function Contact({ language }) {
     setInputValue('');
     setIsTyping(true);
 
-    try {
-      const response = await fetch(`${API_BASE}/api/chat.php`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message: userMessage.text })
-      });
-      
-      if (response.status !== 200) {
-        throw new Error(`HTTP Error ${response.status}`);
-      }
-
-      const result = await response.json();
-      
-      setTimeout(() => {
-        setMessages(prev => [
-          ...prev,
-          {
-            id: Date.now() + 1,
-            sender: 'bot',
-            text: result.response || (language === 'hi' ? 'माफ़ कीजिये, मैं समझ नहीं पाया।' : "Sorry, I didn't quite catch that.")
-          }
-        ]);
-        setIsTyping(false);
-      }, 600);
-    } catch (err) {
-      console.error(err);
-      setTimeout(() => {
-        setMessages(prev => [
-          ...prev,
-          {
-            id: Date.now() + 1,
-            sender: 'bot',
-            text: t.errorMsg
-          }
-        ]);
-        setIsTyping(false);
-      }, 600);
-    }
+    setTimeout(() => {
+      const botResponse = getChatbotResponse(userMessage.text, language);
+      setMessages(prev => [
+        ...prev,
+        {
+          id: Date.now() + 1,
+          sender: 'bot',
+          text: botResponse
+        }
+      ]);
+      setIsTyping(false);
+    }, 800);
   };
 
   return (
@@ -233,37 +271,43 @@ export default function Contact({ language }) {
           <h3 className="font-headline-md text-headline-md mb-2">{language === 'hi' ? 'हमें एक संदेश भेजें' : 'Send us a Message'}</h3>
           <p className="text-on-surface-variant mb-8 text-sm">
             {language === 'hi' 
-              ? 'कोई प्रश्न है जैसे "आपका कार्यालय कहाँ है?" या "क्या आप थोक में बिक्री करते हैं?" - कृपया नीचे दिए गए फॉर्म को भरें और हमारी टीम आपसे संपर्क करेगी।' 
-              : 'Have a question like "Where is your office?" or "Do you do wholesale?" - Please fill out the form below and our team will get back to you.'}
+              ? 'कोई प्रश्न है? नीचे फॉर्म भरें और हमारी टीम आपसे संपर्क करेगी।' 
+              : 'Have a question? Fill out the form below and our team will get back to you.'}
           </p>
+
+          {formStatus && (
+            <div className={`p-4 rounded-lg font-bold text-sm mb-6 ${formSuccess ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'}`}>
+              {formSuccess ? '✅ ' : '❌ '}{formStatus}
+            </div>
+          )}
 
           <form className="space-y-6" onSubmit={async (e) => {
             e.preventDefault();
-            if (!inputValue.name || !inputValue.phone || !inputValue.message) {
-              setMessages([{ type: 'error', text: language === 'hi' ? 'कृपया सभी आवश्यक फ़ील्ड भरें।' : 'Please fill all required fields.' }]);
+            if (!contactForm.name || !contactForm.phone || !contactForm.message) {
+              setFormStatus(language === 'hi' ? 'कृपया सभी आवश्यक फ़ील्ड भरें।' : 'Please fill all required fields.');
+              setFormSuccess(false);
               return;
             }
-            setIsTyping(true);
+            setFormLoading(true);
+            setFormStatus('');
             try {
-              const res = await fetch(`${API_BASE}/api/submit_contact.php`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: inputValue.name, phone: inputValue.phone, requirements: inputValue.message })
+              await createInquiry({
+                customer_name: contactForm.name,
+                customer_phone: contactForm.phone,
+                customer_id: profile?.id || null,
+                message: contactForm.message,
+                requirements: contactForm.message,
+                source: 'contact_form',
+                subject: 'Contact Form Submission',
               });
-              if (res.status !== 200) {
-                throw new Error(`HTTP Error ${res.status}`);
-              }
-              const data = await res.json();
-              if (data.success) {
-                setMessages([{ type: 'success', text: language === 'hi' ? 'संदेश सफलतापूर्वक भेजा गया!' : 'Message sent successfully!' }]);
-                setInputValue({ name: '', phone: '', message: '' });
-              } else {
-                setMessages([{ type: 'error', text: data.message || 'Error submitting form.' }]);
-              }
+              setFormSuccess(true);
+              setFormStatus(language === 'hi' ? 'संदेश सफलतापूर्वक भेजा गया!' : 'Message sent successfully!');
+              setContactForm({ name: '', phone: '', message: '' });
             } catch (err) {
-              setMessages([{ type: 'error', text: (language === 'hi' ? 'कनेक्शन एरर: ' : 'Connection error: ') + err.message }]);
+              setFormSuccess(false);
+              setFormStatus((language === 'hi' ? 'कनेक्शन एरर: ' : 'Error: ') + err.message);
             } finally {
-              setIsTyping(false);
+              setFormLoading(false);
             }
           }}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -271,24 +315,27 @@ export default function Contact({ language }) {
                 <label className="block text-sm font-medium mb-2 text-on-surface">
                   {language === 'hi' ? 'नाम *' : 'Name *'}
                 </label>
-                <input 
-                  type="text" 
-                  value={inputValue.name || ''} 
-                  onChange={e => setInputValue({...inputValue, name: e.target.value})}
+                <input
+                  type="text"
+                  value={contactForm.name}
+                  onChange={e => setContactForm(p => ({ ...p, name: e.target.value }))}
                   className="w-full bg-white border border-outline-variant/50 rounded-xl p-3 text-on-surface focus:ring-2 focus:ring-primary outline-none transition-all shadow-sm"
                   placeholder={language === 'hi' ? 'अपना नाम दर्ज करें' : 'Enter your name'}
+                  required
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-2 text-on-surface">
                   {language === 'hi' ? 'फोन नंबर *' : 'Phone Number *'}
                 </label>
-                <input 
-                  type="tel" 
-                  value={inputValue.phone || ''} 
-                  onChange={e => setInputValue({...inputValue, phone: e.target.value})}
+                <input
+                  type="tel"
+                  value={contactForm.phone}
+                  onChange={e => setContactForm(p => ({ ...p, phone: e.target.value.replace(/\D/g, '').slice(0, 10) }))}
                   className="w-full bg-white border border-outline-variant/50 rounded-xl p-3 text-on-surface focus:ring-2 focus:ring-primary outline-none transition-all shadow-sm"
                   placeholder={language === 'hi' ? '10-अंकीय मोबाइल नंबर' : '10-digit mobile number'}
+                  maxLength={10}
+                  required
                 />
               </div>
             </div>
@@ -296,28 +343,22 @@ export default function Contact({ language }) {
               <label className="block text-sm font-medium mb-2 text-on-surface">
                 {language === 'hi' ? 'संदेश *' : 'Message *'}
               </label>
-              <textarea 
-                rows="4" 
-                value={inputValue.message || ''} 
-                onChange={e => setInputValue({...inputValue, message: e.target.value})}
+              <textarea
+                rows="4"
+                value={contactForm.message}
+                onChange={e => setContactForm(p => ({ ...p, message: e.target.value }))}
                 className="w-full bg-white border border-outline-variant/50 rounded-xl p-3 text-on-surface focus:ring-2 focus:ring-primary outline-none transition-all shadow-sm"
                 placeholder={language === 'hi' ? 'आप क्या जानना चाहते हैं?' : 'How can we help you?'}
-              ></textarea>
+                required
+              />
             </div>
-
-            {messages.length > 0 && messages[0].type && (
-              <div className={`p-4 rounded-lg font-bold text-sm ${messages[0].type === 'error' ? 'bg-error/10 text-error' : 'bg-primary/10 text-primary'}`}>
-                {messages[0].text}
-              </div>
-            )}
-
-            <button 
-              type="submit" 
-              disabled={isTyping}
+            <button
+              type="submit"
+              disabled={formLoading}
               className="w-full bg-primary text-on-primary py-4 rounded-xl font-bold hover:bg-primary/90 active:scale-[0.98] transition-all shadow-sm disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              {isTyping 
-                ? (language === 'hi' ? 'भेजा जा रहा है...' : 'Sending...') 
+              {formLoading
+                ? (language === 'hi' ? 'भेजा जा रहा है...' : 'Sending...')
                 : (language === 'hi' ? 'संदेश भेजें' : 'Send Message')}
             </button>
           </form>

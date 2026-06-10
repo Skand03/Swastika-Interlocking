@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { API_BASE } from "../config";
+import { getAllProducts } from '../services/productService';
 
 const TRANSLATIONS = {
   hi: {
@@ -139,19 +139,19 @@ export default function RCCRoads({ language }) {
   const [activeFilter, setActiveFilter] = useState('All');
 
   useEffect(() => {
-    fetch(`${API_BASE}/api/get_products.php`)
-      .then(res => res.json())
-      .then(data => {
+    const fetchProjects = async () => {
+      try {
+        const data = await getAllProducts();
         let mapped = [];
-        if (data.success && data.products) {
-          mapped = data.products
+        if (data) {
+          mapped = data
             .filter(p => p.category === 'RCC')
             .map(p => ({
               id: p.id,
               name: language === 'hi' ? p.name_hi : p.name_en,
               desc: language === 'hi' ? p.desc_hi : p.desc_en,
               status: parseInt(p.stock) > 0 ? t.completed : t.ongoing,
-              length: p.price, // using price field for length/grade for now
+              length: p.price,
               image: p.image_url || 'https://lh3.googleusercontent.com/aida-public/AB6AXuA_Ptu8XPOZvhrRRG2Ox-TI45MfVGvtbWr3cgUsHGsVJMefaOTl5_6ZOFPYrAE1MeBdkXlHE2hSQf4W_XmgdTGhheYthMJ9hULE_onZmHu8XCkOdyPnHMBYdFyJbkvLxlwowAP8uU92xT68_YyEoxnvgdlPdQim37NWjzAQ0xF5SQ47_7hQ_08uhZqLJWH5R6ryJHUtJ2XgD6dfRZgiQtZFFYfwXyTVXSjowOPfJ0m54L7Cad-YURytq7xoa14wJeYqN9lNRHq1ZSw',
             }));
         }
@@ -168,8 +168,11 @@ export default function RCCRoads({ language }) {
         }
         
         setRccProjects(mapped);
-      })
-      .catch(err => console.error("Error fetching RCC projects:", err));
+      } catch (err) {
+        console.error("Error fetching RCC projects:", err);
+      }
+    };
+    fetchProjects();
   }, [language, t.completed, t.ongoing]);
 
   return (

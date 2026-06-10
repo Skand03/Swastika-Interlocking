@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { API_BASE } from "../../config";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../auth/AuthContext";
 
 export default function Settings({ user, language }) {
-  const { authFetch } = useAuth();
+  const isHindi = language === 'hi';
   const [settings, setSettings] = useState({
     companyName: '',
     gstNumber: '',
@@ -15,12 +14,14 @@ export default function Settings({ user, language }) {
 
   // Load settings on mount
   useEffect(() => {
-    authFetch(`${API_BASE}/api/get_settings.php`)
-      .then(r => r.json())
-      .then(data => {
-        if (data.success) setSettings(data.settings);
-      })
-      .catch(() => {});
+    try {
+      const saved = localStorage.getItem('app_settings');
+      if (saved) {
+        setSettings(JSON.parse(saved));
+      }
+    } catch (e) {
+      console.error(e);
+    }
   }, []);
 
   const handleChange = (field, value) => {
@@ -29,15 +30,10 @@ export default function Settings({ user, language }) {
 
   const handleSave = async () => {
     try {
-      const res = await authFetch(`${API_BASE}/api/save_settings.php`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ settings })
-      });
-      const result = await res.json();
-      setStatusMsg(result.success ? 'Settings saved successfully.' : result.message || 'Failed to save.');
+      localStorage.setItem('app_settings', JSON.stringify(settings));
+      setStatusMsg('Settings saved successfully.');
     } catch {
-      setStatusMsg('Server error while saving settings.');
+      setStatusMsg('Error while saving settings.');
     }
   };
 

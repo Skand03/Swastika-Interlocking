@@ -1,124 +1,153 @@
 import React, { useState } from 'react';
 
+// Helper — get first image from the DB images[] array
+const getProductImage = (prod) => {
+  if (prod.images && Array.isArray(prod.images) && prod.images.length > 0) return prod.images[0];
+  return null;
+};
+
+// Helper — format price from DB numeric fields
+const formatPrice = (prod) => {
+  if (prod.price_min && prod.price_max) {
+    return prod.price_min === prod.price_max
+      ? `₹${prod.price_min}`
+      : `₹${prod.price_min} - ₹${prod.price_max}`;
+  }
+  if (prod.price_min) return `₹${prod.price_min}`;
+  return '—';
+};
+
 export default function ProductsManagement({
   language,
   products,
   productForm,
   setProductForm,
   isEditing,
-  setIsEditing,
   productStatus,
   productIsSuccess,
   handleSaveProduct,
   handleEditProduct,
   handleDeleteProduct,
   handleCancelEdit,
-  handleAddNewProductClick
+  handleAddNewProductClick,
 }) {
   const isHindi = language === 'hi';
   const [filter, setFilter] = useState('All');
 
-  // Filter products by category
+  const divisions = ['All', 'building_materials', 'shuttering'];
+  const divisionLabel = { 'All': 'All', 'building_materials': 'Building Materials', 'shuttering': 'Shuttering' };
+
   const filteredProducts = filter === 'All'
     ? products
-    : products.filter(p => {
-        if (filter === 'Heavy Duty') return p.category === 'Interlocking Blocks' && (p.name_en?.toLowerCase().includes('heavy') || p.price?.includes('85'));
-        if (filter === 'Landscaping') return p.category === 'Interlocking Blocks' && !p.name_en?.toLowerCase().includes('heavy');
-        if (filter === 'RCC Pipes') return p.category === 'Pipes & Drainage';
-        return p.category === filter;
-      });
-
-  const categories = ['All', 'Heavy Duty', 'Landscaping', 'RCC Pipes'];
+    : products.filter(p => p.division === filter);
 
   return (
-    <section className="space-y-8 animate-fade-in" id="products-management">
+    <section className="space-y-8" id="products-management">
+      {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h3 className="font-headline-md text-headline-md text-on-background text-xl font-bold">
-            {isHindi ? 'उत्पाद प्रबंधन / Products' : 'Products Management / उत्पाद प्रबंधन'}
+          <h3 className="text-xl font-bold text-gray-800">
+            {isHindi ? 'उत्पाद प्रबंधन' : 'Products Management'}
           </h3>
-          <p className="text-on-surface-variant text-sm mt-1">
-            {isHindi ? 'कैटलॉग, स्टॉक स्तर और मूल्य निर्धारण नियम प्रबंधित करें।' : 'Manage your catalog, stock levels, and pricing rules.'}
+          <p className="text-gray-500 text-sm mt-1">
+            {isHindi ? 'कैटलॉग, स्टॉक स्तर और मूल्य निर्धारण नियम प्रबंधित करें।' : 'Manage catalog, stock levels, and pricing.'}
           </p>
         </div>
-        <button 
+        <button
           onClick={handleAddNewProductClick}
-          className="bg-[#E8650A] hover:bg-[#c25408] text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:scale-[1.02] active:scale-95 transition-all shadow-md"
+          className="bg-[#E8650A] hover:bg-[#c25408] text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 active:scale-95 transition-all shadow-md cursor-pointer"
         >
-          <span className="material-symbols-outlined">add</span> 
+          <span className="material-symbols-outlined">add</span>
           {isHindi ? 'नया उत्पाद जोड़ें' : 'Add New Product'}
         </button>
       </div>
 
-      {/* Category Filter Pills */}
-      <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
-        {categories.map((c) => (
+      {/* Filter Pills */}
+      <div className="flex gap-3 overflow-x-auto pb-1">
+        {divisions.map(d => (
           <button
-            key={c}
-            onClick={() => setFilter(c)}
-            className={`px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ${
-              filter === c
+            key={d}
+            onClick={() => setFilter(d)}
+            className={`px-5 py-2 rounded-full text-sm font-bold whitespace-nowrap cursor-pointer transition-all ${
+              filter === d
                 ? 'bg-[#E8650A] text-white shadow-sm'
-                : 'bg-white text-on-surface-variant border border-outline-variant/30 hover:border-[#E8650A]'
+                : 'bg-white text-gray-600 border border-gray-200 hover:border-[#E8650A]'
             }`}
           >
-            {c}
+            {divisionLabel[d]}
           </button>
         ))}
+        <span className="ml-auto text-sm text-gray-400 self-center whitespace-nowrap">
+          {filteredProducts.length} {isHindi ? 'उत्पाद' : 'products'}
+        </span>
       </div>
 
-      {/* Catalog Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {/* Products Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
         {filteredProducts.length === 0 ? (
-          <div className="col-span-full bg-white p-12 rounded-2xl text-center font-bold text-on-surface-variant shadow-sm border border-outline-variant/20">
+          <div className="col-span-full bg-white p-12 rounded-2xl text-center text-gray-400 font-bold border border-gray-100">
             {isHindi ? 'कोई उत्पाद नहीं मिला।' : 'No products found.'}
           </div>
         ) : (
-          filteredProducts.map((prod) => {
-            const isLowStock = parseInt(prod.stock) < 100;
+          filteredProducts.map(prod => {
+            const imgSrc = getProductImage(prod);
+            const price = formatPrice(prod);
+            const stock = prod.stock_quantity ?? 0;
+            const isLowStock = stock < 10;
             return (
-              <div key={prod.id} className="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col group border border-outline-variant/20 hover:shadow-md transition-shadow">
-                <div className="h-48 relative overflow-hidden bg-surface-container select-none">
-                  <img 
-                    alt={prod.name_en} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                    src={prod.image_url || '/images/default-product.jpg'} 
-                  />
-                  <span className={`absolute top-3 right-3 text-[10px] font-bold px-3 py-1 rounded-full uppercase text-white shadow ${
-                    isLowStock ? 'bg-error' : 'bg-secondary'
-                  }`}>
-                    {isLowStock ? (isHindi ? 'कम स्टॉक' : 'Low Stock') : (isHindi ? 'स्टॉक में' : 'In Stock')}
+              <div key={prod.id} className="bg-white rounded-xl shadow-sm overflow-hidden flex flex-col border border-gray-100 hover:shadow-md transition-shadow group">
+                {/* Image */}
+                <div className="h-44 relative overflow-hidden bg-gray-50">
+                  {imgSrc ? (
+                    <img
+                      src={imgSrc}
+                      alt={prod.name_en}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center text-gray-300 gap-2">
+                      <span className="material-symbols-outlined text-5xl">image_not_supported</span>
+                      <span className="text-xs">No image</span>
+                    </div>
+                  )}
+                  <span className={`absolute top-3 right-3 text-[10px] font-bold px-2.5 py-1 rounded-full text-white shadow ${isLowStock ? 'bg-red-500' : 'bg-green-600'}`}>
+                    {isLowStock ? 'LOW STOCK' : 'IN STOCK'}
                   </span>
-                  <span className="absolute bottom-3 left-3 bg-[#E8650A] text-white text-[10px] font-bold px-2 py-0.5 rounded shadow">
-                    {prod.category}
+                  <span className="absolute bottom-3 left-3 bg-[#E8650A] text-white text-[10px] font-bold px-2 py-0.5 rounded">
+                    {prod.division === 'shuttering' ? 'Shuttering' : 'Building'}
                   </span>
                 </div>
-                <div className="p-6 flex flex-col flex-grow">
-                  <h5 className="font-bold text-lg mb-1">{isHindi ? prod.name_hi : prod.name_en}</h5>
-                  <p className="text-on-surface-variant text-xs mb-4 line-clamp-2 leading-relaxed flex-grow">
-                    {isHindi ? prod.desc_hi : prod.desc_en}
+
+                {/* Info */}
+                <div className="p-4 flex flex-col flex-grow">
+                  <h5 className="font-bold text-base mb-1 truncate" title={isHindi ? prod.name_hi : prod.name_en}>
+                    {isHindi ? (prod.name_hi || prod.name_en) : prod.name_en}
+                  </h5>
+                  <p className="text-gray-400 text-xs mb-3 line-clamp-2 leading-relaxed flex-grow">
+                    {isHindi ? (prod.description_hi || prod.description_en) : prod.description_en}
                   </p>
-                  <div className="flex items-center justify-between mb-4 border-t border-outline-variant/10 pt-4">
+
+                  <div className="flex items-center justify-between mb-3 pt-3 border-t border-gray-100">
                     <div>
-                      <p className="text-[10px] text-on-surface-variant uppercase font-bold tracking-wider">{isHindi ? 'मूल्य' : 'Price'}</p>
-                      <span className="text-[#E8650A] font-extrabold text-base">{prod.price}</span>
+                      <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Price</p>
+                      <span className="text-[#E8650A] font-extrabold">{price}</span>
                     </div>
                     <div className="text-right">
-                      <p className="text-[10px] text-on-surface-variant uppercase font-bold tracking-wider">{isHindi ? 'स्टॉक' : 'Stock'}</p>
-                      <p className={`font-bold text-sm ${isLowStock ? 'text-error' : ''}`}>{prod.stock} pcs</p>
+                      <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Stock</p>
+                      <p className={`font-bold text-sm ${isLowStock ? 'text-red-500' : 'text-gray-700'}`}>{stock} pcs</p>
                     </div>
                   </div>
-                  <div className="flex gap-2 mt-auto">
-                    <button 
+
+                  <div className="flex gap-2">
+                    <button
                       onClick={() => handleEditProduct(prod)}
-                      className="flex-grow border border-outline-variant/30 py-2 rounded-lg text-xs font-bold hover:bg-surface hover:border-[#E8650A] transition-colors cursor-pointer"
+                      className="flex-grow border border-gray-200 py-2 rounded-lg text-xs font-bold hover:border-[#E8650A] hover:text-[#E8650A] transition-colors cursor-pointer"
                     >
-                      {isHindi ? 'संपादित करें' : 'Edit Product'}
+                      {isHindi ? 'संपादित करें' : 'Edit'}
                     </button>
-                    <button 
+                    <button
                       onClick={() => handleDeleteProduct(prod.id)}
-                      className="w-10 h-10 border border-outline-variant/30 flex items-center justify-center rounded-lg text-error hover:bg-error/10 hover:border-error/30 transition-colors cursor-pointer"
-                      title="Delete Product"
+                      className="w-9 h-9 border border-gray-200 flex items-center justify-center rounded-lg text-red-500 hover:bg-red-50 hover:border-red-300 transition-colors cursor-pointer"
                     >
                       <span className="material-symbols-outlined text-sm">delete</span>
                     </button>
@@ -130,42 +159,32 @@ export default function ProductsManagement({
         )}
       </div>
 
-      {/* Add/Edit Form Section */}
-      <div id="product-form-container" className="bg-white p-card-padding rounded-2xl shadow-sm border border-outline-variant/30 max-w-4xl mt-12">
-        <h4 className="font-headline-md text-lg font-bold mb-6 border-b border-surface-variant pb-4">
-          {isEditing 
-            ? (isHindi ? 'उत्पाद संपादित करें / Edit Product Details' : 'Edit Product Details / उत्पाद संपादित करें')
-            : (isHindi ? 'नया उत्पाद जोड़ें / Add New Product' : 'Add New Product / नया उत्पाद जोड़ें')}
+      {/* Add / Edit Form */}
+      <div id="product-form-container" className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100 max-w-4xl scroll-mt-8">
+        <h4 className="text-lg font-bold mb-6 pb-4 border-b border-gray-100">
+          {isEditing
+            ? (isHindi ? 'उत्पाद संपादित करें' : 'Edit Product')
+            : (isHindi ? 'नया उत्पाद जोड़ें' : 'Add New Product')}
         </h4>
-        
+
         {productStatus && (
           <div className={`p-4 mb-6 rounded-xl font-bold text-sm border ${
-            productIsSuccess 
-              ? 'bg-green-100 text-green-800 border-green-200 shadow-green-100/50' 
-              : 'bg-red-100 text-red-800 border-red-200 shadow-red-100/50'
+            productIsSuccess
+              ? 'bg-green-50 text-green-800 border-green-200'
+              : 'bg-red-50 text-red-800 border-red-200'
           }`}>
-            {productStatus}
+            {productIsSuccess ? '✅ ' : '❌ '}{productStatus}
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <label className="font-bold text-sm text-on-surface-variant">Product Key (Unique URL key, e.g. zigzag, i-shape)</label>
-            <input 
-              value={productForm.product_key}
-              onChange={e => setProductForm({...productForm, product_key: e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, '')})}
-              className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#E8650A] outline-none" 
-              placeholder="e.g. zigzag" 
-              type="text"
-              disabled={isEditing}
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="font-bold text-sm text-on-surface-variant">Category</label>
-            <select 
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {/* Category / Division */}
+          <div className="space-y-1.5">
+            <label className="font-bold text-sm text-gray-500">Category</label>
+            <select
               value={productForm.category}
-              onChange={e => setProductForm({...productForm, category: e.target.value})}
-              className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#E8650A] outline-none"
+              onChange={e => setProductForm({ ...productForm, category: e.target.value })}
+              className="w-full bg-gray-50 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#E8650A] outline-none border border-gray-200"
             >
               <option value="Interlocking Blocks">Interlocking Blocks</option>
               <option value="Raw Materials">Raw Materials</option>
@@ -173,153 +192,182 @@ export default function ProductsManagement({
               <option value="Shuttering">Shuttering</option>
             </select>
           </div>
-          <div className="space-y-2">
-            <label className="font-bold text-sm text-on-surface-variant">Product Name (English)</label>
-            <input 
-              value={productForm.name_en}
-              onChange={e => setProductForm({...productForm, name_en: e.target.value})}
-              className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#E8650A] outline-none" 
-              placeholder="e.g. Zigzag Paver Blocks" 
-              type="text"
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="font-bold text-sm text-on-surface-variant">Product Name (Hindi)</label>
-            <input 
-              value={productForm.name_hi}
-              onChange={e => setProductForm({...productForm, name_hi: e.target.value})}
-              className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#E8650A] outline-none" 
-              placeholder="e.g. ज़िगज़ैग पेवर ब्लॉक" 
-              type="text"
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="font-bold text-sm text-on-surface-variant">Price Range (e.g. ₹45 - ₹85 / sq.ft)</label>
-            <input 
-              value={productForm.price}
-              onChange={e => setProductForm({...productForm, price: e.target.value})}
-              className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#E8650A] outline-none" 
-              placeholder="e.g. ₹45 - ₹85 / sq.ft" 
-              type="text"
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="font-bold text-sm text-on-surface-variant">Stock Quantity</label>
-            <input 
+
+          {/* Stock */}
+          <div className="space-y-1.5">
+            <label className="font-bold text-sm text-gray-500">Stock Quantity</label>
+            <input
               value={productForm.stock}
-              onFocus={(e) => { if(e.target.value === '0' || e.target.value === 0) setProductForm({...productForm, stock: ''}) }}
-              onChange={e => setProductForm({...productForm, stock: e.target.value === '' ? '' : parseInt(e.target.value)})}
-              className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#E8650A] outline-none" 
-              placeholder="0" 
+              onFocus={e => { if (e.target.value === '0') setProductForm({ ...productForm, stock: '' }); }}
+              onChange={e => setProductForm({ ...productForm, stock: e.target.value === '' ? '' : parseInt(e.target.value) })}
+              className="w-full bg-gray-50 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#E8650A] outline-none border border-gray-200"
+              placeholder="0"
               type="number"
+              min="0"
             />
           </div>
-          <div className="md:col-span-2 space-y-2">
-            <label className="font-bold text-sm text-on-surface-variant">Product Image</label>
-            <input 
-              onChange={e => setProductForm({...productForm, imageFile: e.target.files[0]})}
-              className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#E8650A] outline-none cursor-pointer" 
+
+          {/* Name EN */}
+          <div className="space-y-1.5">
+            <label className="font-bold text-sm text-gray-500">Product Name (English) <span className="text-red-500">*</span></label>
+            <input
+              value={productForm.name_en}
+              onChange={e => setProductForm({ ...productForm, name_en: e.target.value })}
+              className="w-full bg-gray-50 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#E8650A] outline-none border border-gray-200"
+              placeholder="e.g. Zigzag Paver Blocks"
+              type="text"
+            />
+          </div>
+
+          {/* Name HI */}
+          <div className="space-y-1.5">
+            <label className="font-bold text-sm text-gray-500">Product Name (Hindi)</label>
+            <input
+              value={productForm.name_hi}
+              onChange={e => setProductForm({ ...productForm, name_hi: e.target.value })}
+              className="w-full bg-gray-50 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#E8650A] outline-none border border-gray-200"
+              placeholder="e.g. ज़िगज़ैग पेवर ब्लॉक"
+              type="text"
+            />
+          </div>
+
+          {/* Price */}
+          <div className="space-y-1.5">
+            <label className="font-bold text-sm text-gray-500">Price (e.g. 45 or 45-85)</label>
+            <input
+              value={productForm.price}
+              onChange={e => setProductForm({ ...productForm, price: e.target.value })}
+              className="w-full bg-gray-50 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#E8650A] outline-none border border-gray-200"
+              placeholder="e.g. 45 or 45-85"
+              type="text"
+            />
+          </div>
+
+          {/* Image Upload */}
+          <div className="space-y-1.5">
+            <label className="font-bold text-sm text-gray-500">Product Image</label>
+            <input
+              key={productForm.image_url} // reset input when editing new product
+              onChange={e => setProductForm({ ...productForm, imageFile: e.target.files[0] })}
+              className="w-full bg-gray-50 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#E8650A] outline-none border border-gray-200 cursor-pointer text-sm"
               type="file"
               accept="image/*"
             />
             {productForm.image_url && !productForm.imageFile && (
-              <p className="text-xs text-on-surface-variant mt-1">Current Image: <a href={productForm.image_url} target="_blank" rel="noreferrer" className="text-secondary hover:underline">{productForm.image_url}</a></p>
+              <div className="flex items-center gap-3 mt-2">
+                <img src={productForm.image_url} alt="current" className="w-16 h-16 rounded-lg object-cover border border-gray-200" />
+                <span className="text-xs text-gray-400">Current image</span>
+              </div>
             )}
-          </div>
-          <div className="space-y-2">
-            <label className="font-bold text-sm text-on-surface-variant">Description (English)</label>
-            <textarea 
-              value={productForm.desc_en}
-              onChange={e => setProductForm({...productForm, desc_en: e.target.value})}
-              className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#E8650A] outline-none resize-none" 
-              placeholder="Enter description in English..." 
-              rows="3"
-            ></textarea>
-          </div>
-          <div className="space-y-2">
-            <label className="font-bold text-sm text-on-surface-variant">Description (Hindi)</label>
-            <textarea 
-              value={productForm.desc_hi}
-              onChange={e => setProductForm({...productForm, desc_hi: e.target.value})}
-              className="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#E8650A] outline-none resize-none" 
-              placeholder="Enter description in Hindi..." 
-              rows="3"
-            ></textarea>
           </div>
 
-          {/* Variants / Color Palettes Section */}
-          <div className="md:col-span-2 mt-4 pt-4 border-t border-outline-variant/30">
-            <div className="flex justify-between items-center mb-4">
-              <label className="font-bold text-sm text-on-surface-variant">Product Variants / Options (e.g. Colors, Brands, Sizes)</label>
-              <button 
-                type="button"
-                onClick={() => setProductForm({...productForm, variants: [...(productForm.variants || []), { name: '', image_url: '', imageFile: null }]})}
-                className="bg-secondary/10 text-secondary hover:bg-secondary/20 px-3 py-1.5 rounded text-xs font-bold transition-colors"
-              >
-                + Add Option
-              </button>
-            </div>
-            
-            {(productForm.variants || []).map((variant, index) => (
-              <div key={index} className="flex flex-col sm:flex-row gap-3 mb-3 p-3 bg-surface-container-lowest border border-outline-variant/30 rounded-xl items-start sm:items-center">
-                <div className="flex-1 w-full">
-                  <input 
-                    type="text" 
-                    placeholder="Variant Name (e.g. Red, ACC Cement)" 
-                    value={variant.name}
-                    onChange={(e) => {
-                      const newVars = [...productForm.variants];
-                      newVars[index].name = e.target.value;
-                      setProductForm({...productForm, variants: newVars});
-                    }}
-                    className="w-full bg-white border border-outline-variant/30 rounded px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"
-                  />
-                </div>
-                <div className="flex-1 w-full flex items-center gap-2">
-                  <input 
-                    type="file" 
-                    accept="image/*"
-                    onChange={(e) => {
-                      const newVars = [...productForm.variants];
-                      newVars[index].imageFile = e.target.files[0];
-                      setProductForm({...productForm, variants: newVars});
-                    }}
-                    className="w-full bg-white border border-outline-variant/30 rounded px-2 py-1.5 text-xs cursor-pointer"
-                  />
-                  {variant.image_url && !variant.imageFile && (
-                    <img src={variant.image_url} alt="variant" className="w-8 h-8 rounded object-cover border border-outline-variant/30" />
-                  )}
-                </div>
-                <button 
-                  type="button"
-                  onClick={() => {
-                    const newVars = productForm.variants.filter((_, i) => i !== index);
-                    setProductForm({...productForm, variants: newVars});
-                  }}
-                  className="w-8 h-8 flex shrink-0 items-center justify-center text-error hover:bg-error/10 rounded transition-colors"
-                >
-                  <span className="material-symbols-outlined text-sm">close</span>
-                </button>
+          {/* Desc EN */}
+          <div className="space-y-1.5">
+            <label className="font-bold text-sm text-gray-500">Description (English)</label>
+            <textarea
+              value={productForm.desc_en}
+              onChange={e => setProductForm({ ...productForm, desc_en: e.target.value })}
+              className="w-full bg-gray-50 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#E8650A] outline-none border border-gray-200 resize-none"
+              placeholder="Description in English..."
+              rows="3"
+            />
+          </div>
+
+          {/* Desc HI */}
+          <div className="space-y-1.5">
+            <label className="font-bold text-sm text-gray-500">Description (Hindi)</label>
+            <textarea
+              value={productForm.desc_hi}
+              onChange={e => setProductForm({ ...productForm, desc_hi: e.target.value })}
+              className="w-full bg-gray-50 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#E8650A] outline-none border border-gray-200 resize-none"
+              placeholder="विवरण हिंदी में..."
+              rows="3"
+            />
+          </div>
+
+          {/* Specifications Section */}
+          <div className="md:col-span-2 pt-4 border-t border-gray-100">
+            <h5 className="font-bold text-sm text-gray-700 mb-4 flex items-center gap-2">
+              <span className="material-symbols-outlined text-[#E8650A] text-base">table_chart</span>
+              Product Specifications (shown on Details page)
+            </h5>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="font-bold text-xs text-gray-400 uppercase tracking-wide">Size / Thickness</label>
+                <input
+                  value={productForm.spec_thickness || ''}
+                  onChange={e => setProductForm({ ...productForm, spec_thickness: e.target.value })}
+                  className="w-full bg-gray-50 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-[#E8650A] outline-none border border-gray-200 text-sm"
+                  placeholder="e.g. 60mm / 80mm"
+                  type="text"
+                />
               </div>
-            ))}
-            {(!productForm.variants || productForm.variants.length === 0) && (
-              <p className="text-xs text-on-surface-variant italic">No variants added. This product will display without color/option choices.</p>
-            )}
+              <div className="space-y-1.5">
+                <label className="font-bold text-xs text-gray-400 uppercase tracking-wide">Weight</label>
+                <input
+                  value={productForm.spec_weight || ''}
+                  onChange={e => setProductForm({ ...productForm, spec_weight: e.target.value })}
+                  className="w-full bg-gray-50 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-[#E8650A] outline-none border border-gray-200 text-sm"
+                  placeholder="e.g. 3.5kg Approx."
+                  type="text"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="font-bold text-xs text-gray-400 uppercase tracking-wide">Compressive Strength</label>
+                <input
+                  value={productForm.spec_strength || ''}
+                  onChange={e => setProductForm({ ...productForm, spec_strength: e.target.value })}
+                  className="w-full bg-gray-50 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-[#E8650A] outline-none border border-gray-200 text-sm"
+                  placeholder="e.g. M30 to M50 Grade"
+                  type="text"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="font-bold text-xs text-gray-400 uppercase tracking-wide">Color Options</label>
+                <input
+                  value={productForm.spec_color || ''}
+                  onChange={e => setProductForm({ ...productForm, spec_color: e.target.value })}
+                  className="w-full bg-gray-50 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-[#E8650A] outline-none border border-gray-200 text-sm"
+                  placeholder="e.g. Grey, Red, Yellow"
+                  type="text"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="font-bold text-xs text-gray-400 uppercase tracking-wide">Application</label>
+                <input
+                  value={productForm.spec_application || ''}
+                  onChange={e => setProductForm({ ...productForm, spec_application: e.target.value })}
+                  className="w-full bg-gray-50 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-[#E8650A] outline-none border border-gray-200 text-sm"
+                  placeholder="e.g. Driveways, Petrol Pumps"
+                  type="text"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="font-bold text-xs text-gray-400 uppercase tracking-wide">Material</label>
+                <input
+                  value={productForm.spec_material || ''}
+                  onChange={e => setProductForm({ ...productForm, spec_material: e.target.value })}
+                  className="w-full bg-gray-50 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-[#E8650A] outline-none border border-gray-200 text-sm"
+                  placeholder="e.g. High-strength Concrete"
+                  type="text"
+                />
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="mt-8 flex gap-4">
-          <button 
+        <div className="mt-6 flex gap-3">
+          <button
             onClick={handleSaveProduct}
-            className="bg-[#E8650A] hover:bg-[#c25408] text-white px-8 py-3 rounded-xl font-bold transition-all cursor-pointer active:scale-95 shadow-md"
+            className="bg-[#E8650A] hover:bg-[#c25408] text-white px-8 py-3 rounded-xl font-bold cursor-pointer active:scale-95 transition-all shadow-md"
           >
             {isEditing ? (isHindi ? 'बदलाव सहेजें' : 'Save Changes') : (isHindi ? 'उत्पाद जोड़ें' : 'Add Product')}
           </button>
-          <button 
+          <button
             onClick={handleCancelEdit}
-            className="bg-surface-variant/50 hover:bg-surface-variant/85 text-on-surface-variant px-8 py-3 rounded-xl font-bold transition-all cursor-pointer active:scale-95"
+            className="bg-gray-100 hover:bg-gray-200 text-gray-600 px-8 py-3 rounded-xl font-bold cursor-pointer active:scale-95 transition-all"
           >
-            {isHindi ? 'रद्द करें / रीसेट' : 'Cancel / Reset'}
+            {isHindi ? 'रद्द करें' : 'Cancel'}
           </button>
         </div>
       </div>

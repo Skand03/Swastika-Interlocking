@@ -3,19 +3,19 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import Footer from './Footer';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../auth/AuthContext';
 
 export default function AdminShell({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const { dbUser } = useAuth();
+  const { profile } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     // If no authenticated user or not admin, redirect to auth page
-    if (!dbUser || dbUser.role !== 'admin') {
+    if (!profile || profile.role !== 'admin') {
       navigate('/auth');
     }
-  }, [dbUser, navigate]);
+  }, [profile, navigate]);
 
   return (
     <div className="flex min-h-screen bg-gray-100 print:bg-white relative">

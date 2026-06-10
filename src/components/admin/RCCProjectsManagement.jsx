@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { API_BASE } from "../../config";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../auth/AuthContext";
+import { getProductsByDivision, createProduct, updateProduct, deleteProduct } from "../../services/productService";
+import { uploadImage } from "../../services/uploadService";
 
 export default function RCCProjectsManagement({ language, user }) {
-  const { authFetch } = useAuth();
   const isHindi = language === 'hi';
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -26,21 +26,16 @@ export default function RCCProjectsManagement({ language, user }) {
   const [isEditing, setIsEditing] = useState(false);
   const [statusMsg, setStatusMsg] = useState('');
 
-  const fetchProjects = () => {
+  const fetchProjects = async () => {
     setLoading(true);
-    authFetch(`${API_BASE}/api/get_products.php`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          const rcc = data.products.filter(p => p.category === 'RCC');
-          setProjects(rcc);
-        }
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error(err);
-        setLoading(false);
-      });
+    try {
+      const data = await getProductsByDivision('rcc');
+      setProjects(data || []);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -49,61 +44,43 @@ export default function RCCProjectsManagement({ language, user }) {
 
   const handleSave = async (e) => {
     e.preventDefault();
-    if (!form.name_en || !form.product_key) {
-      setStatusMsg('Please fill in required fields (Name, Key)');
+    if (!form.name_en) {
+      setStatusMsg('Please fill in required fields (Name)');
       return;
     }
 
     try {
       let finalImageUrl = form.image_url;
       if (form.imageFile) {
-        const formData = new FormData();
-        formData.append('image', form.imageFile);
-        const uploadRes = await authFetch(`${API_BASE}/api/upload_image.php`, { method: 'POST', body: formData });
-        const uploadData = await uploadRes.json();
-        if (uploadData.success) {
-          finalImageUrl = uploadData.url;
-        } else {
-          setStatusMsg(uploadData.message || 'Image upload failed.');
+        try {
+          finalImageUrl = await uploadImage(form.imageFile, 'rcc');
+        } catch (err) {
+          setStatusMsg('Image upload failed.');
           return;
         }
       }
 
-      const uploadedVariants = [];
-      if (form.variants && Array.isArray(form.variants)) {
-        for (let v of form.variants) {
-          let vImageUrl = v.image_url;
-          if (v.imageFile) {
-            const formData = new FormData();
-            formData.append('image', v.imageFile);
-            const uploadRes = await authFetch(`${API_BASE}/api/upload_image.php`, { method: 'POST', body: formData });
-            const uploadData = await uploadRes.json();
-            if (uploadData.success) {
-              vImageUrl = uploadData.url;
-            }
-          }
-          uploadedVariants.push({ name: v.name, image_url: vImageUrl });
-        }
-      }
+      const productData = {
+        name_en: form.name_en,
+        name_hi: form.name_hi,
+        description_en: form.desc_en,
+        description_hi: form.desc_hi,
+        price_min: form.price, // mapped to location
+        price_max: form.price,
+        stock_quantity: form.stock, // mapped to length
+        division: 'rcc',
+        images: finalImageUrl ? [finalImageUrl] : []
+      };
 
-      const response = await authFetch(`${API_BASE}/api/save_product.php`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...form,
-          image_url: finalImageUrl,
-          variants: uploadedVariants,
-          admin_phone: user?.phone
-        })
-      });
-      const result = await response.json();
-      if (result.success) {
-        setStatusMsg(isEditing ? 'RCC Project updated!' : 'RCC Project added!');
-        fetchProjects();
-        handleCancel();
+      if (isEditing && form.id) {
+        await updateProduct(form.id, productData);
       } else {
-        setStatusMsg(result.message || 'Failed to save project.');
+        await createProduct(productData);
       }
+      
+      setStatusMsg(isEditing ? 'RCC Project updated!' : 'RCC Project added!');
+      fetchProjects();
+      handleCancel();
     } catch (err) {
       console.error(err);
       setStatusMsg('Server error saving project.');
@@ -114,17 +91,17 @@ export default function RCCProjectsManagement({ language, user }) {
     setIsEditing(true);
     setForm({
       id: proj.id,
-      product_key: proj.product_key,
+      product_key: proj.id, // Supabase doesn't use custom keys typically
       name_en: proj.name_en,
       name_hi: proj.name_hi,
-      desc_en: proj.desc_en,
-      desc_hi: proj.desc_hi,
-      price: proj.price, // mapped to location
-      stock: proj.stock, // mapped to length
+      desc_en: proj.description_en,
+      desc_hi: proj.description_hi,
+      price: proj.price_min, // mapped to location
+      stock: proj.stock_quantity, // mapped to length
       category: 'RCC',
-      image_url: proj.image_url,
+      image_url: proj.images && proj.images.length > 0 ? proj.images[0] : '',
       imageFile: null,
-      variants: Array.isArray(proj.variants) ? proj.variants : []
+      variants: []
     });
     setStatusMsg('');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -133,20 +110,11 @@ export default function RCCProjectsManagement({ language, user }) {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this project?')) return;
     try {
-      const response = await authFetch(`${API_BASE}/api/delete_product.php`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, admin_phone: user?.phone })
-      });
-      const result = await response.json();
-      if (result.success) {
-        fetchProjects();
-      } else {
-        alert(result.message || 'Failed to delete project.');
-      }
+      await deleteProduct(id);
+      fetchProjects();
     } catch (err) {
       console.error(err);
-      alert('Server error deleting project.');
+      alert('Failed to delete project.');
     }
   };
 

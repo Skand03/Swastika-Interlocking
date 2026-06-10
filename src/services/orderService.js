@@ -1,43 +1,59 @@
 import { supabase } from '../supabase/client';
 
 export const createOrder = async (orderData) => {
-  // First, get the current year for the order number prefix
   const year = new Date().getFullYear();
-  
-  // We need to generate a sequential order number.
-  // Easiest way in pure JS without an Edge Function is to fetch the latest order.
-  // (In production, an Edge Function or DB sequence is safer against race conditions).
+
+  // Get last order number for this year (ignore errors — first order of year)
   const { data: lastOrder } = await supabase
     .from('orders')
     .select('order_number')
     .ilike('order_number', `SW-${year}-%`)
     .order('created_at', { ascending: false })
     .limit(1)
-    .single();
-    
+    .maybeSingle(); // use maybeSingle to avoid throwing when no row found
+
   let nextNum = 1;
-  if (lastOrder && lastOrder.order_number) {
+  if (lastOrder?.order_number) {
     const parts = lastOrder.order_number.split('-');
-    if (parts.length === 3) {
-      nextNum = parseInt(parts[2], 10) + 1;
-    }
+    if (parts.length === 3) nextNum = parseInt(parts[2], 10) + 1;
   }
-  
+
   const orderNumber = `SW-${year}-${String(nextNum).padStart(3, '0')}`;
-  
+
+  // Clean items — strip local `id` field, ensure price is numeric
+  const cleanItems = (orderData.items || []).map(item => ({
+    product_id: item.product_id || null,
+    product_name: item.product_name || '',
+    sub_type: item.sub_type || '',
+    quantity: parseInt(item.quantity) || 1,
+    price: parseFloat(item.price) || 0,
+    image_url: item.image_url || '',
+  }));
+
+  const subtotal = cleanItems.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+
   const finalOrderData = {
-    ...orderData,
     order_number: orderNumber,
+    customer_id: orderData.customer_id,  // required — policy rejects if null or mismatched
+    customer_name: orderData.customer_name || '',
+    customer_phone: orderData.customer_phone || '',
+    delivery_address: orderData.delivery_address || '',
+    delivery_city: orderData.delivery_city || '',
+    items: cleanItems,
+    subtotal: subtotal,
+    total_amount: subtotal,
+    admin_notes: orderData.admin_notes || null,
+    status: 'new',
+    payment_status: 'pending',
   };
-  
+
   const { data, error } = await supabase
     .from('orders')
     .insert([finalOrderData])
     .select()
     .single();
-    
-  if (error) throw error;
-  
+
+  if (error) throw new Error(error.message);
   return data;
 };
 
@@ -58,23 +74,41 @@ export const getOrdersByCustomer = async (customerId) => {
     .eq('customer_id', customerId)
     .order('created_at', { ascending: false });
   if (error) throw error;
-  return data;
+  const uiMap = {
+    'new': 'Pending', 'confirmed': 'Processing', 'processing': 'Processing',
+    'dispatched': 'Shipped', 'delivered': 'Delivered', 'cancelled': 'Cancelled',
+  };
+  return (data || []).map(o => ({ ...o, status: uiMap[o.status] || o.status }));
 };
 
 export const getAllOrders = async (filters = {}) => {
   let query = supabase.from('orders').select('*');
-  
-  if (filters.status) {
-    query = query.eq('status', filters.status);
-  }
-  
+  if (filters.status) query = query.eq('status', filters.status);
   const { data, error } = await query.order('created_at', { ascending: false });
   if (error) throw error;
-  return data;
+  // Normalize DB status → UI labels for backwards compatibility
+  const uiMap = {
+    'new': 'Pending', 'confirmed': 'Processing', 'processing': 'Processing',
+    'dispatched': 'Shipped', 'delivered': 'Delivered', 'cancelled': 'Cancelled',
+  };
+  return (data || []).map(o => ({ ...o, status: uiMap[o.status] || o.status }));
 };
 
 export const updateOrderStatus = async (id, status, adminNotes = null) => {
-  const updates = { status };
+  // Map UI labels → DB CHECK constraint values
+  const statusMap = {
+    'Pending': 'new',
+    'Processing': 'processing',
+    'Shipped': 'dispatched',
+    'Delivered': 'delivered',
+    'Cancelled': 'cancelled',
+    'Confirmed': 'confirmed',
+    // pass-through if already a valid DB value
+    'new': 'new', 'confirmed': 'confirmed', 'processing': 'processing',
+    'dispatched': 'dispatched', 'delivered': 'delivered', 'cancelled': 'cancelled',
+  };
+  const dbStatus = statusMap[status] || 'new';
+  const updates = { status: dbStatus };
   if (adminNotes !== null) updates.admin_notes = adminNotes;
   
   const { data, error } = await supabase

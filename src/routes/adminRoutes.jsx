@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../auth/AuthContext';
 import DashboardOverview from '../components/admin/DashboardOverview';
 import ProductsManagement from '../components/admin/ProductsManagement';
 import InventoryShuttering from '../components/admin/InventoryShuttering';
@@ -10,6 +10,12 @@ import CustomersInquiries from '../components/admin/CustomersInquiries';
 import InquiriesManagement from '../components/admin/InquiriesManagement';
 import Settings from '../components/admin/Settings';
 import RCCProjectsManagement from '../components/admin/RCCProjectsManagement';
+
+import { getAllProducts, createProduct, updateProduct, deleteProduct } from '../services/productService';
+import { getAllOrders, updateOrderStatus } from '../services/orderService';
+import { getAllInquiries } from '../services/inquiryService';
+import { getAllCustomers } from '../services/customerService';
+import { uploadImage } from '../services/uploadService';
 
 export default function AdminRoutes({ language }) {
   const navigate = useNavigate();
@@ -30,9 +36,16 @@ export default function AdminRoutes({ language }) {
     price: '',
     stock: '',
     image_url: '',
+    imageFile: null,
     desc_en: '',
     desc_hi: '',
-    variants: []
+    variants: [],
+    spec_thickness: '',
+    spec_weight: '',
+    spec_strength: '',
+    spec_color: '',
+    spec_application: '',
+    spec_material: '',
   });
   const [isEditing, setIsEditing] = useState(false);
   const [productStatus, setProductStatus] = useState('');
@@ -48,43 +61,47 @@ export default function AdminRoutes({ language }) {
   // Status updating state
   const [updatingOrderId, setUpdatingOrderId] = useState(null);
 
-  const { dbUser, loading: authLoading, authFetch } = useAuth();
+  const { profile: dbUser, loading: authLoading } = useAuth();
 
-  const fetchProducts = () => {
-    authFetch('./api/get_products.php')
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          setProducts(data.products || []);
-        }
-      })
-      .catch(err => console.error("Error fetching products:", err));
+  const fetchProducts = async () => {
+    try {
+      const data = await getAllProducts();
+      setProducts(data || []);
+    } catch (err) {
+      console.error("Error fetching products:", err);
+    }
   };
 
-  const fetchData = (phone) => {
-    authFetch(`./api/get_portal_data.php?phone=${phone}&role=admin`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          setOrders(data.orders || []);
-          setInquiries(data.inquiries || []);
-          setCustomers(data.customers || []);
-          if (data.customers && data.customers.length > 0) {
-            setSelectedCustomer(data.customers[0]);
-          }
-          if (data.inquiries && data.inquiries.length > 0) {
-            setSelectedInquiry(data.inquiries[0]);
-          }
-          if (data.metrics) {
-            setMetrics(data.metrics);
-          }
-        }
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error("Error fetching admin stats:", err);
-        setLoading(false);
-      });
+  const fetchData = async () => {
+    try {
+      const [ordersData, inquiriesData, customersData] = await Promise.all([
+        getAllOrders(),
+        getAllInquiries(),
+        getAllCustomers()
+      ]);
+
+      setOrders(ordersData || []);
+      setInquiries(inquiriesData || []);
+      setCustomers(customersData || []);
+      
+      if (customersData && customersData.length > 0) {
+        setSelectedCustomer(customersData[0]);
+      }
+      if (inquiriesData && inquiriesData.length > 0) {
+        setSelectedInquiry(inquiriesData[0]);
+      }
+      
+      // Calculate metrics based on real data
+      const totalSales = (ordersData || []).reduce((sum, ord) => sum + (parseFloat(ord.total_amount) || 0), 0);
+      const newOrders = (ordersData || []).filter(o => o.status === 'Pending').length;
+      const newCustomers = (customersData || []).length;
+      
+      setMetrics({ totalSales, newOrders, newCustomers, lowStock: 0 });
+    } catch (err) {
+      console.error("Error fetching admin stats:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -100,23 +117,14 @@ export default function AdminRoutes({ language }) {
     setAdmin(dbUser);
 
     fetchProducts();
-    fetchData(dbUser.phone);
+    fetchData();
   }, [navigate, dbUser, authLoading]);
 
   const handleStatusChange = async (orderId, newStatus) => {
     setUpdatingOrderId(orderId);
     try {
-      const response = await authFetch('./api/update_order.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: orderId, status: newStatus, admin_phone: admin?.phone })
-      });
-      const result = await response.json();
-      if (result.success) {
-        fetchData(admin.phone);
-      } else {
-        alert(result.message || "Failed to update order status.");
-      }
+      await updateOrderStatus(orderId, newStatus);
+      fetchData();
     } catch (err) {
       console.error(err);
       alert("Server error updating status.");
@@ -135,9 +143,16 @@ export default function AdminRoutes({ language }) {
       price: '',
       stock: '',
       image_url: '',
+      imageFile: null,
       desc_en: '',
       desc_hi: '',
-      variants: []
+      variants: [],
+      spec_thickness: '',
+      spec_weight: '',
+      spec_strength: '',
+      spec_color: '',
+      spec_application: '',
+      spec_material: '',
     });
     setProductStatus('');
     const formElement = document.getElementById('product-form-container');
@@ -146,18 +161,36 @@ export default function AdminRoutes({ language }) {
 
   const handleEditProduct = (prod) => {
     setIsEditing(true);
+    // Build price string from DB numeric fields
+    const priceStr = prod.price_min && prod.price_max
+      ? prod.price_min === prod.price_max
+        ? String(prod.price_min)
+        : `${prod.price_min}-${prod.price_max}`
+      : String(prod.price_min || '');
+
+    // Read specs from specifications jsonb
+    const specs = prod.specifications || {};
+
     setProductForm({
       id: prod.id,
-      product_key: prod.product_key,
-      category: prod.category,
+      product_key: prod.id,
+      category: prod.division === 'shuttering' ? 'Shuttering' : 'Interlocking Blocks',
       name_en: prod.name_en || '',
       name_hi: prod.name_hi || '',
-      price: prod.price || '',
-      stock: prod.stock || '',
-      image_url: prod.image_url || '',
-      desc_en: prod.desc_en || '',
-      desc_hi: prod.desc_hi || '',
-      variants: Array.isArray(prod.variants) ? prod.variants : []
+      price: priceStr,
+      stock: prod.stock_quantity ?? '',
+      image_url: prod.images && prod.images.length > 0 ? prod.images[0] : '',
+      imageFile: null,
+      desc_en: prod.description_en || '',
+      desc_hi: prod.description_hi || '',
+      variants: prod.specifications?.variants || [],
+      // Spec fields
+      spec_thickness: specs.thickness || '',
+      spec_weight: specs.weight || '',
+      spec_strength: specs.strength || '',
+      spec_color: specs.color || '',
+      spec_application: specs.application || '',
+      spec_material: specs.material || '',
     });
     setProductStatus('');
     const formElement = document.getElementById('product-form-container');
@@ -174,85 +207,107 @@ export default function AdminRoutes({ language }) {
       price: '',
       stock: '',
       image_url: '',
+      imageFile: null,
       desc_en: '',
       desc_hi: '',
-      variants: []
+      variants: [],
+      spec_thickness: '',
+      spec_weight: '',
+      spec_strength: '',
+      spec_color: '',
+      spec_application: '',
+      spec_material: '',
     });
     setProductStatus('');
   };
 
   const handleSaveProduct = async () => {
-    if (!productForm.product_key || !productForm.name_en || !productForm.price) {
-      setProductStatus('Please fill in the product key, English name, and price.');
+    if (!productForm.name_en) {
+      setProductStatus('Please fill in the product English name.');
       setProductIsSuccess(false);
       return;
     }
+
     try {
-      let finalImageUrl = productForm.image_url;
-      
-      // Handle Image Upload if a file was selected
+      // Upload main image if a new file was selected
+      let finalImageUrl = productForm.image_url || '';
       if (productForm.imageFile) {
-        const formData = new FormData();
-        formData.append('image', productForm.imageFile);
-        
-        const uploadRes = await authFetch('./api/upload_image.php', {
-          method: 'POST',
-          body: formData
-        });
-        const uploadData = await uploadRes.json();
-        
-        if (uploadData.success) {
-          finalImageUrl = uploadData.url;
-        } else {
-          setProductStatus(uploadData.message || 'Image upload failed.');
+        try {
+          finalImageUrl = await uploadImage(productForm.imageFile, 'products');
+        } catch (err) {
+          setProductStatus(`Image upload failed: ${err.message}`);
           setProductIsSuccess(false);
           return;
         }
       }
 
-      // Handle Variant Image Uploads
-      const uploadedVariants = [];
-      if (productForm.variants && Array.isArray(productForm.variants)) {
-        for (let v of productForm.variants) {
-          let vImageUrl = v.image_url;
+      // Upload variant images
+      let processedVariants = [];
+      if (productForm.variants && productForm.variants.length > 0) {
+        for (const v of productForm.variants) {
+          let variantUrl = v.image_url || '';
           if (v.imageFile) {
-            const formData = new FormData();
-            formData.append('image', v.imageFile);
-            const uploadRes = await authFetch('./api/upload_image.php', { method: 'POST', body: formData });
-            const uploadData = await uploadRes.json();
-            if (uploadData.success) {
-              vImageUrl = uploadData.url;
+            try {
+              variantUrl = await uploadImage(v.imageFile, 'products');
+            } catch (e) {
+              // variant image upload failed — skip silently
             }
           }
-          uploadedVariants.push({ name: v.name, image_url: vImageUrl });
+          processedVariants.push({ name: v.name, image_url: variantUrl });
         }
       }
 
-      const response = await authFetch('./api/save_product.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...productForm,
-          image_url: finalImageUrl,
-          variants: uploadedVariants,
-          admin_phone: admin?.phone
-        })
-      });
-      const result = await response.json();
-      if (result.success) {
-        setProductStatus(isEditing ? 'Product updated successfully.' : 'Product added successfully.');
-        setProductIsSuccess(true);
-        if (!isEditing) {
-          handleCancelEdit();
-        }
-        fetchProducts();
+      // Parse price — supports "55", "45-85", "₹45 - ₹85 / sq.ft"
+      const rawPrice = String(productForm.price || '0');
+      const nums = rawPrice.match(/\d+(\.\d+)?/g) || ['0'];
+      const priceMin = parseFloat(nums[0]) || 0;
+      const priceMax = parseFloat(nums[1] || nums[0]) || priceMin;
+
+      // Determine division from category
+      const divisionMap = {
+        'Interlocking Blocks': 'building_materials',
+        'Raw Materials': 'building_materials',
+        'Pipes & Drainage': 'building_materials',
+        'Shuttering': 'shuttering',
+      };
+
+      const productData = {
+        name_en: productForm.name_en,
+        name_hi: productForm.name_hi || productForm.name_en,
+        description_en: productForm.desc_en || '',
+        description_hi: productForm.desc_hi || '',
+        price_min: priceMin,
+        price_max: priceMax,
+        price_unit: 'piece',
+        stock_quantity: parseInt(productForm.stock) || 0,
+        division: divisionMap[productForm.category] || 'building_materials',
+        is_active: true,
+        images: finalImageUrl ? [finalImageUrl] : [],
+        // Store specs + variants inside specifications jsonb
+        specifications: {
+          variants: processedVariants,
+          thickness: productForm.spec_thickness || '',
+          weight: productForm.spec_weight || '',
+          strength: productForm.spec_strength || '',
+          color: productForm.spec_color || '',
+          application: productForm.spec_application || '',
+          material: productForm.spec_material || '',
+        },
+      };
+
+      if (isEditing && productForm.id) {
+        await updateProduct(productForm.id, productData);
       } else {
-        setProductStatus(result.message || 'Failed to save product.');
-        setProductIsSuccess(false);
+        await createProduct(productData);
       }
+
+      setProductStatus(isEditing ? 'Product updated successfully.' : 'Product added successfully.');
+      setProductIsSuccess(true);
+      if (!isEditing) handleCancelEdit();
+      fetchProducts();
     } catch (err) {
       console.error(err);
-      setProductStatus('Server error saving product.');
+      setProductStatus(`Error: ${err.message}`);
       setProductIsSuccess(false);
     }
   };
@@ -260,17 +315,8 @@ export default function AdminRoutes({ language }) {
   const handleDeleteProduct = async (id) => {
     if (!window.confirm('Are you sure you want to delete this product?')) return;
     try {
-      const response = await authFetch('./api/delete_product.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, admin_phone: admin?.phone })
-      });
-      const result = await response.json();
-      if (result.success) {
-        fetchProducts();
-      } else {
-        alert(result.message || 'Failed to delete product.');
-      }
+      await deleteProduct(id);
+      fetchProducts();
     } catch (err) {
       console.error(err);
       alert('Server error deleting product.');

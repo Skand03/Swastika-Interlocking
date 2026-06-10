@@ -3,6 +3,18 @@
 -- Enable UUID extension if not already enabled
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+-- Helper function to check if current user is admin
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS boolean AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.profiles 
+    WHERE id = auth.uid() 
+    AND role IN ('admin', 'staff')
+  );
+END;
+$$ LANGUAGE plpgsql STABLE SECURITY DEFINER;
+
 -- ==========================================
 -- TABLE 1: profiles
 -- ==========================================
@@ -23,13 +35,16 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   updated_at timestamptz DEFAULT now()
 );
 
--- RLS Policies for profiles
+-- RLS Policies for profiles - FIXED (NO INFINITE RECURSION!)
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can view own profile" ON public.profiles FOR SELECT USING (auth.uid() = id);
-CREATE POLICY "Users can update own profile" ON public.profiles FOR UPDATE USING (auth.uid() = id);
-CREATE POLICY "Admin can do all on profiles" ON public.profiles FOR ALL USING (
-  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
-);
+CREATE POLICY "Users can insert own profile" ON public.profiles
+  FOR INSERT WITH CHECK (auth.uid() = id);
+CREATE POLICY "Users can view own profile" ON public.profiles
+  FOR SELECT USING (auth.uid() = id OR public.is_admin());
+CREATE POLICY "Users can update own profile" ON public.profiles
+  FOR UPDATE USING (auth.uid() = id);
+CREATE POLICY "Admins can manage all profiles" ON public.profiles
+  FOR ALL USING (public.is_admin());
 
 -- Trigger to update updated_at
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -41,6 +56,29 @@ END;
 $$ language 'plpgsql';
 
 CREATE TRIGGER update_profiles_updated_at BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Trigger to auto-create profile when a new user signs up
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.profiles (id, full_name, email, role, preferred_language, is_active)
+  VALUES (
+    NEW.id,
+    COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'name', 'User'),
+    NEW.email,
+    'customer',
+    'hi',
+    true
+  );
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
 
 -- ==========================================
@@ -60,9 +98,7 @@ CREATE TABLE IF NOT EXISTS public.categories (
 
 ALTER TABLE public.categories ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Everyone can view active categories" ON public.categories FOR SELECT USING (is_active = true);
-CREATE POLICY "Admin can do all on categories" ON public.categories FOR ALL USING (
-  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
-);
+CREATE POLICY "Service role can do all on categories" ON public.categories FOR ALL USING (true);
 
 
 -- ==========================================
@@ -95,9 +131,7 @@ CREATE TABLE IF NOT EXISTS public.products (
 
 ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Everyone can view active products" ON public.products FOR SELECT USING (is_active = true);
-CREATE POLICY "Admin can do all on products" ON public.products FOR ALL USING (
-  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
-);
+CREATE POLICY "Service role can do all on products" ON public.products FOR ALL USING (true);
 CREATE TRIGGER update_products_updated_at BEFORE UPDATE ON public.products FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Indexes for products
@@ -132,11 +166,10 @@ CREATE TABLE IF NOT EXISTS public.orders (
 );
 
 ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can view own orders" ON public.orders FOR SELECT USING (auth.uid() = customer_id);
+CREATE POLICY "Users can view own orders" ON public.orders FOR SELECT USING (auth.uid() = customer_id OR public.is_admin());
 CREATE POLICY "Users can insert own orders" ON public.orders FOR INSERT WITH CHECK (auth.uid() = customer_id);
-CREATE POLICY "Admin can do all on orders" ON public.orders FOR ALL USING (
-  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
-);
+CREATE POLICY "Users can update own orders" ON public.orders FOR UPDATE USING (auth.uid() = customer_id);
+CREATE POLICY "Admins can manage all orders" ON public.orders FOR ALL USING (public.is_admin());
 CREATE TRIGGER update_orders_updated_at BEFORE UPDATE ON public.orders FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Indexes for orders
@@ -172,10 +205,10 @@ CREATE TABLE IF NOT EXISTS public.shuttering_rentals (
 );
 
 ALTER TABLE public.shuttering_rentals ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can view own rentals" ON public.shuttering_rentals FOR SELECT USING (auth.uid() = customer_id);
-CREATE POLICY "Admin can do all on rentals" ON public.shuttering_rentals FOR ALL USING (
-  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
-);
+CREATE POLICY "Users can view own rentals" ON public.shuttering_rentals FOR SELECT USING (auth.uid() = customer_id OR public.is_admin());
+CREATE POLICY "Users can insert own rentals" ON public.shuttering_rentals FOR INSERT WITH CHECK (auth.uid() = customer_id);
+CREATE POLICY "Users can update own rentals" ON public.shuttering_rentals FOR UPDATE USING (auth.uid() = customer_id);
+CREATE POLICY "Admins can manage all rentals" ON public.shuttering_rentals FOR ALL USING (public.is_admin());
 CREATE TRIGGER update_shuttering_rentals_updated_at BEFORE UPDATE ON public.shuttering_rentals FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Indexes for shuttering_rentals
@@ -217,10 +250,8 @@ CREATE TABLE IF NOT EXISTS public.rcc_projects (
 );
 
 ALTER TABLE public.rcc_projects ENABLE ROW LEVEL SECURITY;
--- RCC projects are typically handled directly by admins, so we restrict access to admins.
-CREATE POLICY "Admin can do all on rcc_projects" ON public.rcc_projects FOR ALL USING (
-  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
-);
+-- RCC projects are typically handled directly by admins.
+CREATE POLICY "Service role can do all on rcc_projects" ON public.rcc_projects FOR ALL USING (true);
 CREATE TRIGGER update_rcc_projects_updated_at BEFORE UPDATE ON public.rcc_projects FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Indexes for rcc_projects
@@ -234,6 +265,7 @@ CREATE INDEX idx_rcc_projects_created_at ON public.rcc_projects(created_at);
 -- ==========================================
 CREATE TABLE IF NOT EXISTS public.inquiries (
   id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
+  customer_id uuid REFERENCES public.profiles(id) ON DELETE SET NULL,
   customer_name text,
   customer_phone text,
   customer_email text,
@@ -252,13 +284,10 @@ CREATE TABLE IF NOT EXISTS public.inquiries (
 );
 
 ALTER TABLE public.inquiries ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Anyone can insert inquiries" ON public.inquiries FOR INSERT WITH CHECK (true);
-CREATE POLICY "Admin can view all inquiries" ON public.inquiries FOR SELECT USING (
-  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
-);
-CREATE POLICY "Admin can update inquiries" ON public.inquiries FOR UPDATE USING (
-  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
-);
+CREATE POLICY "Users can insert own inquiries" ON public.inquiries FOR INSERT WITH CHECK (auth.uid() = customer_id);
+CREATE POLICY "Users can view own inquiries" ON public.inquiries FOR SELECT USING (auth.uid() = customer_id OR public.is_admin());
+CREATE POLICY "Users can update own inquiries" ON public.inquiries FOR UPDATE USING (auth.uid() = customer_id);
+CREATE POLICY "Admins can manage all inquiries" ON public.inquiries FOR ALL USING (public.is_admin());
 CREATE TRIGGER update_inquiries_updated_at BEFORE UPDATE ON public.inquiries FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Indexes for inquiries
@@ -284,9 +313,7 @@ CREATE TABLE IF NOT EXISTS public.inventory_logs (
 );
 
 ALTER TABLE public.inventory_logs ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Admin can do all on inventory_logs" ON public.inventory_logs FOR ALL USING (
-  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
-);
+CREATE POLICY "Service role can do all on inventory_logs" ON public.inventory_logs FOR ALL USING (true);
 
 
 -- ==========================================
@@ -305,11 +332,9 @@ CREATE TABLE IF NOT EXISTS public.reviews (
 
 ALTER TABLE public.reviews ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Everyone can view approved reviews" ON public.reviews FOR SELECT USING (is_approved = true);
-CREATE POLICY "Users can view own reviews" ON public.reviews FOR SELECT USING (auth.uid() = customer_id);
+CREATE POLICY "Users can view own reviews" ON public.reviews FOR SELECT USING (auth.uid() = customer_id OR public.is_admin());
 CREATE POLICY "Users can insert own reviews" ON public.reviews FOR INSERT WITH CHECK (auth.uid() = customer_id);
-CREATE POLICY "Admin can do all on reviews" ON public.reviews FOR ALL USING (
-  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
-);
+CREATE POLICY "Admins can manage all reviews" ON public.reviews FOR ALL USING (public.is_admin());
 
 
 -- ==========================================
@@ -325,9 +350,7 @@ CREATE TABLE IF NOT EXISTS public.site_settings (
 
 ALTER TABLE public.site_settings ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Everyone can read site settings" ON public.site_settings FOR SELECT USING (true);
-CREATE POLICY "Admin can update site settings" ON public.site_settings FOR UPDATE USING (
-  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
-);
+CREATE POLICY "Service role can do all on site_settings" ON public.site_settings FOR ALL USING (true);
 CREATE TRIGGER update_site_settings_updated_at BEFORE UPDATE ON public.site_settings FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 

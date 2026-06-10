@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { API_BASE } from "../config";
+import { createInquiry } from '../services/inquiryService';
+import { useAuth } from '../auth/AuthContext';
+import AuthGate from '../components/AuthGate';
 
 const TRANSLATIONS = {
   hi: {
@@ -133,6 +135,7 @@ const TRANSLATIONS = {
 
 export default function Home({ language }) {
   const navigate = useNavigate();
+  const { user: authUser, profile } = useAuth();
   const t = TRANSLATIONS[language];
 
   const heroImages = [
@@ -176,27 +179,18 @@ export default function Home({ language }) {
     setStatusMsg('');
 
     try {
-      const response = await fetch(`${API_BASE}/api/submit_contact.php`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          phone: formData.phone,
-          requirements: formData.requirements
-        })
+      await createInquiry({
+        customer_name: formData.name,
+        customer_phone: formData.phone,
+        message: formData.requirements,
+        source: 'contact_form',
+        subject: 'Quick Quote Request from Homepage',
+        customer_id: profile?.id || null
       });
       
-      const result = await response.json();
-      if (result.success) {
-        setIsSuccess(true);
-        setStatusMsg(t.successMsg);
-        setFormData({ name: '', phone: '', requirements: '' });
-      } else {
-        setIsSuccess(false);
-        setStatusMsg(result.message || (language === 'hi' ? 'अनुरोध भेजने में त्रुटि हुई।' : 'Error submitting request.'));
-      }
+      setIsSuccess(true);
+      setStatusMsg(t.successMsg);
+      setFormData({ name: '', phone: '', requirements: '' });
     } catch (err) {
       console.error(err);
       setIsSuccess(false);
@@ -399,6 +393,7 @@ export default function Home({ language }) {
 </div>
 </section>
 {/*  Testimonials & Contact Strip  */}
+<AuthGate language={language}>
 <section className="py-16 md:py-24 px-gutter max-w-container-max mx-auto">
 <div className="max-w-3xl mx-auto">
 <div className="bg-inverse-surface text-inverse-on-surface p-6 sm:p-10 rounded-2xl shadow-2xl">
@@ -427,6 +422,7 @@ export default function Home({ language }) {
 </div>
 </div>
 </section>
+</AuthGate>
 
     </div>
   );

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { API_BASE } from "../config";
+import { useAuth } from '../auth/AuthContext';
+
 
 const TRANSLATIONS = {
   hi: {
@@ -111,16 +111,12 @@ export default function Order({ language }) {
   const [isSuccess, setIsSuccess] = useState(false);
 
   useEffect(() => {
-    // Fetch products dynamically from the database
-    fetch(`${API_BASE}/api/get_products.php`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.success && data.products) {
-          setProductList(data.products);
-          
+    import('../services/productService').then(({ getProductsByDivision }) => {
+      getProductsByDivision('building_materials')
+        .then(data => {
+          setProductList(data);
           if (location.state && location.state.selectedProduct) {
-            // Find if the selected product exists in the DB
-            const preSelected = data.products.find(p => p.name_en === location.state.selectedProduct || p.name_hi === location.state.selectedProduct);
+            const preSelected = data.find(p => p.name_en === location.state.selectedProduct || p.name_hi === location.state.selectedProduct);
             if (preSelected) {
               setCurrentItem(prev => ({
                 ...prev,
@@ -128,29 +124,29 @@ export default function Order({ language }) {
               }));
             }
           }
-        }
-      })
-      .catch(err => console.error("Error fetching products:", err));
-
-    // Removed old localStorage prefill logic; now handled by dbUser effect
+        })
+        .catch(err => console.error("Error fetching products:", err));
+    });
   }, [location.state]);
 
-  const { dbUser } = useAuth();
+  const { profile } = useAuth();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    if (dbUser) {
+    if (profile) {
       setIsLoggedIn(true);
       setFormData(prev => ({
         ...prev,
-        customer_name: dbUser.full_name || prev.customer_name,
-        phone: dbUser.phone || prev.phone,
-        city: dbUser.city || prev.city
+        customer_name: profile.full_name || prev.customer_name,
+        phone: profile.phone || prev.phone,
+        city: profile.city || prev.city,
+        address: profile.address || prev.address
       }));
+      console.log("PROFILE LOADED:", profile);
     } else {
       setIsLoggedIn(false);
     }
-  }, [dbUser]);
+  }, [profile]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -178,16 +174,16 @@ export default function Order({ language }) {
     }
     
     // Find product details
-    const selectedProd = productList.find(p => p.id == currentItem.product_type);
+    const selectedProd = productList.find(p => p.id === currentItem.product_type);
     
     setCart([...cart, {
       id: Date.now(),
       product_id: currentItem.product_type,
       product_name: selectedProd ? selectedProd.name_en : currentItem.product_type,
       sub_type: currentItem.sub_type,
-      quantity: currentItem.quantity,
-      price: selectedProd ? selectedProd.price : 'N/A',
-      image_url: selectedProd ? selectedProd.image_url : ''
+      quantity: parseInt(currentItem.quantity),
+      price: selectedProd ? selectedProd.price_min : 0,
+      image_url: selectedProd && selectedProd.images && selectedProd.images.length > 0 ? selectedProd.images[0] : ''
     }]);
 
     setCurrentItem({
@@ -203,7 +199,7 @@ export default function Order({ language }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.customer_name || !formData.phone || !formData.address) {
+    if (!formData.customer_name || !formData.phone || !formData.address || !formData.city) {
       setStatusMsg(t.requiredErr);
       setIsSuccess(false);
       return;
@@ -219,15 +215,15 @@ export default function Order({ language }) {
 
     // Auto-add product if they forgot to click "Add to List"
     if (currentItem.product_type && currentItem.quantity) {
-      const selectedProd = productList.find(p => p.id == currentItem.product_type);
+      const selectedProd = productList.find(p => p.id === currentItem.product_type);
       finalCart.push({
         id: Date.now(),
         product_id: currentItem.product_type,
         product_name: selectedProd ? selectedProd.name_en : currentItem.product_type,
         sub_type: currentItem.sub_type,
-        quantity: currentItem.quantity,
-        price: selectedProd ? selectedProd.price : 'N/A',
-        image_url: selectedProd ? selectedProd.image_url : ''
+        quantity: parseInt(currentItem.quantity),
+        price: selectedProd ? selectedProd.price_min : 0,
+        image_url: selectedProd && selectedProd.images && selectedProd.images.length > 0 ? selectedProd.images[0] : ''
       });
       setCart(finalCart);
       setCurrentItem({ product_type: '', sub_type: '', quantity: '' });
@@ -243,29 +239,34 @@ export default function Order({ language }) {
     setStatusMsg('');
 
     try {
-      // Total quantity representation for DB fallback
-      const totalQty = finalCart.reduce((acc, item) => acc + parseInt(item.quantity || 0), 0);
-
-      const response = await fetch(`${API_BASE}/api/submit_order.php`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...formData,
-          product_type: finalCart, // Sending cart array to the backend JSON storage
-          quantity: totalQty
-        })
-      });
+      const { createOrder } = await import('../services/orderService');
+      const { notifyNewOrder } = await import('../services/whatsappService');
       
-      if (response.status !== 200) {
-        throw new Error(`HTTP Error ${response.status}`);
-      }
+      const totalAmount = finalCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
-      const result = await response.json();
-      if (result.success) {
+      const orderData = {
+        customer_id: profile ? profile.id : null,
+        customer_name: formData.customer_name,
+        customer_phone: formData.phone,
+        delivery_address: formData.address,
+        delivery_city: formData.city,
+        items: finalCart,
+        subtotal: totalAmount,
+        total_amount: totalAmount,
+        admin_notes: formData.special_req || null
+      };
+
+      const result = await createOrder(orderData);
+      
+      if (result) {
         setIsSuccess(true);
-        setStatusMsg(t.successMsg + result.order_id + t.successMsgEnd);
+        setStatusMsg(t.successMsg + result.order_number + t.successMsgEnd);
+        
+        // Try to open WhatsApp but catch if popup blocked
+        try {
+          notifyNewOrder(result);
+        } catch(e) {}
+        
         setFormData({
           customer_name: '',
           phone: '',
@@ -275,8 +276,7 @@ export default function Order({ language }) {
         });
         setCart([]);
       } else {
-        setIsSuccess(false);
-        setStatusMsg(result.message || t.failMsg);
+        throw new Error('Order creation failed');
       }
     } catch (err) {
       console.error(err);
@@ -424,12 +424,11 @@ export default function Order({ language }) {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className={`bg-surface border border-outline/20 p-4 rounded-lg outline-none transition-all ${isLoggedIn ? 'opacity-70 cursor-not-allowed bg-surface-variant' : 'focus:ring-2 focus:ring-primary focus:border-primary'}`} 
+                    className="bg-surface border border-outline/20 p-4 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" 
                     placeholder="9876543210" 
                     maxLength={10}
                     type="tel"
                     required
-                    readOnly={isLoggedIn}
                   />
                 </div>
               </div>

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { API_BASE } from "../../config";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../auth/AuthContext";
+import { createProduct, updateProduct, deleteProduct } from "../../services/productService";
+import { uploadImage } from "../../services/uploadService";
 
 export default function InventoryShuttering({ language, products, fetchProducts, user }) {
-  const { authFetch } = useAuth();
   const isHindi = language === 'hi';
   
   // Find raw materials from product list to show live levels
@@ -45,30 +45,19 @@ export default function InventoryShuttering({ language, products, fetchProducts,
       return;
     }
 
-    const selectedProd = products.find(p => p.id === selectedProductId);
-    const newStock = Math.max(0, parseInt(selectedProd.stock) + parseInt(adjustmentValue));
+    const selectedProd = products.find(p => String(p.id) === String(selectedProductId));
+    if (!selectedProd) return;
+    
+    const newStock = Math.max(0, parseInt(selectedProd.stock_quantity || selectedProd.stock) + parseInt(adjustmentValue));
 
     try {
-      const response = await authFetch(`${API_BASE}/api/save_product.php`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...selectedProd,
-          stock: newStock,
-          admin_phone: user?.phone
-        })
-      });
-      const result = await response.json();
-      if (result.success) {
-        setSubmitStatus('Inventory stock level updated successfully.');
-        setIsSuccess(true);
-        setAdjustmentValue('');
-        setReason('');
-        fetchProducts();
-      } else {
-        setSubmitStatus(result.message || 'Failed to update stock.');
-        setIsSuccess(false);
-      }
+      await updateProduct(selectedProd.id, { stock_quantity: newStock });
+      
+      setSubmitStatus('Inventory stock level updated successfully.');
+      setIsSuccess(true);
+      setAdjustmentValue('');
+      setReason('');
+      fetchProducts();
     } catch (err) {
       console.error(err);
       setSubmitStatus('Server error during inventory update.');
@@ -87,52 +76,40 @@ export default function InventoryShuttering({ language, products, fetchProducts,
 
   const handleSaveShut = async (e) => {
     e.preventDefault();
-    if (!shutForm.name_en || !shutForm.product_key) {
-      setShutStatus('Key and English Name are required.'); return;
+    if (!shutForm.name_en) {
+      setShutStatus('English Name is required.'); return;
     }
     try {
       let finalImageUrl = shutForm.image_url;
       if (shutForm.imageFile) {
-        const formData = new FormData();
-        formData.append('image', shutForm.imageFile);
-        const uploadRes = await authFetch(`${API_BASE}/api/upload_image.php`, { method: 'POST', body: formData });
-        const uploadData = await uploadRes.json();
-        if (uploadData.success) {
-          finalImageUrl = uploadData.url;
-        } else {
-          setShutStatus(uploadData.message || 'Image upload failed.'); return;
+        try {
+          finalImageUrl = await uploadImage(shutForm.imageFile, 'shuttering');
+        } catch (err) {
+          setShutStatus('Image upload failed.'); return;
         }
       }
 
-      const uploadedVariants = [];
-      if (shutForm.variants && Array.isArray(shutForm.variants)) {
-        for (let v of shutForm.variants) {
-          let vImageUrl = v.image_url;
-          if (v.imageFile) {
-            const formData = new FormData();
-            formData.append('image', v.imageFile);
-            const uploadRes = await authFetch(`${API_BASE}/api/upload_image.php`, { method: 'POST', body: formData });
-            const uploadData = await uploadRes.json();
-            if (uploadData.success) {
-              vImageUrl = uploadData.url;
-            }
-          }
-          uploadedVariants.push({ name: v.name, image_url: vImageUrl });
-        }
-      }
-      const response = await authFetch(`${API_BASE}/api/save_product.php`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...shutForm, image_url: finalImageUrl, variants: uploadedVariants, admin_phone: user?.phone })
-      });
-      const result = await response.json();
-      if (result.success) {
-        setShutStatus(isEditingShut ? 'Item updated!' : 'Item added!');
-        fetchProducts();
-        handleCancelShut();
+      const productData = {
+        name_en: shutForm.name_en,
+        name_hi: shutForm.name_hi,
+        description_en: shutForm.desc_en,
+        description_hi: shutForm.desc_hi,
+        price_min: shutForm.price, 
+        price_max: shutForm.price,
+        stock_quantity: shutForm.stock,
+        division: 'shuttering',
+        images: finalImageUrl ? [finalImageUrl] : []
+      };
+
+      if (isEditingShut && shutForm.id) {
+        await updateProduct(shutForm.id, productData);
       } else {
-        setShutStatus(result.message || 'Failed to save item.');
+        await createProduct(productData);
       }
+      
+      setShutStatus(isEditingShut ? 'Item updated!' : 'Item added!');
+      fetchProducts();
+      handleCancelShut();
     } catch (err) {
       console.error(err);
       setShutStatus('Server error saving item.');
@@ -150,20 +127,11 @@ export default function InventoryShuttering({ language, products, fetchProducts,
   const handleDeleteShut = async (id) => {
     if (!window.confirm('Are you sure you want to delete this shuttering item?')) return;
     try {
-      const response = await authFetch(`${API_BASE}/api/delete_product.php`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, admin_phone: user?.phone })
-      });
-      const result = await response.json();
-      if (result.success) {
-        fetchProducts();
-      } else {
-        alert(result.message || 'Failed to delete item.');
-      }
+      await deleteProduct(id);
+      fetchProducts();
     } catch (err) {
       console.error(err);
-      alert('Server error deleting item.');
+      alert('Failed to delete item.');
     }
   };
 

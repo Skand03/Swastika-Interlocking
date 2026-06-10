@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { API_BASE } from "../config";
+import { getAllProducts } from '../services/productService';
+import { createInquiry } from '../services/inquiryService';
 
 const CATALOG = {
   zigzag: {
@@ -177,40 +178,50 @@ export default function ProductDetail({ language }) {
 
   // Sync state when URL parameter changes
   useEffect(() => {
-    fetch(`${API_BASE}/api/get_products.php`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.success && data.products) {
-          const found = data.products.find(p => p.product_key === id);
+    const fetchLiveProduct = async () => {
+      try {
+        const data = await getAllProducts();
+        if (data) {
+          const found = data.find(p => String(p.id) === id);
           if (found) {
+            // Read specifications jsonb — admin saves specs inside this field
+            const specs = found.specifications || {};
             setLiveProduct({
-              id: found.product_key,
+              id: found.id,
               nameEn: found.name_en,
-              nameHi: found.name_hi,
-              price: found.price,
-              unit: 'sq.ft',
+              nameHi: found.name_hi || found.name_en,
+              price: found.price_min && found.price_max
+                ? found.price_min === found.price_max
+                  ? `₹${found.price_min}`
+                  : `₹${found.price_min} – ₹${found.price_max}`
+                : found.price_min ? `₹${found.price_min}` : '—',
+              unit: found.price_unit || 'piece',
               moq: 100,
-              descEn: found.desc_en,
-              descHi: found.desc_hi,
-              images: [found.image_url, found.image_url],
+              descEn: found.description_en || '',
+              descHi: found.description_hi || found.description_en || '',
+              // images[] array from DB
+              images: found.images && found.images.length > 0
+                ? found.images
+                : [],
               specs: {
-                thickness: '60mm - 80mm',
-                weight: 'Varies',
-                strength: 'M30 - M40 Grade',
-                color: 'Various colors',
-                application: found.category,
-                material: 'Concrete Mix'
+                thickness: specs.thickness || '—',
+                weight: specs.weight || '—',
+                strength: specs.strength || '—',
+                color: specs.color || '—',
+                application: specs.application || '—',
+                material: specs.material || '—',
               }
             });
           } else {
             setLiveProduct(null);
           }
         }
-      })
-      .catch(err => {
+      } catch (err) {
         console.error("Error fetching live product detail:", err);
         setLiveProduct(null);
-      });
+      }
+    };
+    fetchLiveProduct();
   }, [id]);
 
   const productKey = id && CATALOG[id] ? id : 'zigzag';
@@ -255,30 +266,19 @@ export default function ProductDetail({ language }) {
     setStatusMsg('');
 
     try {
-      // Send inquiry to contact messages API
-      const response = await fetch(`${API_BASE}/api/submit_order.php`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          customer_name: formData.name,
-          phone: formData.phone,
-          city: formData.city || 'Inquiry',
-          product_type: product.nameEn,
-          quantity: quantity,
-          address: 'Product Detail Quick Inquiry Form',
-          special_req: `Quick quote inquiry for ${product.nameEn} (Qty: ${quantity}). City: ${formData.city}`
-        })
+      // Send inquiry
+      await createInquiry({
+        customer_name: formData.name,
+        customer_phone: formData.phone,
+        city: formData.city || 'Inquiry',
+        source: 'contact_form',
+        subject: `Quick quote inquiry for ${product.nameEn} (Qty: ${quantity})`,
+        message: `Product: ${product.nameEn}\nQuantity: ${quantity}\nCity: ${formData.city}`
       });
 
-      const result = await response.json();
-      if (result.success) {
-        setIsSuccess(true);
-        setStatusMsg(t.successMsg);
-        setFormData({ name: '', phone: '', city: '' });
-      } else {
-        setIsSuccess(false);
-        setStatusMsg(result.message || 'Error sending inquiry.');
-      }
+      setIsSuccess(true);
+      setStatusMsg(t.successMsg);
+      setFormData({ name: '', phone: '', city: '' });
     } catch (err) {
       console.error(err);
       setIsSuccess(false);
@@ -308,16 +308,24 @@ export default function ProductDetail({ language }) {
           {/* Left panel: Image selector */}
           <div className="space-y-6">
             <div className="relative aspect-[4/3] w-full border border-outline/20 rounded-xl overflow-hidden bg-surface-container-low flex items-center justify-center shadow-inner">
-              <img 
-                alt={product.nameEn} 
-                className="w-full h-full object-cover transition-all duration-300" 
-                src={activeImage} 
-              />
+              {activeImage ? (
+                <img
+                  alt={product.nameEn}
+                  className="w-full h-full object-cover transition-all duration-300"
+                  src={activeImage}
+                  onError={e => { e.target.style.display = 'none'; }}
+                />
+              ) : (
+                <div className="flex flex-col items-center gap-3 text-gray-300">
+                  <span className="material-symbols-outlined text-6xl">image_not_supported</span>
+                  <span className="text-sm font-medium">No image available</span>
+                </div>
+              )}
             </div>
-            {product.images.length > 1 && (
+            {product.images && product.images.filter(Boolean).length > 1 && (
               <div className="grid grid-cols-3 gap-4">
-                {product.images.map((img, idx) => (
-                  <div 
+                {product.images.filter(Boolean).map((img, idx) => (
+                  <div
                     key={idx}
                     onClick={() => setActiveImage(img)}
                     className={`aspect-square rounded-lg border overflow-hidden cursor-pointer transition-all ${

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 const TRANSLATIONS = {
   hi: {
     title: 'हमारे बारे में',
-    subtitle: 'Gajpur Kauriram, Uttar Pradesh का विश्वसनीय निर्माण साथी',
+    subtitle: 'Girdharpur Uncher, Kauriram, Uttar Pradesh का विश्वसनीय निर्माण साथी',
     ourStory: 'हमारी कहानी',
     ourStoryTitle: 'हमारी कहानी',
     storyText1: 'स्वस्तिका इंटरलॉकिंग गजपुर कौड़ीराम, उत्तर प्रदेश के केंद्र में स्थित एक गर्वित पारिवारिक व्यवसाय है। 1990 के दशक से, हम अपने समुदाय की नींव को अटूट ईमानदारी के साथ बनाने के लिए प्रतिबद्ध हैं।',

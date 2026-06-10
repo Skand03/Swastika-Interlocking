@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { API_BASE } from "../config";
+import { useAuth } from '../auth/AuthContext';
+import { createInquiry } from '../services/inquiryService';
+import AuthGate from '../components/AuthGate';
 
 const TRANSLATIONS = {
   hi: {
@@ -25,14 +26,14 @@ const TRANSLATIONS = {
 };
 
 export default function ShutteringEnquiry({ language }) {
-  const { dbUser } = useAuth();
+  const { profile } = useAuth();
   const [formData, setFormData] = React.useState({ 
-    customer_name: dbUser ? dbUser.full_name : '', 
-    phone: dbUser ? dbUser.phone : '', 
-    city: dbUser ? dbUser.city : '', 
+    customer_name: profile ? profile.full_name : '', 
+    phone: profile ? profile.phone : '', 
+    city: profile ? profile.city : '', 
     product_type: 'Shuttering Enquiry', 
     quantity: '', 
-    address: dbUser && dbUser.address ? dbUser.address : '', 
+    address: profile && profile.address ? profile.address : '', 
     special_req: '' 
   });
   const [orderType, setOrderType] = React.useState('Rent');
@@ -43,16 +44,16 @@ export default function ShutteringEnquiry({ language }) {
 
   // Update form if user logs in after page load
   useEffect(() => {
-    if (dbUser) {
+    if (profile) {
       setFormData(prev => ({
         ...prev,
-        customer_name: prev.customer_name || dbUser.full_name,
-        phone: prev.phone || dbUser.phone,
-        city: prev.city || dbUser.city,
-        address: prev.address || (dbUser.address || '')
+        customer_name: prev.customer_name || profile.full_name,
+        phone: prev.phone || profile.phone,
+        city: prev.city || profile.city,
+        address: prev.address || (profile.address || '')
       }));
     }
-  }, [dbUser]);
+  }, [profile]);
 
   // Auto-fill from product details page
   useEffect(() => {
@@ -105,24 +106,20 @@ export default function ShutteringEnquiry({ language }) {
     }
     setLoading(true); setStatusMsg('');
     try {
-      const response = await fetch(`${API_BASE}/api/submit_order.php`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
-          ...formData,
-          product_type: `${formData.product_type} - [WANTS TO ${orderType.toUpperCase()}]`
-        })
+      await createInquiry({
+        customer_name: formData.customer_name,
+        customer_phone: formData.phone,
+        customer_id: profile?.id || null,
+        city: formData.city,
+        message: `${formData.product_type} - [WANTS TO ${orderType.toUpperCase()}] | Qty: ${formData.quantity} | Site: ${formData.address} | Notes: ${formData.special_req}`,
+        source: 'shuttering_enquiry',
+        division: 'shuttering',
+        subject: `Shuttering ${orderType} Request`,
+        budget_range: formData.quantity
       });
-
-      if (response.status !== 200) {
-        throw new Error(`HTTP Error ${response.status}`);
-      }
-
-      const result = await response.json();
-      if(result.success) {
-        setIsSuccess(true); setStatusMsg(language === 'hi' ? 'आपका अनुरोध दर्ज कर लिया गया है।' : 'Your request has been submitted successfully.');
-        setFormData({ customer_name: '', phone: '', city: '', product_type: 'Shuttering Enquiry', quantity: '', address: '', special_req: '' });
-      } else {
-        setIsSuccess(false); setStatusMsg(result.message || 'Error occurred.');
-      }
+      setIsSuccess(true);
+      setStatusMsg(language === 'hi' ? 'आपका अनुरोध दर्ज कर लिया गया है।' : 'Your request has been submitted successfully.');
+      setFormData({ customer_name: '', phone: '', city: '', product_type: 'Shuttering Enquiry', quantity: '', address: '', special_req: '' });
     } catch(err) { 
       setIsSuccess(false); 
       setStatusMsg((language === 'hi' ? 'कनेक्शन एरर: ' : 'Connection Error: ') + err.message); 
@@ -134,6 +131,7 @@ export default function ShutteringEnquiry({ language }) {
   const navigate = useNavigate();
 
   return (
+    <AuthGate language={language}>
     <div className="pt-16">
       
 {/*  Hero Banner  */}
@@ -303,5 +301,6 @@ export default function ShutteringEnquiry({ language }) {
 </div>
 </main>
     </div>
+    </AuthGate>
   );
 }

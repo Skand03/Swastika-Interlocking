@@ -6,9 +6,9 @@ export default function InquiriesManagement({ language, inquiries }) {
   const [selectedInquiry, setSelectedInquiry] = useState(null);
 
   const filteredInquiries = inquiries.filter(inq => 
-    inq.name?.toLowerCase().includes(search.toLowerCase()) ||
-    inq.phone?.includes(search) ||
-    inq.requirements?.toLowerCase().includes(search.toLowerCase())
+    (inq.customer_name || inq.name)?.toLowerCase().includes(search.toLowerCase()) ||
+    (inq.customer_phone || inq.phone)?.includes(search) ||
+    (inq.requirements || inq.message)?.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -60,10 +60,10 @@ export default function InquiriesManagement({ language, inquiries }) {
                       {inq.created_at ? inq.created_at.split(' ')[0] : 'N/A'}
                     </td>
                     <td className="px-6 py-4 font-bold text-[#1a1a3e] whitespace-nowrap">
-                      {inq.name}
+                      {inq.customer_name || inq.name}
                     </td>
                     <td className="px-6 py-4 text-xs">
-                      <div className="font-semibold">{inq.phone}</div>
+                      <div className="font-semibold">{inq.customer_phone || inq.phone}</div>
                     </td>
                     <td className="px-6 py-4">
                       {inq.image_path && (
@@ -75,8 +75,8 @@ export default function InquiriesManagement({ language, inquiries }) {
                       )}
                     </td>
                     <td className="px-6 py-4">
-                      <p className="line-clamp-2 text-on-surface-variant text-sm" title={inq.requirements}>
-                        {inq.requirements}
+                      <p className="line-clamp-2 text-on-surface-variant text-sm" title={inq.requirements || inq.message}>
+                        {inq.requirements || inq.message}
                       </p>
                     </td>
                   </tr>

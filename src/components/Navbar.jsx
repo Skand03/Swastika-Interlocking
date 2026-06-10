@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../auth/AuthContext';
 
 const TRANSLATIONS = {
   hi: {
@@ -32,9 +32,8 @@ const TRANSLATIONS = {
 export default function Navbar({ language, setLanguage }) {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
-  const { dbUser, logout } = useAuth();
+  const { profile, signOut } = useAuth();
   
-  // Use English text by default for the navbar to match the screenshot exactly
   const t = TRANSLATIONS['en'];
 
   const isLinkActive = (path) => {
@@ -46,10 +45,10 @@ export default function Navbar({ language, setLanguage }) {
     return `pb-1 text-sm font-medium transition-colors ${isActive ? 'text-white border-b-2 border-white/60' : 'text-white/80 hover:text-white'}`;
   };
 
-  const loggedInUser = dbUser;
+  const loggedInUser = profile;
 
   const handleLogout = async () => {
-    await logout();
+    await signOut();
     window.location.href = '#/';
     window.location.reload();
   };

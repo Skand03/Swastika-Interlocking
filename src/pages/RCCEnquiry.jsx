@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { API_BASE } from "../config";
+import { createInquiry } from '../services/inquiryService';
+import { useAuth } from '../auth/AuthContext';
+import AuthGate from '../components/AuthGate';
 
 const TRANSLATIONS = {
   hi: {
@@ -26,7 +28,17 @@ const STATE_DISTRICTS = {
 };
 
 export default function RCCEnquiry({ language }) {
-  const [formData, setFormData] = React.useState({ customer_name: '', phone: '', state: '', city: '', product_type: 'RCC Project', quantity: '', address: '', special_req: '' });
+  const { profile } = useAuth();
+  const [formData, setFormData] = React.useState({ 
+    customer_name: profile?.full_name || '', 
+    phone: profile?.phone || '', 
+    state: '', 
+    city: '', 
+    product_type: 'RCC Project', 
+    quantity: '', 
+    address: '', 
+    special_req: '' 
+  });
   const [statusMsg, setStatusMsg] = React.useState('');
   const [loading, setLoading] = React.useState(false);
   const [isSuccess, setIsSuccess] = React.useState(false);
@@ -51,28 +63,19 @@ export default function RCCEnquiry({ language }) {
     }
     setLoading(true); setStatusMsg('');
     try {
-      const payload = new FormData();
-      Object.entries(formData).forEach(([key, value]) => {
-        payload.append(key, value);
+      await createInquiry({
+        customer_name: formData.customer_name,
+        customer_phone: formData.phone,
+        customer_id: profile?.id || null,
+        city: formData.city,
+        message: `RCC Road Project Enquiry | Type: ${formData.product_type} | Road Length: ${formData.quantity}m | Location: ${formData.address}, ${formData.city}, ${formData.state} | Notes: ${formData.special_req}`,
+        source: 'rcc_enquiry',
+        division: 'rcc',
+        subject: `RCC Road Project - ${formData.product_type}`,
       });
-      if (selectedFile) {
-        payload.append('site_photo', selectedFile);
-      }
-      const response = await fetch(`${API_BASE}/api/submit_order.php`, {
-        method: 'POST',
-        body: payload
-      });
-      if (response.status !== 200) {
-        throw new Error(`HTTP Error ${response.status}`);
-      }
-      const result = await response.json();
-      if(result.success) {
-        setIsSuccess(true); setStatusMsg(language === 'hi' ? 'आपका अनुरोध दर्ज कर लिया गया है।' : 'Your request has been submitted successfully.');
-        setFormData({ customer_name: '', phone: '', state: '', city: '', product_type: 'RCC Project', quantity: '', address: '', special_req: '' });
-        navigate('/rcc-roads#projects'); // Redirect to RCC Roads project section after successful enquiry
-      } else {
-        setIsSuccess(false); setStatusMsg(result.message || 'Error occurred.');
-      }
+      setIsSuccess(true);
+      setStatusMsg(language === 'hi' ? 'आपका अनुरोध दर्ज कर लिया गया है।' : 'Your request has been submitted successfully.');
+      setFormData({ customer_name: '', phone: '', state: '', city: '', product_type: 'RCC Project', quantity: '', address: '', special_req: '' });
     } catch(err) { setIsSuccess(false); setStatusMsg((language === 'hi' ? 'कनेक्शन एरर: ' : 'Connection Error: ') + err.message); }
     finally { setLoading(false); }
   };
@@ -81,6 +84,7 @@ export default function RCCEnquiry({ language }) {
   const navigate = useNavigate();
 
   return (
+    <AuthGate language={language}>
     <div className="pt-16">
       
 {/*  Main Content Layout  */}
@@ -271,7 +275,7 @@ export default function RCCEnquiry({ language }) {
 <span className="material-symbols-outlined text-primary">location_on</span>
 <div>
 <p className="font-bold">Address</p>
-<p className="text-on-surface-variant text-sm">Industrial Area Phase II, Govindpura, Bhopal, MP 462023</p>
+<p className="text-on-surface-variant text-sm">Girdharpur Uncher, Kauriram, Uttar Pradesh</p>
 </div>
 </div>
 <div className="flex gap-4">
@@ -287,12 +291,18 @@ export default function RCCEnquiry({ language }) {
                         </button>
 </div>
 </div>
-{/*  Google Map Placeholder  */}
-<div className="rounded-xl border-2 border-dashed border-outline-variant overflow-hidden aspect-square relative group">
-<img className="w-full h-full object-cover" data-alt="A stylized digital map interface showing a pinpoint in Bhopal, India, specifically highlighting an industrial zone. The map is designed with warm cream and charcoal tones to match the corporate UI. It includes simplified geometric representations of surrounding urban infrastructure and greenery, emphasizing a professional geographic location display." data-location="Bhopal" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIBv6qlOUYhXnTb-hkAr8xiKxuY1M8OEL4LP_cO92IdryqTWus-ruiTkqM15TDCTi6ZVZqoK-5DFRWbBk07obPQsWecLlnsY0Xcz1_gU0rukK6-4nRZmEWGVYxaKPjD1NAc3yjsVkJUWlAqWUoMl3XVzK1hZrmC0KK3TQmT088hu3DLSngxkOhLEbJHXgbos6CD3-v1pIj4lv13TxiulZBeK3Khsm2zVy5ASHxJ-hbGHKFYU3NzTHktOmjgIMS4mikyaAJDswx1Bg"/>
-<div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-<span className="bg-white text-on-surface px-4 py-2 rounded-full font-bold shadow-xl">Open in Maps</span>
-</div>
+{/*  Google Map  */}
+<div className="rounded-xl overflow-hidden aspect-square relative border border-outline-variant">
+<iframe
+  src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3570.661898870162!2d83.44953537542526!3d26.49882887689632!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMjbCsDI5JzU1LjgiTiA4M8KwMjcnMDcuNiJF!5e0!3m2!1sen!2sin!4v1780881087813!5m2!1sen!2sin"
+  width="100%"
+  height="100%"
+  style={{border: 0, minHeight: '300px'}}
+  allowFullScreen=""
+  loading="lazy"
+  referrerPolicy="no-referrer-when-downgrade"
+  title="Swastika Interlocking Location"
+></iframe>
 </div>
 {/*  Trust Badge Card  */}
 <div className="bg-secondary-container/10 p-card-padding rounded-xl border border-secondary/20">
@@ -308,5 +318,6 @@ export default function RCCEnquiry({ language }) {
 {/*  Footer  */}
 
     </div>
+    </AuthGate>
   );
 }
