@@ -127,13 +127,11 @@ export function AuthProvider({ children }) {
         }
       }
       
-      // If no profile found, log the user out
-      await supabase.auth.signOut();
+      // If no profile found, don't sign out, just set profile to null
       setProfile(null);
     } catch (err) {
       console.error('Error fetching profile:', err);
-      // If something goes wrong, log the user out
-      await supabase.auth.signOut();
+      // Don't sign out on error, just set profile to null
       setProfile(null);
     }
   };
