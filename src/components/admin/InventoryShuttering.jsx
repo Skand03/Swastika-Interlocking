@@ -7,19 +7,19 @@ export default function InventoryShuttering({ language, products, fetchProducts,
   const isHindi = language === 'hi';
   
   // Find raw materials from product list to show live levels
-  const rawMaterials = products.filter(p => p.category === 'Raw Materials');
-  const cementProd = rawMaterials.find(p => p.name_en?.toLowerCase().includes('cement')) || { stock: 140, name_en: 'OPC Cement (Bags)', name_hi: 'ओपीसी सीमेंट (बोरी)' };
-  const sandProd = rawMaterials.find(p => p.name_en?.toLowerCase().includes('sand')) || { stock: 450, name_en: 'Coarse Sand (CFT)', name_hi: 'रेत (CFT)' };
-  const gravelProd = rawMaterials.find(p => p.name_en?.toLowerCase().includes('gravel') || p.name_en?.toLowerCase().includes('grit')) || { stock: 820, name_en: 'Aggregate Gravel (CFT)', name_hi: 'गिट्टी (CFT)' };
+  const rawMaterials = products.filter(p => p.division === 'building_materials' && (p.name_en?.toLowerCase().includes('cement') || p.name_en?.toLowerCase().includes('sand') || p.name_en?.toLowerCase().includes('gravel') || p.name_en?.toLowerCase().includes('grit')));
+  const cementProd = rawMaterials.find(p => p.name_en?.toLowerCase().includes('cement')) || { stock_quantity: 140, name_en: 'OPC Cement (Bags)', name_hi: 'ओपीसी सीमेंट (बोरी)' };
+  const sandProd = rawMaterials.find(p => p.name_en?.toLowerCase().includes('sand')) || { stock_quantity: 450, name_en: 'Coarse Sand (CFT)', name_hi: 'रेत (CFT)' };
+  const gravelProd = rawMaterials.find(p => p.name_en?.toLowerCase().includes('gravel') || p.name_en?.toLowerCase().includes('grit')) || { stock_quantity: 820, name_en: 'Aggregate Gravel (CFT)', name_hi: 'गिट्टी (CFT)' };
 
   // Calculate percentages based on thresholds
-  const cementPct = Math.min(Math.round((cementProd.stock / 500) * 100), 100);
-  const sandPct = Math.min(Math.round((sandProd.stock / 600) * 100), 100);
-  const gravelPct = Math.min(Math.round((gravelProd.stock / 900) * 100), 100);
+  const cementPct = Math.min(Math.round(((cementProd.stock_quantity || 0) / 500) * 100), 100);
+  const sandPct = Math.min(Math.round(((sandProd.stock_quantity || 0) / 600) * 100), 100);
+  const gravelPct = Math.min(Math.round(((gravelProd.stock_quantity || 0) / 900) * 100), 100);
 
-  const isLowCement = cementProd.stock < 200;
-  const isLowSand = sandProd.stock < 250;
-  const isLowGravel = gravelProd.stock < 300;
+  const isLowCement = (cementProd.stock_quantity || 0) < 200;
+  const isLowSand = (sandProd.stock_quantity || 0) < 250;
+  const isLowGravel = (gravelProd.stock_quantity || 0) < 300;
   const hasAlert = isLowCement || isLowSand || isLowGravel;
 
   // Form states for manual stock adjustment
@@ -66,10 +66,10 @@ export default function InventoryShuttering({ language, products, fetchProducts,
   };
 
   // --- SHUTTERING CATALOG CRUD ---
-  const shutteringItems = products.filter(p => p.category === 'Shuttering');
+  const shutteringItems = products.filter(p => p.division === 'shuttering');
   const [shutForm, setShutForm] = useState({
     id: '', product_key: '', name_en: '', name_hi: '', desc_en: '', desc_hi: '',
-    price: '', stock: '', category: 'Shuttering', image_url: '', imageFile: null, variants: []
+    price: '', stock: '', division: 'shuttering', image_url: '', imageFile: null, variants: []
   });
   const [isEditingShut, setIsEditingShut] = useState(false);
   const [shutStatus, setShutStatus] = useState('');
@@ -118,7 +118,25 @@ export default function InventoryShuttering({ language, products, fetchProducts,
 
   const handleEditShut = (item) => {
     setIsEditingShut(true);
-    setShutForm({ ...item, imageFile: null, variants: Array.isArray(item.variants) ? item.variants : [] });
+    const priceStr = item.price_min && item.price_max
+      ? item.price_min === item.price_max
+        ? String(item.price_min)
+        : `${item.price_min}-${item.price_max}`
+      : String(item.price_min || '');
+    setShutForm({ 
+      id: item.id, 
+      product_key: item.id, 
+      name_en: item.name_en, 
+      name_hi: item.name_hi, 
+      desc_en: item.description_en, 
+      desc_hi: item.description_hi, 
+      price: priceStr, 
+      stock: item.stock_quantity, 
+      division: 'shuttering', 
+      image_url: item.images && item.images.length > 0 ? item.images[0] : '', 
+      imageFile: null, 
+      variants: item.specifications?.variants || [] 
+    });
     setShutStatus('');
     const el = document.getElementById('shuttering-catalog-form');
     if (el) el.scrollIntoView({ behavior: 'smooth' });
@@ -137,7 +155,7 @@ export default function InventoryShuttering({ language, products, fetchProducts,
 
   const handleCancelShut = () => {
     setIsEditingShut(false);
-    setShutForm({ id: '', product_key: '', name_en: '', name_hi: '', desc_en: '', desc_hi: '', price: '', stock: '', category: 'Shuttering', image_url: '', imageFile: null, variants: [] });
+    setShutForm({ id: '', product_key: '', name_en: '', name_hi: '', desc_en: '', desc_hi: '', price: '', stock: '', division: 'shuttering', image_url: '', imageFile: null, variants: [] });
   };
 
   return (
@@ -177,7 +195,7 @@ export default function InventoryShuttering({ language, products, fetchProducts,
               <p className="text-on-surface-variant font-bold text-xs uppercase tracking-wide">
                 {isHindi ? 'सीमेंट / Cement' : 'Cement / सीमेंट'}
               </p>
-              <h3 className="font-display font-bold text-2xl mt-1">{cementProd.stock} Bags</h3>
+              <h3 className="font-display font-bold text-2xl mt-1">{cementProd.stock_quantity || 0} Bags</h3>
             </div>
             <span className="p-3 bg-surface-container-highest rounded-xl material-symbols-outlined text-primary">layers</span>
           </div>
@@ -199,7 +217,7 @@ export default function InventoryShuttering({ language, products, fetchProducts,
               <p className="text-on-surface-variant font-bold text-xs uppercase tracking-wide">
                 {isHindi ? 'रेत / Sand' : 'Sand / रेत'}
               </p>
-              <h3 className="font-display font-bold text-2xl mt-1">{sandProd.stock} CFT</h3>
+              <h3 className="font-display font-bold text-2xl mt-1">{sandProd.stock_quantity || 0} CFT</h3>
             </div>
             <span className="p-3 bg-surface-container-highest rounded-xl material-symbols-outlined text-secondary">grain</span>
           </div>
@@ -221,7 +239,7 @@ export default function InventoryShuttering({ language, products, fetchProducts,
               <p className="text-on-surface-variant font-bold text-xs uppercase tracking-wide">
                 {isHindi ? 'गिट्टी / Gravel' : 'Gravel / गिट्टी'}
               </p>
-              <h3 className="font-display font-bold text-2xl mt-1">{gravelProd.stock} CFT</h3>
+              <h3 className="font-display font-bold text-2xl mt-1">{gravelProd.stock_quantity || 0} CFT</h3>
             </div>
             <span className="p-3 bg-surface-container-highest rounded-xl material-symbols-outlined text-[#E8650A]">diamond</span>
           </div>
@@ -502,22 +520,29 @@ export default function InventoryShuttering({ language, products, fetchProducts,
           {shutteringItems.length === 0 ? (
             <p className="col-span-full text-on-surface-variant">No shuttering items found.</p>
           ) : (
-            shutteringItems.map(item => (
-              <div key={item.id} className="border border-outline-variant/30 rounded-xl overflow-hidden hover:shadow-md transition-shadow flex flex-col bg-surface-container-lowest">
-                <img src={item.image_url || '/images/default-product.jpg'} alt={item.name_en} className="w-full h-32 object-cover bg-surface-container" />
-                <div className="p-4 flex-grow flex flex-col">
-                  <h5 className="font-bold">{isHindi ? item.name_hi : item.name_en}</h5>
-                  <div className="flex justify-between items-center my-3 text-xs">
-                    <span className="font-bold text-[#E8650A]">{item.price}</span>
-                    <span className="font-bold bg-surface-variant px-2 py-0.5 rounded">Stock: {item.stock}</span>
-                  </div>
-                  <div className="flex gap-2 mt-auto">
-                    <button onClick={() => handleEditShut(item)} className="flex-grow border border-outline-variant py-1.5 rounded hover:border-secondary transition-colors text-xs font-bold">Edit</button>
-                    <button onClick={() => handleDeleteShut(item.id)} className="px-3 border border-red-200 text-error rounded hover:bg-red-50 transition-colors material-symbols-outlined text-sm">delete</button>
+            shutteringItems.map(item => {
+              const priceStr = item.price_min && item.price_max
+                ? item.price_min === item.price_max
+                  ? String(item.price_min)
+                  : `${item.price_min}-${item.price_max}`
+                : String(item.price_min || '');
+              return (
+                <div key={item.id} className="border border-outline-variant/30 rounded-xl overflow-hidden hover:shadow-md transition-shadow flex flex-col bg-surface-container-lowest">
+                  <img src={(item.images && item.images.length > 0 ? item.images[0] : '/images/default-product.jpg')} alt={item.name_en} className="w-full h-32 object-cover bg-surface-container" />
+                  <div className="p-4 flex-grow flex flex-col">
+                    <h5 className="font-bold">{isHindi ? (item.name_hi || item.name_en) : item.name_en}</h5>
+                    <div className="flex justify-between items-center my-3 text-xs">
+                      <span className="font-bold text-[#E8650A]">{priceStr}</span>
+                      <span className="font-bold bg-surface-variant px-2 py-0.5 rounded">Stock: {item.stock_quantity || 0}</span>
+                    </div>
+                    <div className="flex gap-2 mt-auto">
+                      <button onClick={() => handleEditShut(item)} className="flex-grow border border-outline-variant py-1.5 rounded hover:border-secondary transition-colors text-xs font-bold">Edit</button>
+                      <button onClick={() => handleDeleteShut(item.id)} className="px-3 border border-red-200 text-error rounded hover:bg-red-50 transition-colors material-symbols-outlined text-sm">delete</button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
       </section>

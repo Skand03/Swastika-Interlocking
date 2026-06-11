@@ -40,7 +40,7 @@ export default function NotFound({ language }) {
           className="bg-surface text-primary border-2 border-primary/20 px-8 py-3 rounded-full font-bold hover:border-primary active:scale-95 transition-all flex items-center justify-center gap-2"
         >
           <span className="material-symbols-outlined text-sm">category</span>
-          {isHi ? 'उत्पाद देखें' : 'View Products'}
+          {isHi ? 'निर्माण सामग्री देखें' : 'View Building Materials'}
         </Link>
       </div>
     </div>

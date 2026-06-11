@@ -12,7 +12,7 @@ const CATALOG = {
     images: ['https://lh3.googleusercontent.com/aida-public/AB6AXuDA-SM7Qe-nP_Tkzlsjs6Sp4wXka5GxYLj2Znx1fbMS8bzC36BXGiV0ez7X-CR0hX3UlQ7We4WZERCP00VlPnmqpEhy58pLMJ2DBrlPb9JJqOrEbmKDcLWv30QhAzBiBHjuGzNEguwp5c3L7rdkOmbwS3sKn_B0MxuLRevVACZyj53PcMMn1AjVx80_O2gi9Q5qMOO1k_yAM2lUNf3rcgBKF2qtpOMkacX-jD0WSE9EbxhxqfVNSXJ6SM5LtDqBtjA3REeL62JvKck']
   },
   'i-shape': {
-    images: ['https://lh3.googleusercontent.com/aida-public/AB6AXuDV8Oh3FHQu_59sQPs19BgEkuFdqsh6T7mWg9sygIZ2QOPwffQWIXL2XPPfexCcrOo6V7q1eS6Aiuf7r4qBN7HUcdAlHJARgBln1f8zZ3sHINZY_VDJqMX9uNtEic9qURhzQkH5a1W1THZu6qkfi7Su_MNSzmjGnO1ids1w_Esw-I4Ghk7lyfaKc1ZPYtWbC1R8rUJXjAkmgV2GIZdVrkeFRrKBaypKyHNpPVQX-_nlyoLeBfuyoi_ZGHLa8Cu3VhjSwIJR_p_YJtU']
+    images: ['https://lh3.googleusercontent.com/aida-public/AB6AXuDV8Oh3FHQu_59sQPs19BgEkuFdqsh6T7mWg9sygIZ2QOPwffQWIXL2XPPfexCcrOo6V7q1eS6Aiuf7r4qBN7HUcdAlHJARegBln1f8zZ3sHINZY_VDJqMX9uNtEic9qURhzQkH5a1W1THZu6qkfi7Su_MNSzmjGnOids1w_Esw-I4Ghk7lyfaKc1ZPYtWbC1R8rUJXjAkmgV2GIZdVrkeFRrKBaypKyHNpPVQX-_nlyoLeBfuyoi_ZGHLa8Cu3VhjSwIJR_p_YJtU']
   }
 };
 
@@ -70,6 +70,18 @@ const getProductUnitName = (productType = '') => {
   return 'units';
 };
 
+const DIVISION_LABELS = {
+  'building_materials': { hi: 'Building Materials', en: 'Building Materials' },
+  'shuttering': { hi: 'Shuttering', en: 'Shuttering' },
+  'rcc': { hi: 'RCC Roads', en: 'RCC Roads' },
+  'general': { hi: 'General', en: 'General' },
+};
+
+const getDivisionLabel = (div, language) => {
+  const labels = DIVISION_LABELS[div];
+  return labels ? labels[language] : div || 'General Inquiry';
+};
+
 export default function CustomerDashboard({ language }) {
   const navigate = useNavigate();
   const { user: authUser, profile, loading: authLoading } = useAuth();
@@ -82,6 +94,7 @@ export default function CustomerDashboard({ language }) {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [chartData, setChartData] = useState([]);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const [profileName, setProfileName] = useState('');
   const [profileCity, setProfileCity] = useState('');
@@ -179,7 +192,7 @@ export default function CustomerDashboard({ language }) {
 
       if (!error) {
         setIsSuccess(true);
-        setStatusMsg(language === 'hi' ? 'प्रोफ़ाइल सुरक्षित कर ली गई' : 'Profile saved successfully');
+        setStatusMsg(language === 'hi' ? 'Profile saved' : 'Profile saved successfully');
         const updatedUser = { ...user, full_name: profileName, city: profileCity, pincode: profilePincode, address: profileAddress };
         setUser(updatedUser);
       } else {
@@ -189,7 +202,7 @@ export default function CustomerDashboard({ language }) {
     } catch (err) {
       console.error(err);
       setIsSuccess(false);
-      setStatusMsg(language === 'hi' ? 'सर्वर से कनेक्ट करने में विफल' : 'Failed to connect to server');
+      setStatusMsg(language === 'hi' ? 'Failed to connect' : 'Failed to connect to server');
     }
   };
 
@@ -210,7 +223,7 @@ export default function CustomerDashboard({ language }) {
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
-          <p className="font-semibold text-on-surface-variant mt-2">{language === 'hi' ? 'पोर्टल लोड हो रहा है' : 'Loading portal'}</p>
+          <p className="font-semibold text-on-surface-variant mt-2">{language === 'hi' ? 'Loading portal' : 'Loading portal'}</p>
         </div>
       </div>
     );
@@ -230,105 +243,131 @@ export default function CustomerDashboard({ language }) {
   return (
     <div className="min-h-screen bg-[#F8F9FA] text-on-surface font-body-md pt-16 flex flex-col md:flex-row select-none">
       
-      <aside className="bg-[#1C2B1A] text-white w-full md:w-72 flex-shrink-0 flex flex-col shadow-xl z-20 sticky top-16 md:h-[calc(100vh-64px)] overflow-y-auto">
-        <div className="p-6 md:p-8 border-b border-white/10 flex items-center justify-between md:block bg-[#162214]">
+      {/* Mobile Overlay */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-30 backdrop-blur-sm md:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        ></div>
+      )}
+
+      {/* Sidebar */}
+      <aside className={`bg-[#1C2B1A] text-white fixed md:sticky top-16 left-0 h-[calc(100vh-64px)] w-72 flex-shrink-0 flex flex-col shadow-xl z-40 transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} overflow-y-auto`}>
+        <div className="p-6 border-b border-white/10 flex items-center justify-between bg-[#162214]">
           <div>
-            <h1 className="font-display-lg text-xl md:text-2xl text-primary font-bold">Construx Pro</h1>
-            <p className="text-[10px] md:text-xs text-white/50 uppercase tracking-widest mt-1">Customer Portal</p>
+            <h1 className="font-display-lg text-xl text-primary font-bold">Swastika Interlocking</h1>
+            <p className="text-[10px] text-white/50 uppercase tracking-widest mt-1">Customer Portal</p>
           </div>
           <button 
-            onClick={handleRefresh}
-            className={`md:hidden p-2 rounded-full bg-white/10 text-white ${refreshing ? 'animate-spin' : ''}`}
+            onClick={() => setIsSidebarOpen(false)}
+            className="md:hidden p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
           >
-            <span className="material-symbols-outlined text-sm">sync</span>
+            <span className="material-symbols-outlined text-lg">close</span>
           </button>
         </div>
         
-        <div className="p-6 hidden md:block">
+        <div className="p-6">
           <div className="bg-white/5 rounded-2xl p-4 flex items-center space-x-4 border border-white/10 backdrop-blur-sm">
             <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center font-bold text-lg shadow-lg">
-              {user.full_name.substring(0, 2).toUpperCase()}
+              {user.full_name ? user.full_name.substring(0, 2).toUpperCase() : 'U'}
             </div>
             <div>
-              <p className="font-bold text-sm text-white leading-tight">{user.full_name}</p>
+              <p className="font-bold text-sm text-white leading-tight">{user.full_name || 'User'}</p>
               <p className="text-[10px] text-white/50 mt-0.5">Member since 2024</p>
             </div>
           </div>
         </div>
 
-        <nav className="flex-grow p-4 md:px-6 space-x-2 md:space-x-0 md:space-y-2 flex flex-row md:flex-col overflow-x-auto no-scrollbar">
+        <nav className="flex-grow p-4 md:px-6 space-y-2 flex flex-col">
           
           <button 
-            onClick={() => setActiveTab('overview')}
-            className={`flex-shrink-0 md:w-full flex flex-col md:flex-row items-center md:justify-start gap-1 md:gap-3 px-4 py-3 md:py-3.5 rounded-xl text-[10px] md:text-sm font-semibold transition-all cursor-pointer ${activeTab === 'overview' ? 'bg-primary text-white shadow-md' : 'text-white/70 hover:bg-white/10 hover:text-white'}`}
+            onClick={() => { setActiveTab('overview'); setIsSidebarOpen(false); }}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'overview' ? 'bg-primary text-white shadow-md' : 'text-white/70 hover:bg-white/10 hover:text-white'}`}
           >
-            <span className="material-symbols-outlined text-xl md:text-xl">dashboard</span>
-            <span>{language === 'hi' ? 'अवलोकन' : 'Overview'}</span>
+            <span className="material-symbols-outlined text-xl">dashboard</span>
+            <span>{language === 'hi' ? 'Overview' : 'Overview'}</span>
           </button>
 
           <button 
-            onClick={() => setActiveTab('orders')}
-            className={`flex-shrink-0 md:w-full flex flex-col md:flex-row items-center md:justify-between gap-1 md:gap-3 px-4 py-3 md:py-3.5 rounded-xl text-[10px] md:text-sm font-semibold transition-all cursor-pointer ${activeTab === 'orders' ? 'bg-primary text-white shadow-md' : 'text-white/70 hover:bg-white/10 hover:text-white'}`}
+            onClick={() => { setActiveTab('orders'); setIsSidebarOpen(false); }}
+            className={`w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'orders' ? 'bg-primary text-white shadow-md' : 'text-white/70 hover:bg-white/10 hover:text-white'}`}
           >
-            <span className="flex flex-col md:flex-row items-center gap-1 md:gap-3">
-              <span className="material-symbols-outlined text-xl md:text-xl">local_shipping</span>
-              <span>{language === 'hi' ? 'मेरे ऑर्डर' : 'My Orders'}</span>
+            <span className="flex items-center gap-3">
+              <span className="material-symbols-outlined text-xl">local_shipping</span>
+              <span>{language === 'hi' ? 'My Orders' : 'My Orders'}</span>
             </span>
-            <span className="hidden md:flex bg-white/20 text-white text-[10px] px-2.5 py-0.5 rounded-full font-bold">{orders.length}</span>
+            <span className="bg-white/20 text-white text-[10px] px-2.5 py-0.5 rounded-full font-bold">{orders.length}</span>
           </button>
 
           <button 
-            onClick={() => setActiveTab('inquiries')}
-            className={`flex-shrink-0 md:w-full flex flex-col md:flex-row items-center md:justify-between gap-1 md:gap-3 px-4 py-3 md:py-3.5 rounded-xl text-[10px] md:text-sm font-semibold transition-all cursor-pointer ${activeTab === 'inquiries' ? 'bg-primary text-white shadow-md' : 'text-white/70 hover:bg-white/10 hover:text-white'}`}
+            onClick={() => { setActiveTab('inquiries'); setIsSidebarOpen(false); }}
+            className={`w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'inquiries' ? 'bg-primary text-white shadow-md' : 'text-white/70 hover:bg-white/10 hover:text-white'}`}
           >
-            <span className="flex flex-col md:flex-row items-center gap-1 md:gap-3">
-              <span className="material-symbols-outlined text-xl md:text-xl">support_agent</span>
-              <span>{language === 'hi' ? 'मेरे अनुरोध' : 'My Requests'}</span>
+            <span className="flex items-center gap-3">
+              <span className="material-symbols-outlined text-xl">support_agent</span>
+              <span>{language === 'hi' ? 'My Requests' : 'My Requests'}</span>
             </span>
             {inquiries.length > 0 && (
-              <span className="hidden md:flex bg-white/20 text-white text-[10px] px-2.5 py-0.5 rounded-full font-bold">{inquiries.length}</span>
+              <span className="bg-white/20 text-white text-[10px] px-2.5 py-0.5 rounded-full font-bold">{inquiries.length}</span>
             )}
           </button>
 
           <button 
-            onClick={() => setActiveTab('profile')}
-            className={`flex-shrink-0 md:w-full flex flex-col md:flex-row items-center md:justify-start gap-1 md:gap-3 px-4 py-3 md:py-3.5 rounded-xl text-[10px] md:text-sm font-semibold transition-all cursor-pointer ${activeTab === 'profile' ? 'bg-primary text-white shadow-md' : 'text-white/70 hover:bg-white/10 hover:text-white'}`}
+            onClick={() => { setActiveTab('profile'); setIsSidebarOpen(false); }}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'profile' ? 'bg-primary text-white shadow-md' : 'text-white/70 hover:bg-white/10 hover:text-white'}`}
           >
-            <span className="material-symbols-outlined text-xl md:text-xl">account_circle</span>
-            <span>{language === 'hi' ? 'प्रोफ़ाइल' : 'Profile'}</span>
+            <span className="material-symbols-outlined text-xl">account_circle</span>
+            <span>{language === 'hi' ? 'Profile' : 'Profile'}</span>
           </button>
 
           <button 
-            onClick={() => setActiveTab('details')}
+            onClick={() => { setActiveTab('details'); setIsSidebarOpen(false); }}
             disabled={!selectedOrder}
-            className={`flex-shrink-0 md:w-full flex flex-col md:flex-row items-center md:justify-start gap-1 md:gap-3 px-4 py-3 md:py-3.5 rounded-xl text-[10px] md:text-sm font-semibold transition-all cursor-pointer ${!selectedOrder ? 'opacity-30 cursor-not-allowed hidden md:flex' : ''} ${activeTab === 'details' ? 'bg-primary text-white shadow-md' : 'text-white/70 hover:bg-white/10 hover:text-white'}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${!selectedOrder ? 'opacity-30 cursor-not-allowed hidden md:flex' : ''} ${activeTab === 'details' ? 'bg-primary text-white shadow-md' : 'text-white/70 hover:bg-white/10 hover:text-white'}`}
           >
-            <span className="material-symbols-outlined text-xl md:text-xl">receipt_long</span>
-            <span>{language === 'hi' ? 'विवरण' : 'Details'}</span>
+            <span className="material-symbols-outlined text-xl">receipt_long</span>
+            <span>{language === 'hi' ? 'Details' : 'Details'}</span>
           </button>
           
           <button 
-            onClick={() => setActiveTab('notifications')}
-            className={`flex-shrink-0 md:w-full flex flex-col md:flex-row items-center md:justify-between gap-1 md:gap-3 px-4 py-3 md:py-3.5 rounded-xl text-[10px] md:text-sm font-semibold transition-all cursor-pointer ${activeTab === 'notifications' ? 'bg-primary text-white shadow-md' : 'text-white/70 hover:bg-white/10 hover:text-white'}`}
+            onClick={() => { setActiveTab('notifications'); setIsSidebarOpen(false); }}
+            className={`w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'notifications' ? 'bg-primary text-white shadow-md' : 'text-white/70 hover:bg-white/10 hover:text-white'}`}
           >
-            <span className="flex flex-col md:flex-row items-center gap-1 md:gap-3">
-              <span className="material-symbols-outlined text-xl md:text-xl relative">
+            <span className="flex items-center gap-3">
+              <span className="material-symbols-outlined text-xl relative">
                 notifications
                 {notifications.filter(n => n.unread).length > 0 && (
                   <span className="absolute top-0 right-0 w-2 h-2 bg-error rounded-full animate-pulse"></span>
                 )}
               </span>
-              <span>{language === 'hi' ? 'सूचनाएं' : 'Alerts'}</span>
+              <span>{language === 'hi' ? 'Alerts' : 'Alerts'}</span>
             </span>
-            <span className="hidden md:flex bg-white/20 text-white text-[10px] px-2.5 py-0.5 rounded-full font-bold">
+            <span className="bg-white/20 text-white text-[10px] px-2.5 py-0.5 rounded-full font-bold">
               {notifications.filter(n => n.unread).length}
             </span>
           </button>
         </nav>
       </aside>
 
-      <main className="flex-grow p-4 md:p-8 max-w-screen-xl mx-auto space-y-8 w-full md:h-[calc(100vh-64px)] md:overflow-y-auto">
+      <main className="flex-grow p-4 md:p-8 max-w-screen-xl mx-auto space-y-6 md:space-y-8 w-full md:h-[calc(100vh-64px)] md:overflow-y-auto">
         
+        {/* Mobile Header with Sidebar Toggle */}
+        <div className="flex items-center justify-between mb-4 md:hidden">
+          <button 
+            onClick={() => setIsSidebarOpen(true)}
+            className="p-2 rounded-lg bg-white border border-outline/10 shadow-sm hover:bg-surface-variant transition-colors"
+          >
+            <span className="material-symbols-outlined text-xl text-on-surface">menu</span>
+          </button>
+          <button 
+            onClick={handleRefresh}
+            className={`flex items-center gap-2 px-4 py-2 bg-white border border-outline/10 shadow-sm rounded-lg text-sm font-bold text-primary hover:bg-surface-variant transition-colors ${refreshing ? 'opacity-70 pointer-events-none' : ''}`}
+          >
+            <span className={`material-symbols-outlined text-lg ${refreshing ? 'animate-spin' : ''}`}>sync</span>
+          </button>
+        </div>
+
+        {/* Desktop Header with Refresh */}
         <div className="hidden md:flex justify-end mb-4">
           <button 
             onClick={handleRefresh}
@@ -343,7 +382,7 @@ export default function CustomerDashboard({ language }) {
           <section className="space-y-6 md:space-y-8 animate-fade-in">
             <div>
               <h3 className="font-display-lg text-2xl md:text-3xl text-on-surface font-bold tracking-tight">
-                {language === 'hi' ? 'डैशबोर्ड में आपका स्वागत है' : `Welcome back, ${user.full_name.split(' ')[0]}`}
+                {language === 'hi' ? 'Welcome back' : `Welcome back, ${user.full_name ? user.full_name.split(' ')[0] : 'User'}`}
               </h3>
               <p className="text-on-surface-variant text-sm mt-1">Here's an overview of your recent activity and spending</p>
             </div>
@@ -385,7 +424,7 @@ export default function CustomerDashboard({ language }) {
                 <div className="absolute -right-6 -top-6 w-32 h-32 bg-white/5 rounded-full blur-2xl group-hover:bg-primary/20 transition-colors"></div>
                 <div className="relative z-10">
                   <p className="text-xs md:text-sm text-white/70 font-bold uppercase tracking-wider mb-2">Need Materials?</p>
-                  <p className="text-lg md:text-xl font-bold leading-tight mb-4">Start a new project with Construx Pro</p>
+                  <p className="text-lg md:text-xl font-bold leading-tight mb-4">Start a new project</p>
                   <button onClick={() => navigate('/products')} className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg hover:brightness-110 transition-all flex items-center gap-2 w-fit">
                     Order Now <span className="material-symbols-outlined text-sm">arrow_forward</span>
                   </button>
@@ -445,9 +484,9 @@ export default function CustomerDashboard({ language }) {
         {activeTab === 'profile' && (
           <section className="space-y-6">
             <div>
-              <h3 className="font-display-lg text-2xl text-primary font-bold">{language === 'hi' ? 'मेरी प्रोफ़ाइल' : 'My Profile'}</h3>
+              <h3 className="font-display-lg text-2xl text-primary font-bold">{language === 'hi' ? 'My Profile' : 'My Profile'}</h3>
               <p className="text-on-surface-variant text-sm mt-1">
-                {language === 'hi' ? 'अपनी व्यक्तिगत जानकारी और प्राथमिकताएँ प्रबंधित करें' : 'Manage your personal information and preferences'}
+                {language === 'hi' ? 'Manage your personal info' : 'Manage your personal information and preferences'}
               </p>
             </div>
             
@@ -460,7 +499,7 @@ export default function CustomerDashboard({ language }) {
             <form onSubmit={handleProfileSave} className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-outline/10 max-w-2xl space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-on-surface-variant">{language === 'hi' ? 'पूरा नाम' : 'Full Name'}</label>
+                  <label className="text-xs font-bold text-on-surface-variant">{language === 'hi' ? 'Full Name' : 'Full Name'}</label>
                   <input 
                     value={profileName}
                     onChange={(e) => setProfileName(e.target.value)}
@@ -470,7 +509,7 @@ export default function CustomerDashboard({ language }) {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-on-surface-variant">{language === 'hi' ? 'फ़ोन नंबर (अपरिवर्तनीय)' : 'Phone Number (Read-only)'}</label>
+                  <label className="text-xs font-bold text-on-surface-variant">{language === 'hi' ? 'Phone' : 'Phone Number (Read-only)'}</label>
                   <input 
                     value={user.phone || ''}
                     className="w-full bg-surface-dim/30 border border-outline/10 rounded-lg p-3 text-on-surface-variant cursor-not-allowed text-sm font-semibold outline-none" 
@@ -479,7 +518,7 @@ export default function CustomerDashboard({ language }) {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-on-surface-variant">{language === 'hi' ? 'शहर' : 'City'}</label>
+                  <label className="text-xs font-bold text-on-surface-variant">{language === 'hi' ? 'City' : 'City'}</label>
                   <input 
                     value={profileCity}
                     onChange={(e) => setProfileCity(e.target.value)}
@@ -489,7 +528,7 @@ export default function CustomerDashboard({ language }) {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-on-surface-variant">{language === 'hi' ? 'पिनकोड' : 'Pincode'}</label>
+                  <label className="text-xs font-bold text-on-surface-variant">{language === 'hi' ? 'Pincode' : 'Pincode'}</label>
                   <input 
                     value={profilePincode}
                     onChange={(e) => setProfilePincode(e.target.value)}
@@ -498,7 +537,7 @@ export default function CustomerDashboard({ language }) {
                   />
                 </div>
                 <div className="sm:col-span-2 space-y-2">
-                  <label className="text-xs font-bold text-on-surface-variant">{language === 'hi' ? 'पूरा पता' : 'Full Address'}</label>
+                  <label className="text-xs font-bold text-on-surface-variant">{language === 'hi' ? 'Address' : 'Full Address'}</label>
                   <textarea 
                     value={profileAddress}
                     onChange={(e) => setProfileAddress(e.target.value)}
@@ -512,7 +551,7 @@ export default function CustomerDashboard({ language }) {
                   type="submit"
                   className="px-6 py-3 bg-[#E8650A] text-white font-bold text-sm rounded-lg hover:brightness-110 active:scale-95 transition-all flex items-center space-x-2 shadow-md cursor-pointer"
                 >
-                  <span>{language === 'hi' ? 'बदलाव सुरक्षित करें' : 'Save Changes'}</span>
+                  <span>{language === 'hi' ? 'Save Changes' : 'Save Changes'}</span>
                   <span className="material-symbols-outlined text-sm">check_circle</span>
                 </button>
               </div>
@@ -524,7 +563,7 @@ export default function CustomerDashboard({ language }) {
           <section className="space-y-6 md:space-y-8 animate-fade-in">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div>
-                <h3 className="font-display-lg text-2xl md:text-3xl text-on-surface font-bold tracking-tight">{language === 'hi' ? 'मेरे अनुरोध' : 'My Requests & Inquiries'}</h3>
+                <h3 className="font-display-lg text-2xl md:text-3xl text-on-surface font-bold tracking-tight">{language === 'hi' ? 'My Requests' : 'My Requests & Inquiries'}</h3>
                 <p className="text-on-surface-variant text-sm mt-1">Track your support tickets and general requests</p>
               </div>
             </div>
@@ -557,7 +596,7 @@ export default function CustomerDashboard({ language }) {
                           {inq.created_at ? new Date(inq.created_at).toLocaleDateString() : '—'}
                         </span>
                       </div>
-                      <h4 className="font-bold text-base text-on-surface mb-2">General Inquiry</h4>
+                      <h4 className="font-bold text-base text-on-surface mb-2">{inq.subject || getDivisionLabel(inq.division, language)}</h4>
                       <div className="bg-surface-container-low p-3 rounded-lg text-sm text-on-surface-variant">
                         <p className="whitespace-pre-wrap">{inq.requirements || inq.message || '—'}</p>
                       </div>
@@ -573,15 +612,15 @@ export default function CustomerDashboard({ language }) {
           <section className="space-y-6 md:space-y-8 animate-fade-in">
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div>
-                <h3 className="font-display-lg text-2xl md:text-3xl text-on-surface font-bold tracking-tight">{language === 'hi' ? 'मेरे ऑर्डर' : 'My Orders'}</h3>
+                <h3 className="font-display-lg text-2xl md:text-3xl text-on-surface font-bold tracking-tight">{language === 'hi' ? 'My Orders' : 'My Orders'}</h3>
                 <p className="text-on-surface-variant text-sm mt-1">Track and manage your order history</p>
               </div>
-              <div className="flex bg-surface-container p-1 rounded-xl w-fit">
+              <div className="flex flex-wrap bg-surface-container p-1 rounded-xl w-full sm:w-auto gap-1">
                 {['All', 'Pending', 'Processing', 'Shipped', 'Delivered'].map((filter) => (
                   <button 
                     key={filter}
                     onClick={() => setStatusFilter(filter)}
-                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${statusFilter === filter ? 'bg-white text-primary shadow-sm' : 'text-on-surface-variant hover:text-on-surface'}`}
+                    className={`px-3 sm:px-4 py-2 rounded-lg text-xs font-semibold transition-all ${statusFilter === filter ? 'bg-white text-primary shadow-sm' : 'text-on-surface-variant hover:text-on-surface hover:bg-white/50'}`}
                   >
                     {filter}
                   </button>
@@ -591,7 +630,7 @@ export default function CustomerDashboard({ language }) {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
               {filteredOrders.length === 0 ? (
-                <div className="col-span-2 text-center py-20 bg-white rounded-3xl border border-outline/10 shadow-sm">
+                <div className="col-span-full text-center py-20 bg-white rounded-3xl border border-outline/10 shadow-sm">
                   <div className="w-24 h-24 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-4">
                     <span className="material-symbols-outlined text-5xl text-outline/50">inventory_2</span>
                   </div>
@@ -620,7 +659,7 @@ export default function CustomerDashboard({ language }) {
                           <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ${ord.status === 'Delivered' ? 'bg-[#E8F5E9] text-[#2E7D32]' : ord.status === 'Pending' ? 'bg-error-container text-on-error-container' : 'bg-[#E3F2FD] text-[#0D47A1]'}`}>
                             {ord.status}
                           </span>
-                          <span className="text-[10px] text-on-surface-variant font-bold">{ord.order_number || `#SW-${ord.id?.slice(0,8)}`}</span>
+                          <span className="text-[10px] text-on-surface-variant font-bold">{ord.order_number || `#SW-${ord.id ? ord.id.slice(0,8) : '0000'}`}</span>
                         </div>
                         
                         <h4 className="font-bold text-sm md:text-base text-on-surface leading-tight line-clamp-2 mb-1">
@@ -670,7 +709,7 @@ export default function CustomerDashboard({ language }) {
               </button>
               <div>
                 <h3 className="font-display-lg text-2xl text-primary font-bold">
-                  {language === 'hi' ? 'ऑर्डर विवरण' : 'Order Details'} — {selectedOrder.order_number || '—'}
+                  {language === 'hi' ? 'Order Details' : 'Order Details'} — {selectedOrder.order_number || '—'}
                 </h3>
                 <p className="text-on-surface-variant text-xs font-semibold mt-1">
                   Created on {selectedOrder.created_at ? new Date(selectedOrder.created_at).toLocaleDateString() : '—'}
@@ -836,7 +875,7 @@ export default function CustomerDashboard({ language }) {
         {activeTab === 'notifications' && (
           <section className="space-y-6">
             <div>
-              <h3 className="font-display-lg text-2xl text-primary font-bold">{language === 'hi' ? 'सूचनाएं' : 'Notifications'}</h3>
+              <h3 className="font-display-lg text-2xl text-primary font-bold">{language === 'hi' ? 'Notifications' : 'Notifications'}</h3>
               <p className="text-on-surface-variant text-sm mt-1">Stay updated with order progress updates</p>
             </div>
             
@@ -858,6 +897,14 @@ export default function CustomerDashboard({ language }) {
                   </div>
                 </div>
               ))}
+              {notifications.length === 0 && (
+                <div className="text-center py-16 bg-white rounded-2xl border border-outline/10 shadow-sm">
+                  <div className="w-20 h-20 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="material-symbols-outlined text-4xl text-outline/50">notifications</span>
+                  </div>
+                  <p className="text-on-surface-variant font-semibold">No notifications yet</p>
+                </div>
+              )}
             </div>
           </section>
         )}
@@ -865,8 +912,8 @@ export default function CustomerDashboard({ language }) {
         {activeTab === 'reviews' && (
           <section className="space-y-6 max-w-2xl">
             <div>
-              <h3 className="font-display-lg text-2xl text-primary font-bold">{language === 'hi' ? 'समीक्षाएं' : 'My Reviews'}</h3>
-              <p className="text-on-surface-variant text-sm mt-1">Share your experience with our construction blocks</p>
+              <h3 className="font-display-lg text-2xl text-primary font-bold">{language === 'hi' ? 'My Reviews' : 'My Reviews'}</h3>
+              <p className="text-on-surface-variant text-sm mt-1">Share your experience with our products</p>
             </div>
 
             {reviewSubmitted ? (
@@ -898,7 +945,7 @@ export default function CustomerDashboard({ language }) {
 
                 <form onSubmit={handleReviewSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-on-surface-variant block">Your Rating / आपकी रेटिंग</label>
+                    <label className="text-xs font-bold text-on-surface-variant block">Your Rating</label>
                     <div className="flex space-x-1.5">
                       {[1, 2, 3, 4, 5].map((star) => (
                         <button 
@@ -919,12 +966,12 @@ export default function CustomerDashboard({ language }) {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-on-surface-variant block">Comment / टिप्पणी</label>
+                    <label className="text-xs font-bold text-on-surface-variant block">Comment</label>
                     <textarea 
                       value={reviewComment}
                       onChange={(e) => setReviewComment(e.target.value)}
                       className="w-full bg-surface-container border border-outline/10 rounded-xl p-4 outline-none text-sm font-semibold focus:ring-1 focus:ring-primary focus:border-primary" 
-                      placeholder="Share your experience with the durability, color retention or finish..." 
+                      placeholder="Share your experience with our products..." 
                       rows="4"
                       required
                     />
@@ -934,7 +981,7 @@ export default function CustomerDashboard({ language }) {
                     type="submit"
                     className="px-6 py-3 bg-[#E8650A] text-white font-bold text-xs rounded-lg hover:brightness-110 active:scale-95 transition-all shadow-md cursor-pointer"
                   >
-                    Submit Review / समीक्षा भेजें
+                    Submit Review
                   </button>
                 </form>
               </div>

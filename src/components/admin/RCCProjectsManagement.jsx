@@ -134,74 +134,73 @@ export default function RCCProjectsManagement({ language, user }) {
       imageFile: null,
       variants: []
     });
-    // setStatusMsg('');
   };
 
   return (
-    <section className="space-y-8 animate-fade-in">
+    <section className="space-y-6 md:space-y-8 animate-fade-in">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h3 className="font-headline-md text-headline-md text-on-background text-xl font-bold">
-            {isHindi ? 'RCC प्रोजेक्ट्स मैनेजमेंट' : 'RCC Projects Management'}
+            {isHindi ? 'RCC Projects Management' : 'RCC Projects Management'}
           </h3>
           <p className="text-on-surface-variant text-sm mt-1">
-            {isHindi ? 'अपनी आरसीसी सड़क परियोजनाओं और छवियों को प्रबंधित करें।' : 'Manage your RCC road projects and gallery images.'}
+            {isHindi ? 'Manage your RCC road projects and gallery images.' : 'Manage your RCC road projects and gallery images.'}
           </p>
         </div>
       </div>
 
       {/* Add/Edit Form */}
-      <div className="bg-white p-6 rounded-2xl shadow-sm border border-outline-variant/30">
+      <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-outline-variant/30">
         <h4 className="font-bold text-lg mb-4 border-b pb-2">
-          {isEditing ? (isHindi ? 'प्रोजेक्ट संपादित करें' : 'Edit Project') : (isHindi ? 'नया प्रोजेक्ट जोड़ें' : 'Add New Project')}
+          {isEditing ? (isHindi ? 'Edit Project' : 'Edit Project') : (isHindi ? 'Add New Project' : 'Add New Project')}
         </h4>
         
         {statusMsg && <div className="mb-4 p-3 rounded bg-blue-50 text-blue-800 font-bold text-sm">{statusMsg}</div>}
 
         <form onSubmit={handleSave} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             <label className="text-xs font-bold text-on-surface-variant">Project Key (Unique ID)</label>
-            <input required value={form.product_key} onChange={e => setForm({...form, product_key: e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, '')})} className="w-full bg-surface-container-low rounded p-2 focus:ring-2 focus:ring-primary outline-none" disabled={isEditing} />
+            <input required value={form.product_key} onChange={e => setForm({...form, product_key: e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, '')})} className="w-full bg-surface-container-low rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-primary outline-none" disabled={isEditing} />
           </div>
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             <label className="text-xs font-bold text-on-surface-variant">Project Name (English)</label>
-            <input required value={form.name_en} onChange={e => setForm({...form, name_en: e.target.value})} className="w-full bg-surface-container-low rounded p-2 focus:ring-2 focus:ring-primary outline-none" />
+            <input required value={form.name_en} onChange={e => setForm({...form, name_en: e.target.value})} className="w-full bg-surface-container-low rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-primary outline-none" />
           </div>
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             <label className="text-xs font-bold text-on-surface-variant">Project Name (Hindi)</label>
-            <input value={form.name_hi} onChange={e => setForm({...form, name_hi: e.target.value})} className="w-full bg-surface-container-low rounded p-2 focus:ring-2 focus:ring-primary outline-none" />
+            <input value={form.name_hi} onChange={e => setForm({...form, name_hi: e.target.value})} className="w-full bg-surface-container-low rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-primary outline-none" />
           </div>
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             <label className="text-xs font-bold text-on-surface-variant">Location</label>
-            <input value={form.price} onChange={e => setForm({...form, price: e.target.value})} className="w-full bg-surface-container-low rounded p-2 focus:ring-2 focus:ring-primary outline-none" placeholder="e.g. Gurugram" />
+            <input value={form.price} onChange={e => setForm({...form, price: e.target.value})} className="w-full bg-surface-container-low rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-primary outline-none" placeholder="e.g. Gurugram" />
           </div>
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             <label className="text-xs font-bold text-on-surface-variant">Length / Size</label>
-            <input type="number" value={form.stock} onFocus={e => { if(e.target.value === '0') setForm({...form, stock: ''}); }} onChange={e => setForm({...form, stock: e.target.value})} className="w-full bg-surface-container-low rounded p-2 focus:ring-2 focus:ring-primary outline-none" placeholder="e.g. 5 (km)" />
+            <input type="number" value={form.stock} onFocus={e => { if(e.target.value === '0') setForm({...form, stock: ''}); }} onChange={e => setForm({...form, stock: e.target.value})} className="w-full bg-surface-container-low rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-primary outline-none" placeholder="e.g. 5 (km)" />
           </div>
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             <label className="text-xs font-bold text-on-surface-variant">Project Image</label>
-            <input type="file" accept="image/*" onChange={e => setForm({...form, imageFile: e.target.files[0]})} className="w-full bg-surface-container-low rounded p-2 focus:ring-2 focus:ring-primary outline-none cursor-pointer" />
+            <input type="file" accept="image/*" onChange={e => setForm({...form, imageFile: e.target.files[0]})} className="w-full bg-surface-container-low rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-primary outline-none cursor-pointer text-sm" />
             {form.image_url && !form.imageFile && <p className="text-xs text-secondary mt-1">Current: <a href={form.image_url} target="_blank" rel="noreferrer" className="hover:underline">{form.image_url}</a></p>}
           </div>
-          <div className="space-y-1 md:col-span-2">
+          <div className="space-y-1.5 md:col-span-2">
             <label className="text-xs font-bold text-on-surface-variant">Description (English)</label>
-            <textarea value={form.desc_en} onChange={e => setForm({...form, desc_en: e.target.value})} className="w-full bg-surface-container-low rounded p-2 focus:ring-2 focus:ring-primary outline-none resize-none" rows="2" />
+            <textarea value={form.desc_en} onChange={e => setForm({...form, desc_en: e.target.value})} className="w-full bg-surface-container-low rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-primary outline-none resize-none" rows="3" />
           </div>
 
           <div className="md:col-span-2 pt-2 border-t border-outline-variant/30">
-            <div className="flex justify-between items-center mb-2">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-2">
               <label className="text-xs font-bold text-on-surface-variant">Project Variants (e.g. Phase Images, Layouts)</label>
               <button 
                 type="button"
                 onClick={() => setForm({...form, variants: [...(form.variants || []), { name: '', image_url: '', imageFile: null }]})}
-                className="bg-secondary/10 text-secondary hover:bg-secondary/20 px-2 py-1 rounded text-[10px] font-bold transition-colors"
+                className="bg-secondary/10 text-secondary hover:bg-secondary/20 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors"
               >
                 + Add Option
               </button>
             </div>
             {(form.variants || []).map((variant, index) => (
-              <div key={index} className="flex gap-2 mb-2 p-2 bg-surface-container-lowest border border-outline-variant/30 rounded items-center">
+              <div key={index} className="flex flex-col sm:flex-row gap-2 mb-2 p-3 bg-surface-container-lowest border border-outline-variant/30 rounded-xl items-start sm:items-center">
                 <input 
                   type="text" 
                   placeholder="Variant Name" 
@@ -211,7 +210,7 @@ export default function RCCProjectsManagement({ language, user }) {
                     newVars[index].name = e.target.value;
                     setForm({...form, variants: newVars});
                   }}
-                  className="flex-1 bg-white border border-outline-variant/30 rounded px-2 py-1 text-xs focus:ring-1 focus:ring-primary outline-none"
+                  className="flex-1 bg-white border border-outline-variant/30 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-primary outline-none w-full"
                 />
                 <input 
                   type="file" 
@@ -221,10 +220,10 @@ export default function RCCProjectsManagement({ language, user }) {
                     newVars[index].imageFile = e.target.files[0];
                     setForm({...form, variants: newVars});
                   }}
-                  className="w-40 bg-white border border-outline-variant/30 rounded px-1 py-1 text-[10px] cursor-pointer"
+                  className="w-full sm:w-40 bg-white border border-outline-variant/30 rounded-xl px-3 py-2 text-xs cursor-pointer"
                 />
                 {variant.image_url && !variant.imageFile && (
-                  <img src={variant.image_url} alt="v" className="w-6 h-6 rounded object-cover border border-outline-variant/30" />
+                  <img src={variant.image_url} alt="v" className="w-8 h-8 rounded-lg object-cover border border-outline-variant/30" />
                 )}
                 <button 
                   type="button"
@@ -232,18 +231,18 @@ export default function RCCProjectsManagement({ language, user }) {
                     const newVars = form.variants.filter((_, i) => i !== index);
                     setForm({...form, variants: newVars});
                   }}
-                  className="text-error hover:bg-error/10 w-6 h-6 rounded flex items-center justify-center transition-colors"
+                  className="text-error hover:bg-error/10 w-8 h-8 rounded-lg flex items-center justify-center transition-colors ml-auto"
                 >
-                  <span className="material-symbols-outlined text-[14px]">close</span>
+                  <span className="material-symbols-outlined text-lg">close</span>
                 </button>
               </div>
             ))}
           </div>
-          <div className="col-span-full flex gap-3 mt-2">
-            <button type="submit" className="bg-secondary text-white px-6 py-2 rounded font-bold hover:bg-secondary/90 transition-colors">
+          <div className="col-span-full flex flex-col sm:flex-row gap-3 mt-2">
+            <button type="submit" className="bg-secondary text-white px-6 py-2.5 rounded-xl font-bold hover:bg-secondary/90 transition-colors">
               {isEditing ? 'Update Project' : 'Save Project'}
             </button>
-            <button type="button" onClick={handleCancel} className="bg-surface-variant/50 text-on-surface px-6 py-2 rounded font-bold hover:bg-surface-variant transition-colors">
+            <button type="button" onClick={handleCancel} className="bg-surface-variant/50 text-on-surface px-6 py-2.5 rounded-xl font-bold hover:bg-surface-variant transition-colors">
               Cancel
             </button>
           </div>
@@ -251,28 +250,33 @@ export default function RCCProjectsManagement({ language, user }) {
       </div>
 
       {/* Projects Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         {loading ? (
-          <p className="col-span-full text-center">Loading...</p>
+          <p className="col-span-full text-center py-8">Loading...</p>
         ) : projects.length === 0 ? (
-          <div className="col-span-full bg-white p-8 rounded-xl text-center text-on-surface-variant">No RCC projects found.</div>
+          <div className="col-span-full bg-white p-8 rounded-2xl text-center text-on-surface-variant border border-outline-variant/30">No RCC projects found.</div>
         ) : (
           projects.map(proj => (
             <div key={proj.id} className="bg-white rounded-xl shadow-sm overflow-hidden border border-outline-variant/20 group">
-              <div className="h-48 bg-surface-container relative">
-                <img src={proj.image_url || '/images/default-project.jpg'} alt={proj.name_en} className="w-full h-full object-cover" />
-                <span className="absolute top-2 right-2 bg-secondary text-white text-[10px] font-bold px-2 py-1 rounded">RCC</span>
+              <div className="h-40 sm:h-48 bg-surface-container relative">
+                <img 
+                  src={(proj.images && proj.images.length > 0 ? proj.images[0] : null) || 'https://images.unsplash.com/photo-1517482813155-273a215b2447?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'} 
+                  alt={proj.name_en} 
+                  className="w-full h-full object-cover" 
+                  onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1517482813155-273a215b2447?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'; }}
+                />
+                <span className="absolute top-2 right-2 bg-secondary text-white text-[10px] font-bold px-2 py-1 rounded-lg">RCC</span>
               </div>
               <div className="p-4">
-                <h5 className="font-bold text-lg">{isHindi ? proj.name_hi : proj.name_en}</h5>
-                <p className="text-xs text-on-surface-variant mt-1 mb-3 line-clamp-2">{proj.desc_en}</p>
+                <h5 className="font-bold text-lg">{isHindi ? (proj.name_hi || proj.name_en) : proj.name_en}</h5>
+                <p className="text-xs text-on-surface-variant mt-1 mb-3 line-clamp-2">{proj.description_en}</p>
                 <div className="flex gap-2 text-xs font-bold text-on-surface-variant mb-4">
-                  <span className="bg-surface-variant px-2 py-1 rounded">{proj.price || 'N/A'}</span>
-                  <span className="bg-surface-variant px-2 py-1 rounded">{proj.stock ? `${proj.stock} km` : 'N/A'}</span>
+                  <span className="bg-surface-variant px-2 py-1 rounded">{proj.price_min || 'N/A'}</span>
+                  <span className="bg-surface-variant px-2 py-1 rounded">{proj.stock_quantity ? `${proj.stock_quantity} km` : 'N/A'}</span>
                 </div>
                 <div className="flex gap-2">
-                  <button onClick={() => handleEdit(proj)} className="flex-1 border border-outline-variant py-1.5 rounded hover:border-secondary transition-colors text-xs font-bold">Edit</button>
-                  <button onClick={() => handleDelete(proj.id)} className="px-3 border border-red-200 text-error rounded hover:bg-red-50 transition-colors material-symbols-outlined text-sm">delete</button>
+                  <button onClick={() => handleEdit(proj)} className="flex-1 border border-outline-variant py-1.5 rounded-lg hover:border-secondary transition-colors text-xs font-bold">Edit</button>
+                  <button onClick={() => handleDelete(proj.id)} className="px-3 border border-red-200 text-error rounded-lg hover:bg-red-50 transition-colors material-symbols-outlined text-sm">delete</button>
                 </div>
               </div>
             </div>

@@ -3,36 +3,32 @@ import { Link } from 'react-router-dom';
 
 const TRANSLATIONS = {
   hi: {
-    desc: 'प्रीमियम निर्माण परियोजनाओं के लिए उच्च-शक्ति इंटरलॉकिंग पेवर ब्लॉक और कंक्रीट समाधानों के निर्माता। एक परिवारिक व्यवसाय, चौबे ब्रदर्स द्वारा संचालित।',
-    buildingDiv: 'बिल्डिंग मैटेरियल्स डिविजन',
-    pipesDiv: 'पाइप्स डिविजन',
+    desc: 'प्रीमियम निर्माण परियोजनाओं के लिए उच्च-शक्ति इंटरलॉकिंग पेवर ब्लॉक और कंक्रीट समाधानों के निर्माता।',
+    buildingDiv: 'बिल्डिंग मैटेरियल्स',
     quickLinks: 'त्वरित लिंक',
-    addressVal: 'Deesa, Banaskantha, Gujarat - 385535',
+    addressVal: 'गिरधारपुर उंचेर कौरीराम, उत्तर प्रदेश - 273413',
     hoursVal: 'सोम - शनि: सुबह 9:00 बजे - शाम 7:00 बजे',
     sunday: 'रविवार: अपॉइंटमेंट पर',
     home: 'मुख्य पृष्ठ',
-    products: 'उत्पाद',
+    products: 'निर्माण सामग्री',
     order: 'ऑर्डर बुक करें',
     shuttering: 'शटरिंग',
     rccRoads: 'RCC सड़कें',
-    pipes: 'पाइप्स',
     about: 'हमारे बारे में',
     contact: 'संपर्क'
   },
   en: {
-    desc: 'Leading manufacturers of high-strength interlocking pavers and concrete solutions for premium construction projects. A family business, operated by Chaubey Brothers.',
-    buildingDiv: 'Building Materials Division',
-    pipesDiv: 'Pipes Division',
+    desc: 'Leading manufacturers of high-strength interlocking pavers and concrete solutions for premium construction projects.',
+    buildingDiv: 'Building Materials',
     quickLinks: 'Quick Links',
-    addressVal: 'Deesa, Banaskantha, Gujarat - 385535',
+    addressVal: 'Girdharpur Uncher Kauriram, Uttar Pradesh - 273413',
     hoursVal: 'Mon - Sat: 9:00 AM - 7:00 PM',
     sunday: 'Sunday: By Appointment',
     home: 'Home',
-    products: 'Products',
+    products: 'Building Materials',
     order: 'Book Order',
     shuttering: 'Shuttering',
     rccRoads: 'RCC Roads',
-    pipes: 'Pipes',
     about: 'About',
     contact: 'Contact'
   }
@@ -46,119 +42,83 @@ export default function Footer({ language }) {
   };
 
   return (
-    <footer className="bg-surface-container py-16 px-gutter border-t border-surface-variant/30 select-none">
-      <div className="max-w-container-max mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
-        {/* Brand Column */}
+    <footer className="py-16 px-gutter border-t select-none" style={{ background: '#1a1a3e' }}>
+      <div className="max-w-container-max mx-auto grid grid-cols-1 md:grid-cols-3 gap-12">
         <div className="flex flex-col">
           <div className="flex items-center gap-3 mb-6 select-none">
             <img alt="Swastika Interlocking Logo" className="h-10 w-10 object-contain" src="/logo.svg" />
-            <span className="font-headline-md text-headline-md font-bold text-primary leading-tight">
-              Swastika<br/><span className="text-on-surface">Interlocking</span>
+            <span className="font-headline-md text-headline-md font-bold leading-tight" style={{ color: '#E8650A' }}>
+              Swastika<br/><span style={{ color: 'rgba(255,255,255,0.8)' }}>Interlocking</span>
             </span>
           </div>
-          <p className="text-on-surface-variant font-body-md text-body-md mb-6 leading-relaxed">
+          <p className="font-body-md text-body-md mb-6 leading-relaxed" style={{ color: 'rgba(255,255,255,0.8)' }}>
             {t.desc}
-          </p>
-          <p className="text-on-surface-variant font-body-md text-body-md">
-            {language === 'hi' ? 'एक चौबे परिवार का व्यवसाय' : 'A Chaubey Family Business'}
           </p>
         </div>
 
-        {/* Dilip's Division Column */}
         <div>
-          <h4 className="font-bold text-on-surface mb-6 font-body-md text-body-md border-b border-primary/30 pb-2 text-primary">
-            {t.buildingDiv}
+          <h4 className="font-bold mb-6 font-body-md text-body-md border-b pb-2" style={{ color: '#E8650A', borderColor: 'rgba(232,101,10,0.3)' }}>
+            {t.quickLinks}
           </h4>
-          <p className="text-on-surface font-semibold mb-2">Dilip Chaubey</p>
-          <a href="tel:+918400936290" className="text-on-surface-variant hover:text-primary transition-colors mb-1 block">
-            84009 36290
-          </a>
-          <ul className="space-y-3 mt-6">
+          <ul className="space-y-3">
             <li>
-              <Link to="/products" onClick={handleScrollToTop} className="text-on-surface-variant hover:text-primary transition-all">
+              <Link to="/products" onClick={handleScrollToTop} className="transition-all" style={{ color: 'rgba(255,255,255,0.8)' }} onMouseOver={(e) => e.target.style.color = '#E8650A'} onMouseOut={(e) => e.target.style.color = 'rgba(255,255,255,0.8)'}>
                 {t.products}
               </Link>
             </li>
             <li>
-              <Link to="/shuttering" onClick={handleScrollToTop} className="text-on-surface-variant hover:text-primary transition-all">
+              <Link to="/shuttering" onClick={handleScrollToTop} className="transition-all" style={{ color: 'rgba(255,255,255,0.8)' }} onMouseOver={(e) => e.target.style.color = '#E8650A'} onMouseOut={(e) => e.target.style.color = 'rgba(255,255,255,0.8)'}>
                 {t.shuttering}
               </Link>
             </li>
             <li>
-              <Link to="/rcc-roads" onClick={handleScrollToTop} className="text-on-surface-variant hover:text-primary transition-all">
+              <Link to="/rcc-roads" onClick={handleScrollToTop} className="transition-all" style={{ color: 'rgba(255,255,255,0.8)' }} onMouseOver={(e) => e.target.style.color = '#E8650A'} onMouseOut={(e) => e.target.style.color = 'rgba(255,255,255,0.8)'}>
                 {t.rccRoads}
               </Link>
             </li>
             <li>
-              <Link to="/order" onClick={handleScrollToTop} className="text-on-surface-variant hover:text-primary transition-all">
+              <Link to="/order" onClick={handleScrollToTop} className="transition-all" style={{ color: 'rgba(255,255,255,0.8)' }} onMouseOver={(e) => e.target.style.color = '#E8650A'} onMouseOut={(e) => e.target.style.color = 'rgba(255,255,255,0.8)'}>
                 {t.order}
               </Link>
             </li>
-          </ul>
-        </div>
-
-        {/* Alok's Division Column */}
-        <div>
-          <h4 className="font-bold text-on-surface mb-6 font-body-md text-body-md border-b border-[#1565C0]/30 pb-2 text-[#1565C0]">
-            {t.pipesDiv}
-          </h4>
-          <p className="text-on-surface font-semibold mb-2">Alok Chaubey</p>
-          <a href="tel:+919722832661" className="text-on-surface-variant hover:text-[#1565C0] transition-colors mb-1 block">
-            97228 32661
-          </a>
-          <ul className="space-y-3 mt-6">
             <li>
-              <Link to="/pipes" onClick={handleScrollToTop} className="text-on-surface-variant hover:text-[#1565C0] transition-all">
-                {t.pipes}
-              </Link>
-            </li>
-            <li>
-              <Link to="/about" onClick={handleScrollToTop} className="text-on-surface-variant hover:text-primary transition-all">
-                {t.about}
-              </Link>
-            </li>
-            <li>
-              <Link to="/contact" onClick={handleScrollToTop} className="text-on-surface-variant hover:text-primary transition-all">
+              <Link to="/contact" onClick={handleScrollToTop} className="transition-all" style={{ color: 'rgba(255,255,255,0.8)' }} onMouseOver={(e) => e.target.style.color = '#E8650A'} onMouseOut={(e) => e.target.style.color = 'rgba(255,255,255,0.8)'}>
                 {t.contact}
               </Link>
             </li>
           </ul>
         </div>
 
-        {/* Contact Column */}
         <div>
-          <h4 className="font-bold text-on-surface mb-6 font-body-md text-body-md border-b border-on-surface/5 pb-2">
+          <h4 className="font-bold mb-6 font-body-md text-body-md border-b pb-2" style={{ color: '#E8650A', borderColor: 'rgba(255,255,255,0.1)' }}>
             {language === 'hi' ? 'संपर्क सूत्र' : 'Contact Us'}
           </h4>
-          <p className="text-on-surface-variant font-body-md text-body-md mb-4 flex items-start gap-2 leading-relaxed">
-            <span className="material-symbols-outlined text-primary shrink-0 mt-1">location_on</span>
+          <p className="font-body-md text-body-md mb-4 flex items-start gap-2 leading-relaxed" style={{ color: 'rgba(255,255,255,0.8)' }}>
+            <span className="material-symbols-outlined shrink-0 mt-1" style={{ color: '#E8650A' }}>location_on</span>
             <a 
-              href="https://www.google.com/maps/place/Deesa,+Gujarat" 
+              href="#" 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="hover:text-primary transition-colors hover:underline"
+              className="transition-colors hover:underline"
+              style={{ color: 'rgba(255,255,255,0.8)' }} 
+              onMouseOver={(e) => e.target.style.color = '#E8650A'} 
+              onMouseOut={(e) => e.target.style.color = 'rgba(255,255,255,0.8)'}
             >
               {t.addressVal}
             </a>
           </p>
-          <div className="text-on-surface-variant font-body-md text-body-md mb-4 flex items-start gap-2 leading-relaxed">
-            <span className="material-symbols-outlined text-primary shrink-0 mt-1">schedule</span>
+          <div className="font-body-md text-body-md mb-4 flex items-start gap-2 leading-relaxed" style={{ color: 'rgba(255,255,255,0.8)' }}>
+            <span className="material-symbols-outlined shrink-0 mt-1" style={{ color: '#E8650A' }}>schedule</span>
             <div>
               <p>{t.hoursVal}</p>
               <p className="text-sm">{t.sunday}</p>
             </div>
           </div>
-          <p className="text-on-surface-variant font-body-md text-body-md flex items-start gap-2 leading-relaxed">
-            <span className="material-symbols-outlined text-primary shrink-0 mt-1">mail</span>
-            <a href="mailto:info@swastikainterlocking.live" className="hover:text-primary transition-colors hover:underline">
-              info@swastikainterlocking.live
-            </a>
-          </p>
         </div>
       </div>
 
-      <div className="max-w-container-max mx-auto mt-12 pt-8 border-t border-on-surface/10 text-center text-on-surface-variant font-body-md text-body-md">
-        © {new Date().getFullYear()} Swastika Interlocking | Dilip Chaubey & Alok Chaubey | Deesa, Gujarat
+      <div className="max-w-container-max mx-auto mt-12 pt-8 border-t text-center font-body-md text-body-md" style={{ borderColor: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.8)' }}>
+        © {new Date().getFullYear()} Swastika Interlocking
       </div>
     </footer>
   );

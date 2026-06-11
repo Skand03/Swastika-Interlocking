@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Swastika Interlocking</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&amp;family=JetBrains+Mono:wght@500&amp;family=Source+Sans+3:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                            "on-surface": "#1c1b1b",
+                            "inverse-primary": "#ffb692",
+                            "inverse-surface": "#313030",
+                            "secondary-container": "#d2d0ff",
+                            "primary-container": "#c35200",
+                            "on-secondary-fixed": "#17173b",
+                            "error": "#ba1a1a",
+                            "tertiary-fixed-dim": "#cec5bc",
+                            "on-primary": "#ffffff",
+                            "inverse-on-surface": "#f3f0ef",
+                            "surface-dim": "#dcd9d9",
+                            "secondary-fixed-dim": "#c4c2f0",
+                            "tertiary": "#615b53",
+                            "secondary-fixed": "#e2dfff",
+                            "on-secondary": "#ffffff",
+                            "outline": "#8c7165",
+                            "surface-variant": "#e5e2e1",
+                            "error-container": "#ffdad6",
+                            "surface-bright": "#fcf9f8",
+                            "primary-fixed": "#ffdbcb",
+                            "on-error": "#ffffff",
+                            "surface-container-lowest": "#ffffff",
+                            "primary": "#9b4000",
+                            "on-primary-fixed": "#341100",
+                            "on-tertiary-fixed": "#1f1b15",
+                            "primary-fixed-dim": "#ffb692",
+                            "on-background": "#1c1b1b",
+                            "on-tertiary-container": "#fffbff",
+                            "on-surface-variant": "#584237",
+                            "tertiary-container": "#7a736b",
+                            "on-secondary-fixed-variant": "#434369",
+                            "tertiary-fixed": "#ebe1d7",
+                            "surface-container-highest": "#e5e2e1",
+                            "outline-variant": "#e0c0b1",
+                            "secondary": "#5b5b82",
+                            "on-tertiary-fixed-variant": "#4b463f",
+                            "on-primary-container": "#fffbff",
+                            "on-error-container": "#93000a",
+                            "on-primary-fixed-variant": "#793000",
+                            "surface-tint": "#9f4200",
+                            "surface-container": "#f0edec",
+                            "on-secondary-container": "#58587f",
+                            "surface-container-low": "#f6f3f2",
+                            "surface": "#fcf9f8",
+                            "surface-container-high": "#ebe7e7",
+                            "background": "#fcf9f8",
+                            "on-tertiary": "#ffffff"
+                    },
+                    "borderRadius": {
+                            "DEFAULT": "0.125rem",
+                            "lg": "0.25rem",
+                            "xl": "0.5rem",
+                            "full": "0.75rem"
+                    },
+                    "spacing": {
+                            "margin-mobile": "20px",
+                            "max-width": "1280px",
+                            "base-unit": "8px",
+                            "section-gap": "120px",
+                            "gutter": "24px",
+                            "margin-desktop": "64px"
+                    },
+                    "fontFamily": {
+                            "display-lg": ["IBM Plex Sans"],
+                            "label-caps": ["JetBrains Mono"],
+                            "bilingual-sub": ["Source Sans 3"],
+                            "headline-lg": ["IBM Plex Sans"],
+                            "display-lg-mobile": ["IBM Plex Sans"],
+                            "body-lg": ["Source Sans 3"],
+                            "body-md": ["Source Sans 3"],
+                            "headline-lg-mobile": ["IBM Plex Sans"],
+                            "headline-md": ["IBM Plex Sans"]
+                    },
+                    "fontSize": {
+                            "display-lg": ["64px", {"lineHeight": "72px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                            "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "500"}],
+                            "bilingual-sub": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                            "headline-lg": ["40px", {"lineHeight": "48px", "fontWeight": "600"}],
+                            "display-lg-mobile": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                            "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                            "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                            "headline-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                            "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .hero-gradient {
+            background: linear-gradient(90deg, rgba(23, 23, 59, 0.95) 0%, rgba(23, 23, 59, 0.8) 50%, rgba(23, 23, 59, 0.2) 100%);
+        }
+        .text-gradient-orange {
+            background: linear-gradient(90deg, #c35200 0%, #ffb692 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glow-effect {
+            box-shadow: -20px 0 100px 20px rgba(195, 82, 0, 0.15);
+        }
+        .hard-shadow {
+            box-shadow: 4px 4px 0px 0px rgba(23, 23, 59, 1);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased selection:bg-primary-container selection:text-on-primary">
+<!-- TopNavBar -->
+<nav class="bg-inverse-surface dark:bg-inverse-surface border-b-2 border-primary sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-max-width mx-auto">
+<div class="font-display-lg text-display-lg-mobile md:text-display-lg text-primary dark:text-inverse-primary uppercase tracking-tighter">
+                Swastika Interlocking
+            </div>
+<div class="hidden md:flex items-center gap-gutter">
+<a class="text-primary font-bold border-b-2 border-primary pb-1 active:scale-95 duration-150" href="#">Home</a>
+<a class="text-on-primary-container dark:text-inverse-on-surface hover:text-primary transition-colors hover:text-primary dark:hover:text-inverse-primary transition-all active:scale-95 duration-150" href="#">Products</a>
+<a class="text-on-primary-container dark:text-inverse-on-surface hover:text-primary transition-colors hover:text-primary dark:hover:text-inverse-primary transition-all active:scale-95 duration-150" href="#">RCC Roads</a>
+<a class="text-on-primary-container dark:text-inverse-on-surface hover:text-primary transition-colors hover:text-primary dark:hover:text-inverse-primary transition-all active:scale-95 duration-150" href="#">About</a>
+<a class="text-on-primary-container dark:text-inverse-on-surface hover:text-primary transition-colors hover:text-primary dark:hover:text-inverse-primary transition-all active:scale-95 duration-150" href="#">Order</a>
+<a class="text-on-primary-container dark:text-inverse-on-surface hover:text-primary transition-colors hover:text-primary dark:hover:text-inverse-primary transition-all active:scale-95 duration-150" href="#">Contact</a>
+</div>
+<div class="flex items-center gap-4">
+<button aria-label="language" class="text-primary dark:text-inverse-primary hover:text-primary dark:hover:text-inverse-primary transition-all flex items-center justify-center p-2 rounded-full hover:bg-surface/10 active:scale-95 duration-150">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">language</span>
+</button>
+<button aria-label="login" class="text-primary dark:text-inverse-primary hover:text-primary dark:hover:text-inverse-primary transition-all flex items-center justify-center p-2 rounded-full hover:bg-surface/10 active:scale-95 duration-150">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">login</span>
+</button>
+<button class="md:hidden text-primary flex items-center justify-center p-2">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</div>
+</nav>
+<main>
+<!-- HERO SECTION -->
+<section class="relative w-full min-h-[90vh] flex items-center overflow-hidden bg-on-secondary-fixed">
+<!-- Background Image -->
+<div class="absolute inset-0 z-0">
+<img alt="Large industrial interlocking paver manufacturing plant at dusk, heavy machinery, rows of paver blocks, dramatic lighting, premium corporate aesthetic." class="w-full h-full object-cover object-center" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZwyVpZcQOByJo1-KsRr2aNLMf4GG7bCN_922WJOSADW4HKgPpGbgNqw7oNCX8JO9jPIOTmTmd5GcSrvdZwmbLoEPjYzAwis5F64_XxqaISJapBETLjLSMyPpZdcxYAbO9FTKh9wq6EzvdEPCc2p7Zb6bym4M1pAHutvqrfHuDMgi2Oea_rdpEmZj6PAUpvFxUCN7OwTaDD2EdTcS-ZGU8EfVXjwYD1ZxFyC5pTXZFmW2VPw0ZoJMyacGuvI6E4iCBVkJHsg68q8s"/>
+<div class="absolute inset-0 hero-gradient"></div>
+</div>
+<div class="relative z-10 w-full max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-12 gap-gutter items-center">
+<!-- Left Content (60%) -->
+<div class="col-span-1 md:col-span-7 flex flex-col gap-6 glow-effect py-12">
+<!-- Top Badge -->
+<div class="inline-flex items-center gap-2 border border-primary-container rounded-full px-4 py-2 w-max bg-on-secondary-fixed/50 backdrop-blur-sm">
+<span class="material-symbols-outlined text-primary-container text-sm">star</span>
+<div class="flex flex-col">
+<span class="font-bilingual-sub text-bilingual-sub text-primary-container uppercase tracking-wider">देसा का नंबर 1 निर्माण साथी</span>
+<span class="font-label-caps text-label-caps text-surface-variant">Kauriram's #1 Construction Partner</span>
+</div>
+</div>
+<!-- Main Headline -->
+<div class="flex flex-col">
+<h1 class="font-display-lg-mobile text-display-lg-mobile md:font-display-lg md:text-display-lg text-on-primary">
+                            निर्माण करो <br/>
+<span class="text-gradient-orange">विश्वास के साथ</span>
+</h1>
+<p class="font-headline-md text-headline-md text-surface-variant italic font-light mt-2">
+                            Build with Confidence
+                        </p>
+</div>
+<!-- Subheading -->
+<div class="flex items-center gap-2 mt-2">
+<span class="text-primary-container text-xl">✓</span>
+<div class="flex flex-col">
+<span class="font-bilingual-sub text-bilingual-sub text-surface-variant">दिलीप चौबे और आलोक चौबे की गारंटी के साथ</span>
+<span class="font-body-md text-body-md text-surface-dim">Guaranteed by Dilip &amp; Alok Chaubey</span>
+</div>
+</div>
+<!-- Stats Row -->
+<div class="flex flex-wrap gap-8 mt-6">
+<div class="flex flex-col border-l-2 border-primary-container pl-4">
+<span class="font-headline-lg text-headline-lg text-on-primary">500+</span>
+<span class="font-bilingual-sub text-bilingual-sub text-surface-variant mt-1">Happy Customers</span>
+<span class="font-label-caps text-label-caps text-surface-dim">खुश ग्राहक</span>
+</div>
+<div class="flex flex-col border-l-2 border-primary-container pl-4">
+<span class="font-headline-lg text-headline-lg text-on-primary">25+</span>
+<span class="font-bilingual-sub text-bilingual-sub text-surface-variant mt-1">Roads Built</span>
+<span class="font-label-caps text-label-caps text-surface-dim">सड़कें बनाईं</span>
+</div>
+<div class="flex flex-col border-l-2 border-primary-container pl-4">
+<span class="font-headline-lg text-headline-lg text-on-primary">10+</span>
+<span class="font-bilingual-sub text-bilingual-sub text-surface-variant mt-1">Years Exp.</span>
+<span class="font-label-caps text-label-caps text-surface-dim">साल का अनुभव</span>
+</div>
+</div>
+<!-- CTA Buttons -->
+<div class="flex flex-wrap items-center gap-4 mt-8">
+<button class="text-on-primary font-bilingual-sub text-bilingual-sub uppercase px-8 py-4 rounded font-bold hard-shadow hover:translate-y-1 hover:shadow-none transition-all flex flex-col items-center bg-[#4a7c59]">
+<span>अभी ऑर्डर करें</span>
+<span class="text-xs opacity-90 mt-1">Order Now →</span>
+</button>
+<button class="border-2 border-surface-variant text-on-primary font-bilingual-sub text-bilingual-sub px-6 py-4 rounded flex items-center gap-2 hover:bg-surface-variant/10 transition-colors">
+<span class="material-symbols-outlined">call</span>
+<span>84009 36290</span>
+</button>
+<button class="bg-[#25D366] text-on-primary font-bilingual-sub text-bilingual-sub px-4 py-3 rounded flex items-center gap-2 hover:bg-[#20b858] transition-colors self-start mt-1">
+<span class="material-symbols-outlined text-sm">chat</span>
+<span>WhatsApp करें</span>
+</button>
+</div>
+<!-- Trust Row -->
+<div class="flex flex-wrap items-center gap-2 text-surface-dim mt-8 font-label-caps text-label-caps text-[10px]">
+<div class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">lock</span> Safe Payment</div>
+<span class="text-primary-container">•</span>
+<div class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">local_shipping</span> Fast Delivery</div>
+<span class="text-primary-container">•</span>
+<div class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">verified</span> Quality Guaranteed</div>
+<span class="text-primary-container">•</span>
+<div class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">location_on</span> Kauriram, Gorakhpur</div>
+</div>
+</div>
+<!-- Right Content (40%) -->
+<div class="col-span-1 md:col-span-5 relative hidden md:block mt-12 md:mt-0"><div class="relative w-[480px] h-[420px] -rotate-2 rounded-[20px] shadow-lg overflow-visible mx-auto ml-auto">
+<div class="absolute -top-4 -left-4 z-30 text-white font-bold px-4 py-1 rounded shadow-md flex items-center gap-1 text-xs uppercase tracking-wider bg-[#4a7c59]">
+<span class="material-symbols-outlined text-sm">verified</span> Quality Certified
+  </div>
+<div class="grid grid-cols-2 gap-2 h-full">
+<div class="relative bg-gradient-to-br from-primary to-tertiary rounded-xl overflow-hidden border-b-[3px] border-[#E8650A] flex flex-col items-center justify-center p-4 text-on-primary">
+<span class="text-4xl mb-2">🧱</span>
+<span class="font-bold text-lg">Paver Blocks</span>
+<span class="text-xs opacity-80">पेवर ब्लॉक</span>
+</div>
+<div class="relative bg-gradient-to-br from-inverse-surface to-on-secondary-fixed rounded-xl overflow-hidden border-b-[3px] border-[#E8650A] flex flex-col items-center justify-center p-4 text-on-primary">
+<span class="text-4xl mb-2">🛣️</span>
+<span class="font-bold text-lg">RCC Roads</span>
+<span class="text-xs opacity-80">RCC सड़क</span>
+</div>
+<div class="relative bg-gradient-to-br from-secondary to-on-secondary-fixed rounded-xl overflow-hidden border-b-[3px] border-[#E8650A] flex flex-col items-center justify-center p-4 text-on-primary">
+<span class="text-4xl mb-2">🏗️</span>
+<span class="font-bold text-lg">Shuttering</span>
+<span class="text-xs opacity-80">शटरिंग</span>
+</div>
+<div class="relative bg-gradient-to-br from-primary-container to-primary rounded-xl overflow-hidden border-b-[3px] border-[#E8650A] flex flex-col items-center justify-center p-4 text-on-primary">
+<span class="text-4xl mb-2">⛏️</span>
+<span class="font-bold text-lg">Raw Materials</span>
+<span class="text-xs opacity-80">कच्चा माल</span>
+</div>
+</div>
+<div class="absolute -bottom-4 -left-8 bg-surface rounded-lg py-3 px-5 shadow-xl border border-on-secondary-fixed/10 flex items-center gap-3 z-40 rotate-2">
+<div class="w-3 h-3 bg-[#25D366] rounded-full animate-pulse"></div>
+<div class="flex flex-col">
+<span class="font-bold text-on-surface text-sm">New order placed</span>
+<span class="text-on-surface-variant text-xs">Kauriram, Gorakhpur — just now</span>
+</div>
+</div>
+</div></div>
+</div>
+<!-- Bottom Scroll -->
+<div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-surface-variant/50 opacity-80 z-10">
+<span class="font-bilingual-sub text-bilingual-sub text-sm">नीचे देखें / Scroll to explore</span>
+<span class="material-symbols-outlined animate-bounce">keyboard_arrow_down</span>
+</div>
+</section>
+<!-- DIVISION STRIP -->
+<section class="w-full bg-surface-container-low border-b border-surface-variant py-6" id="division-strip">
+<div class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop flex flex-col md:flex-row justify-center items-center gap-4">
+<div class="bg-surface border border-surface-variant rounded-full px-6 py-2 flex items-center gap-2 shadow-sm">
+<span class="text-xl">🧱</span>
+<span class="font-label-caps text-label-caps text-on-surface uppercase font-bold tracking-wider">Building Materials <span class="text-on-surface-variant font-normal">— Dilip Chaubey</span></span>
+</div>
+<div class="bg-surface border border-surface-variant rounded-full px-6 py-2 flex items-center gap-2 shadow-sm">
+<span class="text-xl">🔧</span>
+<span class="font-label-caps text-label-caps text-on-surface uppercase font-bold tracking-wider">Pipes Division <span class="text-on-surface-variant font-normal">— Alok Chaubey</span></span>
+</div>
+<div class="bg-surface border border-surface-variant rounded-full px-6 py-2 flex items-center gap-2 shadow-sm">
+<span class="text-xl">🛣️</span>
+<span class="font-label-caps text-label-caps text-on-surface uppercase font-bold tracking-wider">RCC ROADS <span class="text-on-surface-variant font-normal">— KAURIRAM</span></span>
+</div>
+</div>
+</section>
+<!-- TRUST BAR -->
+<section class="w-full bg-on-secondary-fixed py-4 border-b-4 border-primary-container" id="trust-bar">
+<div class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop flex flex-wrap justify-center md:justify-between items-center gap-y-4 gap-x-8">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-sm">check</span>
+<span class="font-bilingual-sub text-bilingual-sub text-surface-variant">500+ Happy Customers</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-sm">check</span>
+<span class="font-bilingual-sub text-bilingual-sub text-surface-variant">10+ Years in Kauriram</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-sm">check</span>
+<span class="font-bilingual-sub text-bilingual-sub text-surface-variant">Free Delivery Available</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-sm">check</span>
+<span class="font-bilingual-sub text-bilingual-sub text-surface-variant">Quality Certified Materials</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-sm">check</span>
+<span class="font-bilingual-sub text-bilingual-sub text-surface-variant">दिलीप और आलोक चौबे की गारंटी</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-inverse-surface dark:bg-on-surface border-t-4 border-primary">
+<div class="w-full px-margin-mobile md:px-margin-desktop py-section-gap max-w-max-width mx-auto flex flex-col md:flex-row justify-between gap-8">
+<div class="flex flex-col gap-4 max-w-sm">
+<div class="font-headline-md text-headline-md text-primary">
+                    Swastika Interlocking
+                </div>
+<p class="font-body-md text-body-md text-surface-variant opacity-80">
+                    © 2024 Swastika Interlocking. Quality Guaranteed by Dilip &amp; Alok Chaubey.
+                </p>
+</div>
+<div class="flex flex-col md:flex-row gap-8 md:gap-16">
+<div class="flex flex-col gap-4">
+<a class="font-body-md text-body-md text-surface-variant opacity-80 hover:text-white transition-opacity" href="#">Privacy Policy</a>
+<a class="font-body-md text-body-md text-surface-variant opacity-80 hover:text-white transition-opacity" href="#">Terms of Service</a>
+</div>
+<div class="flex flex-col gap-4">
+<a class="font-body-md text-body-md text-surface-variant opacity-80 hover:text-white transition-opacity" href="#">Bureau of Indian Standards</a>
+<a class="font-body-md text-body-md text-surface-variant opacity-80 hover:text-white transition-opacity" href="#">Site Map</a>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

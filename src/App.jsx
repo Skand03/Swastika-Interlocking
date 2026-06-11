@@ -10,7 +10,7 @@ import Products from './pages/Products';
 import Order from './pages/Order';
 import OrderDetails from './pages/OrderDetails';
 import Contact from './pages/Contact';
-import About from './pages/About';
+
 import ProductDetail from './pages/ProductDetail';
 import Auth from './pages/Auth';
 import CustomerDashboard from './pages/CustomerDashboard';
@@ -21,7 +21,7 @@ import ShutteringDetail from './pages/ShutteringDetail';
 import ShutteringEnquiry from './pages/ShutteringEnquiry';
 import RCCRoads from './pages/RCCRoads';
 import RCCEnquiry from './pages/RCCEnquiry';
-import Pipes from './pages/Pipes';
+
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './auth/ProtectedRoute';
 import AdminRoute from './auth/AdminRoute';
@@ -119,7 +119,7 @@ function AppContent({ language, handleLanguageChange }) {
               <Contact language={language} />
             </AuthGate>
           } />
-          <Route path="/about" element={<About language={language} />} />
+
           <Route path="/shuttering" element={<Shuttering language={language} />} />
           <Route path="/shuttering/:productId" element={<ShutteringDetail language={language} />} />
           <Route path="/shuttering-enquiry" element={
@@ -133,7 +133,7 @@ function AppContent({ language, handleLanguageChange }) {
               <RCCEnquiry language={language} />
             </AuthGate>
           } />
-          <Route path="/pipes" element={<Pipes language={language} />} />
+
           <Route path="/auth" element={<Auth language={language} />} />
           
           <Route path="/customer-dashboard" element={
@@ -144,7 +144,7 @@ function AppContent({ language, handleLanguageChange }) {
           
           <Route path="/admin-dashboard/*" element={
             <AdminRoute>
-              <AdminShell>
+              <AdminShell language={language} handleLanguageChange={handleLanguageChange}>
                 <AdminRoutes language={language} />
               </AdminShell>
             </AdminRoute>

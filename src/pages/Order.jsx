@@ -13,15 +13,15 @@ const TRANSLATIONS = {
     name: 'नाम',
     namePlaceholder: 'पूरा नाम दर्ज करें',
     phone: 'फ़ोन नंबर',
-    city: 'शहर या गाँव',
+    city: 'शहर या गांव',
     cityPlaceholder: 'स्थान दर्ज करें',
     product: 'उत्पाद चुनें',
     selectProduct: 'उत्पाद सूची',
     quantity: 'मात्रा',
     quantityPlaceholder: 'मात्रा दर्ज करें',
-    address: 'डिलिवरी का पता',
+    address: 'डिलीवरी का पता',
     addressPlaceholder: 'लैंडमार्क के साथ पूरा पता दर्ज करें',
-    requirements: 'विशेष आवश्यकताएं',
+    requirements: 'विशेष आवश्यकताएँ',
     requirementsPlaceholder: 'कोई विशेष निर्देश?',
     submitBtn: 'ऑर्डर सबमिट करें',
     processing: 'प्रक्रिया में है...',
@@ -43,7 +43,9 @@ const TRANSLATIONS = {
     addToList: 'सूची में जोड़ें',
     selectedItems: 'चयनित उत्पाद (डैशबोर्ड)',
     emptyCart: 'कोई उत्पाद नहीं चुना गया।',
-    totalItems: 'कुल उत्पाद'
+    totalItems: 'कुल उत्पाद',
+    remove: 'हटाएं',
+    required: 'आवश्यक'
   },
   en: {
     title: 'Book Your Order',
@@ -82,7 +84,9 @@ const TRANSLATIONS = {
     addToList: 'Add to List',
     selectedItems: 'Selected Products Dashboard',
     emptyCart: 'No products selected yet.',
-    totalItems: 'Total Items'
+    totalItems: 'Total Items',
+    remove: 'Remove',
+    required: 'Required'
   }
 };
 
@@ -181,7 +185,7 @@ export default function Order({ language }) {
     setCart([...cart, {
       id: Date.now(),
       product_id: currentItem.product_type,
-      product_name: selectedProd ? selectedProd.name_en : currentItem.product_type,
+      product_name: selectedProd ? (language === 'hi' ? (selectedProd.name_hi || selectedProd.name_en) : selectedProd.name_en) : currentItem.product_type,
       sub_type: currentItem.sub_type,
       quantity: parseInt(currentItem.quantity),
       price: selectedProd ? selectedProd.price_min : 0,
@@ -221,7 +225,7 @@ export default function Order({ language }) {
       finalCart.push({
         id: Date.now(),
         product_id: currentItem.product_type,
-        product_name: selectedProd ? selectedProd.name_en : currentItem.product_type,
+        product_name: selectedProd ? (language === 'hi' ? (selectedProd.name_hi || selectedProd.name_en) : selectedProd.name_en) : currentItem.product_type,
         sub_type: currentItem.sub_type,
         quantity: parseInt(currentItem.quantity),
         price: selectedProd ? selectedProd.price_min : 0,
@@ -289,7 +293,7 @@ export default function Order({ language }) {
   const activeProductObj = productList.find(p => p.id == currentItem.product_type);
 
   return (
-    <main className="pt-32 pb-20 px-gutter max-w-container-max mx-auto min-h-screen">
+    <main className="pt-16 pb-20 px-4 sm:px-gutter max-w-container-max mx-auto min-h-screen">
       <SEOHead
         title="Book Order - Paver Blocks & Building Materials | Swastika Interlocking Deesa"
         description="Book your order for interlocking paver blocks, sand, gravel, cement or shuttering materials from Swastika Interlocking, Deesa. Fast delivery in Banaskantha, Gujarat."
@@ -300,42 +304,42 @@ export default function Order({ language }) {
       />
       {/* Page Header */}
       <div className="mb-12 text-center md:text-left select-none">
-        <h1 className="font-display-lg text-display-lg-mobile md:text-display-lg text-primary mb-2">{t.title}</h1>
-        <p className="text-on-surface-variant max-w-2xl leading-relaxed">{t.sub}</p>
+        <h1 className="font-display-lg text-2xl sm:text-3xl md:text-display-lg-mobile md:text-display-lg text-primary mb-2">{t.title}</h1>
+        <p className="text-on-surface-variant max-w-2xl leading-relaxed text-sm md:text-base">{t.sub}</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-gutter items-start">
         {/* Order Form Section */}
         <section className="lg:col-span-8 space-y-6">
-          <div className="bg-surface-container-low p-card-padding rounded-xl border border-surface-variant/30 shadow-sm transition-all duration-300">
+          <div className="bg-surface-container-low p-4 sm:p-card-padding rounded-xl border border-surface-variant/30 shadow-sm transition-all duration-300">
             {statusMsg && (
-              <div className={`flex items-start gap-4 p-5 rounded-xl mb-6 border-2 shadow-lg animate-bounce-once transition-all duration-500 ${
+              <div className={`flex items-start gap-4 p-4 sm:p-5 rounded-xl mb-6 border-2 shadow-lg animate-fade-in transition-all duration-500 ${
                 isSuccess
                   ? 'bg-gradient-to-r from-emerald-500 to-green-600 text-white border-emerald-400 shadow-emerald-200'
                   : 'bg-gradient-to-r from-red-500 to-rose-600 text-white border-red-400 shadow-red-200'
               }`}>
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${isSuccess ? 'bg-white/20' : 'bg-white/20'}`}>
-                  <span className="material-symbols-outlined text-2xl text-white" style={{fontVariationSettings: "'FILL' 1"}}>
+                <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center shrink-0 ${isSuccess ? 'bg-white/20' : 'bg-white/20'}`}>
+                  <span className="material-symbols-outlined text-xl sm:text-2xl text-white" style={{fontVariationSettings: "'FILL' 1"}}>
                     {isSuccess ? 'check_circle' : 'error'}
                   </span>
                 </div>
                 <div className="flex-1">
-                  <p className="font-bold text-base mb-0.5">
+                  <p className="font-bold text-sm sm:text-base mb-0.5">
                     {isSuccess ? (language === 'hi' ? 'ऑर्डर सफलतापूर्वक बुक हुआ!' : 'Order Successfully Booked!') : (language === 'hi' ? 'कुछ गलत हुआ' : 'Something went wrong')}
                   </p>
-                  <p className="text-white/90 text-sm leading-relaxed">{statusMsg}</p>
+                  <p className="text-white/90 text-xs sm:text-sm leading-relaxed">{statusMsg}</p>
                 </div>
               </div>
             )}
             
             <form onSubmit={handleSubmit} className="space-y-6" id="orderForm">
               
-              <div className="bg-white p-4 md:p-6 rounded-xl border border-outline-variant/30 shadow-sm mb-8">
-                <h3 className="font-bold text-lg mb-4 text-[#E8650A] border-b pb-2">1. Add Products to Order</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+              <div className="bg-white p-4 sm:p-6 rounded-xl border border-outline-variant/10 shadow-sm mb-8">
+                <h3 className="font-bold text-base sm:text-lg mb-4 text-[#E8650A] border-b pb-2">1. Add Products to Order</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
                   {/* Product Type */}
-                  <div className="flex flex-col gap-2 md:col-span-1">
-                    <label className="text-on-surface-variant font-label-sm font-medium">{t.product}</label>
+                  <div className="flex flex-col gap-2 sm:col-span-1">
+                    <label className="text-on-surface-variant font-label-sm font-medium text-xs sm:text-sm">{t.product} <span className="text-primary">*</span></label>
                     <div className="relative flex items-center">
                       <select 
                         name="product_type"
@@ -346,18 +350,18 @@ export default function Order({ language }) {
                         <option value="">{t.selectProduct}</option>
                         {productList.map(p => (
                           <option key={p.id} value={p.id}>
-                            {language === 'hi' ? p.name_hi : p.name_en}
+                            {language === 'hi' ? (p.name_hi || p.name_en) : p.name_en}
                           </option>
                         ))}
                       </select>
-                      <span className="material-symbols-outlined absolute right-3 pointer-events-none text-on-surface-variant">expand_more</span>
+                      <span className="material-symbols-outlined absolute right-3 pointer-events-none text-on-surface-variant text-sm">expand_more</span>
                     </div>
                   </div>
 
                   {/* Conditional Variants/Options */}
-                  {activeProductObj && activeProductObj.variants && activeProductObj.variants.length > 0 ? (
+                  {activeProductObj && activeProductObj.specifications?.variants && activeProductObj.specifications.variants.length > 0 ? (
                     <div className="flex flex-col gap-2">
-                      <label className="text-on-surface-variant font-label-sm font-medium">{t.color}</label>
+                      <label className="text-on-surface-variant font-label-sm font-medium text-xs sm:text-sm">{t.color}</label>
                       <div className="relative flex items-center">
                         <select 
                           name="sub_type" 
@@ -366,23 +370,23 @@ export default function Order({ language }) {
                           className="w-full bg-surface border border-outline/20 p-3 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all appearance-none text-sm"
                         >
                           <option value="">{t.selectColor}</option>
-                          {activeProductObj.variants.map((v, idx) => (
+                          {activeProductObj.specifications.variants.map((v, idx) => (
                             <option key={idx} value={v.name}>{v.name}</option>
                           ))}
                         </select>
-                        <span className="material-symbols-outlined absolute right-3 pointer-events-none text-on-surface-variant">expand_more</span>
+                        <span className="material-symbols-outlined absolute right-3 pointer-events-none text-on-surface-variant text-sm">expand_more</span>
                       </div>
                     </div>
                   ) : (
                     <div className="flex flex-col gap-2">
-                      <label className="text-on-surface-variant font-label-sm font-medium opacity-50">{t.color}</label>
+                      <label className="text-on-surface-variant font-label-sm font-medium text-xs sm:text-sm opacity-50">{t.color}</label>
                       <input disabled className="bg-surface border border-outline/20 p-3 rounded-lg outline-none cursor-not-allowed opacity-50 text-sm" placeholder="No variants" />
                     </div>
                   )}
 
                   {/* Quantity */}
                   <div className="flex flex-col gap-2">
-                    <label className="text-on-surface-variant font-label-sm font-medium">{t.quantity}</label>
+                    <label className="text-on-surface-variant font-label-sm font-medium text-xs sm:text-sm">{t.quantity} <span className="text-primary">*</span></label>
                     <input 
                       name="quantity"
                       value={currentItem.quantity}
@@ -394,11 +398,11 @@ export default function Order({ language }) {
                     />
                   </div>
 
-                  <div className="md:col-span-3 mt-2 flex justify-end">
+                  <div className="sm:col-span-3 mt-2 flex justify-end">
                     <button 
                       type="button" 
                       onClick={handleAddToCart}
-                      className="bg-[#2E7D32] text-white px-6 py-2.5 rounded-lg font-bold hover:bg-[#1B5E20] transition-colors active:scale-95 text-sm flex items-center gap-2 shadow-md cursor-pointer"
+                      className="bg-[#2E7D32] text-white px-4 sm:px-6 py-2.5 rounded-lg font-bold hover:bg-[#1B5E20] transition-colors active:scale-95 text-xs sm:text-sm flex items-center gap-2 shadow-md cursor-pointer"
                     >
                       <span className="material-symbols-outlined text-sm">add_shopping_cart</span>
                       {t.addToList}
@@ -407,61 +411,55 @@ export default function Order({ language }) {
                 </div>
               </div>
 
-
-              <h3 className="font-bold text-lg mb-4 text-[#1565C0] border-b pb-2">2. Customer Details</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <h3 className="font-bold text-base sm:text-lg mb-4 text-[#1565C0] border-b pb-2">2. Customer Details</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {/* Customer Name */}
                 <div className="flex flex-col gap-2">
-                  <label className="text-on-surface-variant font-label-sm font-medium">{t.name} <span className="text-primary">*</span></label>
+                  <label className="text-on-surface-variant font-label-sm font-medium text-xs sm:text-sm">{t.name} <span className="text-primary">*</span></label>
                   <input 
                     name="customer_name"
                     value={formData.customer_name}
                     onChange={handleChange}
-                    className="bg-surface border border-outline/20 p-4 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" 
+                    className="w-full bg-surface-container border border-outline/20 p-3 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-sm" 
                     placeholder={t.namePlaceholder}
-                    type="text"
+                    type="text" 
                     required
                   />
                 </div>
                 {/* Phone Number */}
                 <div className="flex flex-col gap-2">
-                  <label className="text-on-surface-variant font-label-sm font-medium">{t.phone} <span className="text-primary">*</span></label>
-                  <input 
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className="bg-surface border border-outline/20 p-4 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" 
-                    placeholder="9876543210" 
-                    maxLength={10}
-                    type="tel"
-                    required
-                  />
+                  <label className="text-on-surface-variant font-label-sm font-medium text-xs sm:text-sm">{t.phone} <span className="text-primary">*</span></label>
+                  <div className="flex">
+                    <span className="bg-surface-container-highest border border-r-0 border-outline-variant/30 rounded-l-lg px-3 sm:px-4 flex items-center text-on-surface-variant text-sm">+91</span>
+                    <input className="w-full bg-surface-container border border-outline-variant/30 rounded-r-lg p-3 form-input-focus text-sm" placeholder="9876543210" maxLength={10} type="tel" name="phone" value={formData.phone} onChange={handleChange} required />
+                  </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {/* City/Village */}
                 <div className="flex flex-col gap-2">
-                  <label className="text-on-surface-variant font-label-sm font-medium">{t.city} <span className="text-primary">*</span></label>
+                  <label className="text-on-surface-variant font-label-sm font-medium text-xs sm:text-sm">{t.city} <span className="text-primary">*</span></label>
                   <input 
                     name="city"
                     value={formData.city}
                     onChange={handleChange}
-                    className="bg-surface border border-outline/20 p-4 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" 
+                    className="w-full bg-surface-container border border-outline/20 p-3 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-sm" 
                     placeholder={t.cityPlaceholder}
-                    type="text"
+                    type="text" 
+                    required
                   />
                 </div>
                 {/* Delivery Address */}
                 <div className="flex flex-col gap-2">
-                  <label className="text-on-surface-variant font-label-sm font-medium">{t.address} <span className="text-primary">*</span></label>
+                  <label className="text-on-surface-variant font-label-sm font-medium text-xs sm:text-sm">{t.address} <span className="text-primary">*</span></label>
                   <input 
                     name="address"
                     value={formData.address}
                     onChange={handleChange}
-                    className="bg-surface border border-outline/20 p-4 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" 
+                    className="w-full bg-surface-container border border-outline/20 p-3 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-sm" 
                     placeholder={t.addressPlaceholder}
-                    type="text"
+                    type="text" 
                     required
                   />
                 </div>
@@ -469,26 +467,26 @@ export default function Order({ language }) {
 
               {/* Special Requirements */}
               <div className="flex flex-col gap-2">
-                <label className="text-on-surface-variant font-label-sm font-medium">{t.requirements}</label>
+                <label className="text-on-surface-variant font-label-sm font-medium text-xs sm:text-sm">{t.requirements}</label>
                 <textarea 
                   name="special_req"
                   value={formData.special_req}
                   onChange={handleChange}
-                  className="bg-surface border border-outline/20 p-4 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-sm" 
+                  className="w-full bg-surface-container border border-outline/20 p-3 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all text-sm" 
                   placeholder={t.requirementsPlaceholder}
-                  rows="3"
+                  rows="4"
                 ></textarea>
               </div>
 
               {/* Submit Button */}
-              <div className="pt-4 border-t border-outline/10 mt-6">
+              <div className="pt-4 border-t border-outline/10 mt-6 flex justify-start">
                 <button 
                   type="submit"
                   disabled={loading}
-                  className="w-full md:w-auto flex items-center justify-center gap-2 bg-[#E8650A] text-white font-bold px-12 py-4 rounded-lg hover:brightness-110 transition-all active:scale-95 shadow-lg group cursor-pointer"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#E8650A] text-white font-bold px-8 py-3 sm:py-4 rounded-lg hover:brightness-110 transition-all active:scale-95 shadow-md group cursor-pointer text-sm"
                 >
                   {loading ? t.processing : t.submitBtn}
-                  <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                  <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform text-sm">arrow_forward</span>
                 </button>
               </div>
             </form>
@@ -496,38 +494,39 @@ export default function Order({ language }) {
         </section>
 
         {/* Sidebar / Side Panel */}
-        <aside className="lg:col-span-4 space-y-gutter select-none">
+        <aside className="lg:col-span-4 space-y-gutter select-none order-first lg:order-last">
           
           {/* Selected Products Dashboard */}
-          <div className="bg-surface-container border border-primary/20 p-5 rounded-xl shadow-sm relative overflow-hidden">
+          <div className="bg-surface-container border border-primary/20 p-4 sm:p-5 rounded-xl shadow-sm relative overflow-hidden">
             <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full pointer-events-none"></div>
-            <h3 className="font-headline-md text-base text-primary mb-4 font-bold flex items-center gap-2">
-              <span className="material-symbols-outlined">dashboard</span>
+            <h3 className="font-headline-md text-sm sm:text-base text-primary mb-4 font-bold flex items-center gap-2">
+              <span className="material-symbols-outlined text-base sm:text-lg">dashboard</span>
               {t.selectedItems}
             </h3>
             
             <div className="space-y-3 mb-4 max-h-64 overflow-y-auto pr-2">
               {cart.length === 0 ? (
                 <div className="text-center py-6 bg-white rounded-lg border border-outline/10 border-dashed">
-                  <span className="material-symbols-outlined text-3xl text-outline-variant mb-2">remove_shopping_cart</span>
+                  <span className="material-symbols-outlined text-4xl sm:text-5xl text-outline-variant mb-2">remove_shopping_cart</span>
                   <p className="text-on-surface-variant text-sm">{t.emptyCart}</p>
                 </div>
               ) : (
                 cart.map(item => (
                   <div key={item.id} className="bg-white p-3 rounded-lg shadow-sm border border-outline/10 flex justify-between items-center group relative overflow-hidden">
                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary"></div>
-                    <div className="pl-2">
-                      <p className="font-bold text-sm text-on-surface leading-tight">{item.product_name}</p>
-                      <div className="flex gap-2 mt-1">
+                    <div className="pl-2 flex-1 min-w-0">
+                      <p className="font-bold text-xs sm:text-sm text-on-surface leading-tight truncate">{item.product_name}</p>
+                      <div className="flex gap-2 mt-1 flex-wrap">
                         {item.sub_type && <span className="text-[10px] bg-surface-variant px-1.5 py-0.5 rounded text-on-surface-variant font-semibold">{item.sub_type}</span>}
                         <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded font-bold">Qty: {item.quantity}</span>
+                        {item.price > 0 && <span className="text-[10px] bg-secondary/10 text-secondary px-1.5 py-0.5 rounded font-bold">₹{item.price.toLocaleString()}</span>}
                       </div>
                     </div>
                     <button 
                       type="button"
                       onClick={() => handleRemoveFromCart(item.id)}
-                      className="text-outline-variant hover:text-error transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-error/10 cursor-pointer"
-                      title="Remove"
+                      className="text-outline-variant hover:text-error transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-error/10 cursor-pointer shrink-0"
+                      title={t.remove}
                     >
                       <span className="material-symbols-outlined text-sm">close</span>
                     </button>
@@ -536,40 +535,39 @@ export default function Order({ language }) {
               )}
             </div>
             
-            <div className="pt-3 border-t border-outline/10 flex justify-between items-center text-sm font-bold">
+            <div className="pt-3 border-t border-outline/10 flex justify-between items-center text-xs sm:text-sm font-bold">
               <span className="text-on-surface-variant">{t.totalItems}:</span>
               <span className="bg-primary text-white px-2 py-0.5 rounded-full">{cart.length}</span>
             </div>
           </div>
 
           {/* Contact Support Card */}
-          <div className="bg-surface-container border border-surface-variant/30 p-card-padding rounded-xl shadow-sm overflow-hidden relative">
+          <div className="bg-surface-container border border-surface-variant/30 p-4 sm:p-card-padding rounded-xl shadow-sm overflow-hidden relative">
             <div className="relative z-10">
-              <h3 className="font-headline-md text-headline-md text-primary mb-2 font-semibold">{t.needHelp}</h3>
-              <p className="text-on-surface-variant mb-6 leading-relaxed">{t.helpSub}</p>
+              <h3 className="font-headline-md text-headline-md text-primary mb-2 font-semibold text-sm sm:text-base">{t.needHelp}</h3>
+              <p className="text-on-surface-variant text-xs sm:text-sm mb-6 leading-relaxed">{t.helpSub}</p>
               <div className="space-y-3">
-                <a className="flex items-center gap-4 p-3 bg-surface rounded-lg hover:shadow-md transition-shadow group" href="tel:+918400936290">
+                <a className="flex items-center gap-3 p-3 bg-surface rounded-lg hover:shadow-md transition-shadow group" href="tel:+918400936290">
                   <span className="w-10 h-10 flex items-center justify-center bg-secondary rounded-full text-white">
                     <span className="material-symbols-outlined">call</span>
                   </span>
                   <div>
-                    <p className="text-xs text-on-surface-variant font-label-sm">{t.callUs}</p>
-                    <p className="font-bold text-on-surface">+91 84009 36290</p>
+                    <p className="text-[10px] sm:text-xs text-on-surface-variant font-label-sm">{t.callUs}</p>
+                    <p className="font-bold text-on-surface text-sm">+91 84009 36290</p>
                   </div>
                 </a>
-                <a className="flex items-center gap-4 p-3 bg-[#25D366] text-white rounded-lg hover:shadow-md transition-all scale-100 active:scale-95" href="https://wa.me/918400936290" target="_blank" rel="noreferrer">
+                <a className="flex items-center gap-3 p-3 bg-[#25D366] text-white rounded-lg hover:shadow-md transition-all scale-100 active:scale-95" href="https://wa.me/918400936290" target="_blank" rel="noreferrer">
                   <span className="w-10 h-10 flex items-center justify-center bg-white/20 rounded-full">
                     <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>chat</span>
                   </span>
                   <div>
-                    <p className="text-xs font-label-sm opacity-90">{t.waSupport}</p>
-                    <p className="font-bold">{t.chatSpecialist}</p>
+                    <p className="text-[10px] sm:text-xs font-label-sm opacity-90">{t.waSupport}</p>
+                    <p className="font-bold text-sm">{t.chatSpecialist}</p>
                   </div>
                 </a>
               </div>
             </div>
           </div>
-
         </aside>
       </div>
     </main>

@@ -2,6 +2,19 @@ import React from 'react';
 import SEOHead from '../components/SEO/SEOHead';
 import { getBreadcrumbSchema } from '../components/SEO/schemas';
 
+const MARQUEE_ITEMS = [
+  '✓ 10+ Years Experience',
+  '🧱 Interlocking Paver Blocks',
+  '🏗 Shuttering Materials',
+  '🚰 RCC Pipes',
+  '🛣 RCC Road Solutions',
+  '📍 Serving Kauriram & Gorakhpur Region',
+  '✓ Quality Assured Materials',
+  '📞 Direct Owner Support',
+  '🚚 Fast Delivery Available',
+  '✓ Trusted by Contractors & Homeowners',
+];
+
 const TRANSLATIONS = {
   hi: {
     title: 'पाइप समाधान',
@@ -127,6 +140,17 @@ export default function Pipes({ language }) {
               WhatsApp
             </a>
           </div>
+        </div>
+      </section>
+
+      {/* Marquee Section */}
+      <section className="bg-[#1a1a3e] py-4 overflow-hidden">
+        <div className="flex items-center gap-8 animate-marquee whitespace-nowrap">
+          {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((text, i) => (
+            <div key={i} className="flex items-center gap-3 text-white text-sm font-semibold">
+              {text}
+            </div>
+          ))}
         </div>
       </section>
 

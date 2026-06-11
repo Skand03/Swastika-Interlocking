@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { getShutteringProducts } from '../utils/shutteringData';
+import { getAllProducts } from '../services/productService';
 
 const DURATION_OPTIONS = [
   { label: '1 Day', days: 1 },
@@ -14,9 +14,27 @@ export default function ShutteringDetail({ language }) {
   const { productId } = useParams();
   const navigate = useNavigate();
   const isHi = language === 'hi';
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Get all products and find the current one
-  const products = getShutteringProducts(language);
+  // Get all shuttering products from database
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const data = await getAllProducts();
+        const shutteringProducts = data.filter(p => p.division === 'shuttering');
+        setProducts(shutteringProducts);
+      } catch (err) {
+        console.error('Error fetching shuttering products:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  // Find current product
   const product = products.find(p => p.id === productId);
 
   // State
@@ -26,13 +44,23 @@ export default function ShutteringDetail({ language }) {
   const [isCustom, setIsCustom] = useState(false);
   const [mainImage, setMainImage] = useState(null);
 
-  // Derived
+  // Derived values - adjust based on product structure
+  const productPrice = product?.price_min || 0;
   const days = isCustom ? (parseInt(customDays, 10) || 1) : DURATION_OPTIONS[selectedDuration].days;
-  const rentTotal = useMemo(() => quantity * days * (product?.rentPriceRaw || 0), [quantity, days, product]);
-  const saleTotal = useMemo(() => quantity * (product?.salePriceRaw || 0), [quantity, product]);
+  const rentTotal = useMemo(() => quantity * days * productPrice, [quantity, days, productPrice]);
+  const saleTotal = useMemo(() => quantity * productPrice, [quantity, productPrice]);
 
   // Related products (all except current)
   const relatedProducts = products.filter(p => p.id !== productId).slice(0, 4);
+
+  if (loading) {
+    return (
+      <div className="pt-16 min-h-screen flex flex-col items-center justify-center gap-4">
+        <span className="material-symbols-outlined text-6xl text-primary animate-spin">autorenew</span>
+        <h1 className="font-headline-md text-headline-md">{isHi ? 'लोड हो रहा है...' : 'Loading...'}</h1>
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -44,12 +72,16 @@ export default function ShutteringDetail({ language }) {
     );
   }
 
-  const displayImage = mainImage || product.image;
+  const productName = isHi ? (product.name_hi || product.name_en) : product.name_en;
+  const productDesc = isHi ? (product.description_hi || product.description_en) : product.description_en;
+  const displayImage = mainImage || (product.images && product.images[0]);
+  const isAvailable = (product.stock_quantity || 0) > 0;
+  const stockTag = isAvailable ? (isHi ? 'उपलब्ध' : 'Available') : (isHi ? 'स्टॉक से बाहर' : 'Out of Stock');
 
   const handleRentEnquiry = () => {
     navigate('/shuttering-enquiry', {
       state: {
-        productName: product.name,
+        productName,
         productId: product.id,
         quantity,
         duration: days,
@@ -62,7 +94,7 @@ export default function ShutteringDetail({ language }) {
   const handleBuyEnquiry = () => {
     navigate('/shuttering-enquiry', {
       state: {
-        productName: product.name,
+        productName,
         productId: product.id,
         quantity,
         totalCost: saleTotal,
@@ -80,7 +112,7 @@ export default function ShutteringDetail({ language }) {
           <span className="material-symbols-outlined text-[16px]">chevron_right</span>
           <Link to="/shuttering" className="hover:text-primary">{isHi ? 'शटरिंग सामग्री' : 'Shuttering Materials'}</Link>
           <span className="material-symbols-outlined text-[16px]">chevron_right</span>
-          <span className="text-primary font-bold">{product.name}</span>
+          <span className="text-primary font-bold">{productName}</span>
         </nav>
 
         {/* Product Grid */}
@@ -88,36 +120,64 @@ export default function ShutteringDetail({ language }) {
           {/* Left Column: Media */}
           <div className="space-y-6">
             <div className="relative aspect-square bg-surface-container-high rounded-xl overflow-hidden border border-outline-variant shadow-sm group">
-              <img
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                alt={product.name}
-                src={displayImage}
-              />
-              <div className="absolute top-4 left-4 bg-secondary text-on-secondary px-4 py-1 rounded-full font-label-sm text-label-sm flex items-center gap-2">
-                <span className="material-symbols-outlined text-[18px]">check_circle</span>
-                {product.tag}
+              {displayImage ? (
+                <img
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  alt={productName}
+                  src={displayImage}
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-surface-container">
+                  <span className="material-symbols-outlined text-6xl text-outline-variant">image_not_supported</span>
+                </div>
+              )}
+              <div className={`absolute top-4 left-4 ${isAvailable ? 'bg-secondary text-on-secondary' : 'bg-error text-on-error'} px-4 py-1 rounded-full font-label-sm text-label-sm flex items-center gap-2`}>
+                <span className="material-symbols-outlined text-[18px]">{isAvailable ? 'check_circle' : 'cancel'}</span>
+                {stockTag}
               </div>
             </div>
+            {/* Variant images if available */}
+            {product.specifications?.variants && product.specifications.variants.length > 0 && (
+              <div className="flex gap-3 overflow-x-auto pb-2">
+                <div
+                  className={`w-20 h-20 rounded-lg border cursor-pointer shadow-sm hover:scale-105 transition-transform flex items-center justify-center overflow-hidden bg-surface-container ${!mainImage || mainImage === displayImage ? 'border-primary border-2' : 'border-outline-variant/30'}`}
+                  onClick={() => setMainImage(null)}
+                >
+                  {displayImage ? <img src={displayImage} alt="default" className="w-full h-full object-cover" /> : <span className="material-symbols-outlined">image</span>}
+                </div>
+                {product.specifications.variants.map((variant, idx) => (
+                  variant.image_url && (
+                    <div
+                      key={idx}
+                      className={`w-20 h-20 rounded-lg border cursor-pointer shadow-sm hover:scale-105 transition-transform flex items-center justify-center overflow-hidden bg-surface-container ${mainImage === variant.image_url ? 'border-primary border-2' : 'border-outline-variant/30'}`}
+                      onClick={() => setMainImage(variant.image_url)}
+                    >
+                      <img src={variant.image_url} alt={variant.name} className="w-full h-full object-cover" />
+                    </div>
+                  )
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Right Column: Details & Actions */}
           <div className="space-y-8">
             <div>
-              <h1 className="font-display-lg text-display-lg text-on-surface mb-2">{product.name}</h1>
-              <p className="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">{product.desc}</p>
-              <div className="w-32 h-[3px] bg-rental-blue mt-4"></div>
+              <h1 className="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-2">{productName}</h1>
+              <p className="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">{productDesc}</p>
+              <div className="w-32 h-[3px] bg-primary mt-4"></div>
             </div>
 
             {/* Pricing */}
             <div className="bg-surface-container-low p-6 rounded-xl border border-outline-variant flex flex-col sm:flex-row gap-8 items-center">
               <div className="text-center sm:text-left">
                 <p className="text-on-surface-variant font-label-sm uppercase tracking-wider mb-1">{isHi ? 'किराया' : 'Rent'} / {isHi ? 'Rent' : 'किराया'}</p>
-                <p className="text-rental-blue font-bold text-headline-md">₹{product.rentPriceRaw} <span className="text-body-md font-normal">/ {product.rentUnit} / day</span></p>
+                <p className="text-primary font-bold text-headline-md">₹{product.price_min} <span className="text-body-md font-normal">/ {product.price_unit || 'item'} / day</span></p>
               </div>
               <div className="hidden sm:block w-[1px] h-12 bg-outline-variant"></div>
               <div className="text-center sm:text-left">
                 <p className="text-on-surface-variant font-label-sm uppercase tracking-wider mb-1">{isHi ? 'बिक्री' : 'Sale'} / {isHi ? 'Sale' : 'बिक्री'}</p>
-                <p className="text-saffron-orange font-bold text-headline-md">₹{product.salePriceRaw.toLocaleString('en-IN')} <span className="text-body-md font-normal">/ {product.saleUnit}</span></p>
+                <p className="text-secondary font-bold text-headline-md">₹{(product.price_max || product.price_min).toLocaleString('en-IN')} <span className="text-body-md font-normal">/ {product.price_unit || 'item'}</span></p>
               </div>
             </div>
 
@@ -252,20 +312,30 @@ export default function ShutteringDetail({ language }) {
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {relatedProducts.map(rp => (
-              <Link key={rp.id} to={`/shuttering/${rp.id}`} className="bg-surface-container-low rounded-xl border border-outline-variant overflow-hidden hover:shadow-lg transition-shadow group">
-                <div className="aspect-[4/3] overflow-hidden">
-                  <img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={rp.name} src={rp.image} />
-                </div>
-                <div className="p-4 space-y-2">
-                  <p className="font-bold text-on-surface">{rp.name}</p>
-                  <p className="text-rental-blue font-bold">₹{rp.rentPriceRaw} / {rp.rentUnit}</p>
-                  <div className="w-full mt-2 border border-dark-brown text-dark-brown py-2 rounded-lg font-bold text-label-sm uppercase text-center">
-                    {isHi ? 'विवरण' : 'Details'}
+            {relatedProducts.map(rp => {
+              const rpName = isHi ? (rp.name_hi || rp.name_en) : rp.name_en;
+              const rpImage = rp.images && rp.images[0];
+              return (
+                <Link key={rp.id} to={`/shuttering/${rp.id}`} className="bg-surface-container-low rounded-xl border border-outline-variant overflow-hidden hover:shadow-lg transition-shadow group">
+                  <div className="aspect-[4/3] overflow-hidden">
+                    {rpImage ? (
+                      <img className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={rpName} src={rpImage} />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-surface-container">
+                        <span className="material-symbols-outlined text-4xl text-outline-variant">image_not_supported</span>
+                      </div>
+                    )}
                   </div>
-                </div>
-              </Link>
-            ))}
+                  <div className="p-4 space-y-2">
+                    <p className="font-bold text-on-surface">{rpName}</p>
+                    <p className="text-primary font-bold">₹{rp.price_min} / {rp.price_unit || 'item'}</p>
+                    <div className="w-full mt-2 border border-primary text-primary py-2 rounded-lg font-bold text-label-sm uppercase text-center hover:bg-primary hover:text-white transition-colors">
+                      {isHi ? 'विवरण' : 'Details'}
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </section>
       </main>

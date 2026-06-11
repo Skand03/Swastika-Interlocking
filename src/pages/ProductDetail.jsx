@@ -301,7 +301,7 @@ export default function ProductDetail({ language }) {
         schema={[getProductSchema({ nameEn: product.nameEn, descEn: language === 'hi' ? product.descHi : product.descEn, images: product.images, priceMin: parseFloat((product.price || '0').replace(/[^0-9.]/g, '')) })]}
         breadcrumb={getBreadcrumbSchema([
           { name: 'Home', path: '/' },
-          { name: 'Products', path: '/products' },
+          { name: language === 'hi' ? 'निर्माण सामग्री' : 'Building Materials', path: '/products' },
           { name: language === 'hi' ? product.nameHi : product.nameEn, path: `/products/${id}` },
         ])}
         language={language}
@@ -311,7 +311,7 @@ export default function ProductDetail({ language }) {
         <nav className="flex items-center gap-2 text-xs font-semibold text-on-surface-variant">
           <Link to="/" className="hover:text-primary transition-colors">Home</Link>
           <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-          <Link to="/products" className="hover:text-primary transition-colors">Products</Link>
+          <Link to="/products" className="hover:text-primary transition-colors">{language === 'hi' ? 'निर्माण सामग्री' : 'Building Materials'}</Link>
           <span className="material-symbols-outlined text-[14px]">chevron_right</span>
           <span className="text-primary font-bold">{language === 'hi' ? product.nameHi : product.nameEn}</span>
         </nav>
