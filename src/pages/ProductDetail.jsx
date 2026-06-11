@@ -411,7 +411,7 @@ export default function ProductDetail({ language }) {
                   {t.getQuote} <span className="material-symbols-outlined">arrow_forward</span>
                 </button>
                 <a 
-                  href={`https://wa.me/917905978260?text=I%20am%20interested%20in%20ordering%20${quantity}%20pieces%20of%20${product.nameEn}`}
+                  href={`https://wa.me/918400936290?text=I%20am%20interested%20in%20ordering%20${quantity}%20pieces%20of%20${product.nameEn}`}
                   target="_blank"
                   rel="noreferrer"
                   className="flex-1 bg-[#25D366] text-white py-4 px-8 rounded-lg font-bold flex items-center justify-center gap-2 hover:brightness-105 shadow-md transition-all active:scale-[0.98] text-center"

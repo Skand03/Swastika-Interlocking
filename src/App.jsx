@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './auth/AuthContext';
 import { Toaster } from 'react-hot-toast';import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Chatbot from './components/Chatbot';
+import WhatsAppButton from './components/WhatsAppButton';
 import Home from './pages/Home';
 import Products from './pages/Products';
 import Order from './pages/Order';
@@ -20,6 +21,7 @@ import ShutteringDetail from './pages/ShutteringDetail';
 import ShutteringEnquiry from './pages/ShutteringEnquiry';
 import RCCRoads from './pages/RCCRoads';
 import RCCEnquiry from './pages/RCCEnquiry';
+import Pipes from './pages/Pipes';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './auth/ProtectedRoute';
 import AdminRoute from './auth/AdminRoute';
@@ -131,6 +133,7 @@ function AppContent({ language, handleLanguageChange }) {
               <RCCEnquiry language={language} />
             </AuthGate>
           } />
+          <Route path="/pipes" element={<Pipes language={language} />} />
           <Route path="/auth" element={<Auth language={language} />} />
           
           <Route path="/customer-dashboard" element={
@@ -152,8 +155,11 @@ function AppContent({ language, handleLanguageChange }) {
         </Routes>
       </div>
 
-      {/* Global Floating AI Chatbot & WhatsApp support */}
+      {/* Global Floating AI Chatbot */}
       {!isAdminPath && <Chatbot language={language} />}
+
+      {/* WhatsApp floating button — shown on all non-admin pages */}
+      {!isAdminPath && <WhatsAppButton language={language} />}
 
       {/* Footer */}
       {!isAdminPath && !location.pathname.startsWith('/customer-dashboard') && <Footer language={language} />}

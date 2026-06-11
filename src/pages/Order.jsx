@@ -244,7 +244,6 @@ export default function Order({ language }) {
 
     try {
       const { createOrder } = await import('../services/orderService');
-      const { notifyNewOrder } = await import('../services/whatsappService');
       
       const totalAmount = finalCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
@@ -265,11 +264,6 @@ export default function Order({ language }) {
       if (result) {
         setIsSuccess(true);
         setStatusMsg(t.successMsg + result.order_number + t.successMsgEnd);
-        
-        // Try to open WhatsApp but catch if popup blocked
-        try {
-          notifyNewOrder(result);
-        } catch(e) {}
         
         setFormData({
           customer_name: '',
@@ -563,7 +557,7 @@ export default function Order({ language }) {
                     <p className="font-bold text-on-surface">+91 84009 36290</p>
                   </div>
                 </a>
-                <a className="flex items-center gap-4 p-3 bg-[#25D366] text-white rounded-lg hover:shadow-md transition-all scale-100 active:scale-95" href="https://wa.me/917905978260" target="_blank" rel="noreferrer">
+                <a className="flex items-center gap-4 p-3 bg-[#25D366] text-white rounded-lg hover:shadow-md transition-all scale-100 active:scale-95" href="https://wa.me/918400936290" target="_blank" rel="noreferrer">
                   <span className="w-10 h-10 flex items-center justify-center bg-white/20 rounded-full">
                     <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>chat</span>
                   </span>

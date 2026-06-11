@@ -243,6 +243,87 @@ export default function Home({ language }) {
   </button>
 </div>
 </section>
+{/* Talk Directly to Owners Section */}
+<section className="py-16 md:py-24 px-gutter max-w-container-max mx-auto bg-surface-container">
+  <div className="text-center mb-12">
+    <h2 className="font-display-lg text-3xl md:text-4xl text-on-surface mb-2">
+      {language === 'hi' ? 'सीधे मालिक से बात करें' : 'Talk Directly to the Owners'}
+    </h2>
+    <p className="text-on-surface-variant text-lg">
+      {language === 'hi' ? 'कोई बीचौलिया नहीं — हमेशा सीधा संपर्क' : 'No middleman — direct contact always'}
+    </p>
+  </div>
+
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+    {/* Dilip Card */}
+    <div className="bg-white p-8 rounded-2xl shadow-sm border border-primary/10 hover:shadow-md transition-all">
+      <div className="flex items-center gap-4 mb-4">
+        <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+          <span className="material-symbols-outlined text-3xl text-primary">person</span>
+        </div>
+        <div>
+          <h3 className="font-headline-md text-xl font-bold text-on-surface">Dilip Chaubey</h3>
+          <p className="text-primary font-semibold text-sm">Building Materials & RCC Roads</p>
+        </div>
+      </div>
+      <p className="text-on-surface-variant text-sm mb-4">
+        {language === 'hi' ? 'पेवर ब्लॉक, निर्माण सामग्री, शटरिंग किराए और RCC सड़क के लिए संपर्क करें।' : 'Contact for paver blocks, building materials, shuttering rental, and RCC roads.'}
+      </p>
+      <div className="flex gap-3 flex-wrap">
+        <a 
+          href="tel:+918400936290" 
+          className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl font-semibold hover:bg-primary-dark transition-colors text-sm"
+        >
+          <span className="material-symbols-outlined text-base">call</span>
+          84009 36290
+        </a>
+        <a 
+          href="https://wa.me/918400936290" 
+          target="_blank"
+          rel="noreferrer"
+          className="flex items-center gap-2 px-5 py-2.5 bg-[#25D366] text-white rounded-xl font-semibold hover:bg-[#1DA852] transition-colors text-sm"
+        >
+          <span className="material-symbols-outlined text-base">chat</span>
+          WhatsApp
+        </a>
+      </div>
+    </div>
+
+    {/* Alok Card */}
+    <div className="bg-white p-8 rounded-2xl shadow-sm border border-[#1565C0]/10 hover:shadow-md transition-all">
+      <div className="flex items-center gap-4 mb-4">
+        <div className="w-16 h-16 rounded-full bg-[#1565C0]/10 flex items-center justify-center">
+          <span className="material-symbols-outlined text-3xl text-[#1565C0]">person</span>
+        </div>
+        <div>
+          <h3 className="font-headline-md text-xl font-bold text-on-surface">Alok Chaubey</h3>
+          <p className="text-[#1565C0] font-semibold text-sm">Pipes & Drainage Solutions</p>
+        </div>
+      </div>
+      <p className="text-on-surface-variant text-sm mb-4">
+        {language === 'hi' ? 'ड्रेनेज पाइप, जल आपूर्ति, पूल निर्माण और औद्योगिक पाइपिंग के लिए संपर्क करें।' : 'Contact for drainage pipes, water supply, pool construction, and industrial piping.'}
+      </p>
+      <div className="flex gap-3 flex-wrap">
+        <a 
+          href="tel:+919722832661" 
+          className="flex items-center gap-2 px-5 py-2.5 bg-[#1565C0] text-white rounded-xl font-semibold hover:bg-[#0D47A1] transition-colors text-sm"
+        >
+          <span className="material-symbols-outlined text-base">call</span>
+          97228 32661
+        </a>
+        <a 
+          href="https://wa.me/919722832661" 
+          target="_blank"
+          rel="noreferrer"
+          className="flex items-center gap-2 px-5 py-2.5 bg-[#25D366] text-white rounded-xl font-semibold hover:bg-[#1DA852] transition-colors text-sm"
+        >
+          <span className="material-symbols-outlined text-base">chat</span>
+          WhatsApp
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
 <section className="py-16 md:py-24 px-gutter max-w-container-max mx-auto">
 <div className="text-center mb-16">
 <h2 className="font-display-lg text-headline-md md:text-display-lg text-on-surface">{t.ourBusiness}</h2>

@@ -3,30 +3,38 @@ import { Link } from 'react-router-dom';
 
 const TRANSLATIONS = {
   hi: {
-    desc: 'प्रीमियम निर्माण परियोजनाओं के लिए उच्च-शक्ति इंटरलॉकिंग पेवर ब्लॉक और कंक्रीट समाधानों के निर्माता।',
+    desc: 'प्रीमियम निर्माण परियोजनाओं के लिए उच्च-शक्ति इंटरलॉकिंग पेवर ब्लॉक और कंक्रीट समाधानों के निर्माता। एक परिवारिक व्यवसाय, चौबे ब्रदर्स द्वारा संचालित।',
+    buildingDiv: 'बिल्डिंग मैटेरियल्स डिविजन',
+    pipesDiv: 'पाइप्स डिविजन',
     quickLinks: 'त्वरित लिंक',
-    ourProducts: 'हमारे उत्पाद',
-    contactUs: 'संपर्क सूत्र',
-    addressVal: 'Girdharpur uncher, Kauriram, Uttar Pradesh' ,
+    addressVal: 'Deesa, Banaskantha, Gujarat - 385535',
     hoursVal: 'सोम - शनि: सुबह 9:00 बजे - शाम 7:00 बजे',
-    sunday: 'रविवार: बंद',
+    sunday: 'रविवार: अपॉइंटमेंट पर',
     home: 'मुख्य पृष्ठ',
     products: 'उत्पाद',
-    bookOrder: 'ऑर्डर बुक करें',
+    order: 'ऑर्डर बुक करें',
+    shuttering: 'शटरिंग',
+    rccRoads: 'RCC सड़कें',
+    pipes: 'पाइप्स',
+    about: 'हमारे बारे में',
     contact: 'संपर्क'
   },
   en: {
-    desc: 'Leading manufacturers of high-strength interlocking pavers and concrete solutions for premium construction projects.',
+    desc: 'Leading manufacturers of high-strength interlocking pavers and concrete solutions for premium construction projects. A family business, operated by Chaubey Brothers.',
+    buildingDiv: 'Building Materials Division',
+    pipesDiv: 'Pipes Division',
     quickLinks: 'Quick Links',
-    ourProducts: 'Our Products',
-    contactUs: 'Contact Us',
-    addressVal: 'Girdharpur uncher, Kauriram, Uttar Pradesh',
+    addressVal: 'Deesa, Banaskantha, Gujarat - 385535',
     hoursVal: 'Mon - Sat: 9:00 AM - 7:00 PM',
-    sunday: 'Sunday: Closed',
+    sunday: 'Sunday: By Appointment',
     home: 'Home',
     products: 'Products',
-    bookOrder: 'Book Order',
-    contact: 'Contact Us'
+    order: 'Book Order',
+    shuttering: 'Shuttering',
+    rccRoads: 'RCC Roads',
+    pipes: 'Pipes',
+    about: 'About',
+    contact: 'Contact'
   }
 };
 
@@ -44,68 +52,74 @@ export default function Footer({ language }) {
         <div className="flex flex-col">
           <div className="flex items-center gap-3 mb-6 select-none">
             <img alt="Swastika Interlocking Logo" className="h-10 w-10 object-contain" src="/logo.svg" />
-            <span className="font-headline-md text-headline-md font-bold text-primary dark:text-inverse-primary leading-tight">
+            <span className="font-headline-md text-headline-md font-bold text-primary leading-tight">
               Swastika<br/><span className="text-on-surface">Interlocking</span>
             </span>
           </div>
           <p className="text-on-surface-variant font-body-md text-body-md mb-6 leading-relaxed">
             {t.desc}
           </p>
+          <p className="text-on-surface-variant font-body-md text-body-md">
+            {language === 'hi' ? 'एक चौबे परिवार का व्यवसाय' : 'A Chaubey Family Business'}
+          </p>
         </div>
 
-        {/* Quick Links Column */}
+        {/* Dilip's Division Column */}
         <div>
-          <h4 className="font-bold text-on-surface mb-6 font-body-md text-body-md border-b border-on-surface/5 pb-2">
-            {t.quickLinks}
+          <h4 className="font-bold text-on-surface mb-6 font-body-md text-body-md border-b border-primary/30 pb-2 text-primary">
+            {t.buildingDiv}
           </h4>
-          <ul className="space-y-4">
+          <p className="text-on-surface font-semibold mb-2">Dilip Chaubey</p>
+          <a href="tel:+918400936290" className="text-on-surface-variant hover:text-primary transition-colors mb-1 block">
+            84009 36290
+          </a>
+          <ul className="space-y-3 mt-6">
             <li>
-              <Link to="/" onClick={handleScrollToTop} className="text-on-surface-variant hover:text-primary transition-all font-body-md text-body-md hover:underline decoration-primary">
-                {t.home}
-              </Link>
-            </li>
-            <li>
-              <Link to="/products" onClick={handleScrollToTop} className="text-on-surface-variant hover:text-primary transition-all font-body-md text-body-md hover:underline decoration-primary">
+              <Link to="/products" onClick={handleScrollToTop} className="text-on-surface-variant hover:text-primary transition-all">
                 {t.products}
               </Link>
             </li>
             <li>
-              <Link to="/order" onClick={handleScrollToTop} className="text-on-surface-variant hover:text-primary transition-all font-body-md text-body-md hover:underline decoration-primary">
-                {t.bookOrder}
+              <Link to="/shuttering" onClick={handleScrollToTop} className="text-on-surface-variant hover:text-primary transition-all">
+                {t.shuttering}
               </Link>
             </li>
             <li>
-              <Link to="/contact" onClick={handleScrollToTop} className="text-on-surface-variant hover:text-primary transition-all font-body-md text-body-md hover:underline decoration-primary">
-                {t.contact}
+              <Link to="/rcc-roads" onClick={handleScrollToTop} className="text-on-surface-variant hover:text-primary transition-all">
+                {t.rccRoads}
+              </Link>
+            </li>
+            <li>
+              <Link to="/order" onClick={handleScrollToTop} className="text-on-surface-variant hover:text-primary transition-all">
+                {t.order}
               </Link>
             </li>
           </ul>
         </div>
 
-        {/* Products Column */}
+        {/* Alok's Division Column */}
         <div>
-          <h4 className="font-bold text-on-surface mb-6 font-body-md text-body-md border-b border-on-surface/5 pb-2">
-            {t.ourProducts}
+          <h4 className="font-bold text-on-surface mb-6 font-body-md text-body-md border-b border-[#1565C0]/30 pb-2 text-[#1565C0]">
+            {t.pipesDiv}
           </h4>
-          <ul className="space-y-4">
+          <p className="text-on-surface font-semibold mb-2">Alok Chaubey</p>
+          <a href="tel:+919722832661" className="text-on-surface-variant hover:text-[#1565C0] transition-colors mb-1 block">
+            97228 32661
+          </a>
+          <ul className="space-y-3 mt-6">
             <li>
-              <Link to="/products" onClick={handleScrollToTop} className="text-on-surface-variant hover:text-primary transition-all font-body-md text-body-md">
-                Zig-Zag Pavers
+              <Link to="/pipes" onClick={handleScrollToTop} className="text-on-surface-variant hover:text-[#1565C0] transition-all">
+                {t.pipes}
               </Link>
             </li>
             <li>
-              <Link to="/products" onClick={handleScrollToTop} className="text-on-surface-variant hover:text-primary transition-all font-body-md text-body-md">
-                I-Shape Blocks
+              <Link to="/about" onClick={handleScrollToTop} className="text-on-surface-variant hover:text-primary transition-all">
+                {t.about}
               </Link>
             </li>
             <li>
-              <Link to="/products" onClick={handleScrollToTop} className="text-on-surface-variant hover:text-primary transition-all font-body-md text-body-md">
-                Grass Pavers
-              </Link>
-            </li>
-            <li>
-              <Link to="/products" onClick={handleScrollToTop} className="text-on-surface-variant hover:text-primary transition-all font-body-md text-body-md">
-                Hollow Blocks & Pipes
+              <Link to="/contact" onClick={handleScrollToTop} className="text-on-surface-variant hover:text-primary transition-all">
+                {t.contact}
               </Link>
             </li>
           </ul>
@@ -114,12 +128,12 @@ export default function Footer({ language }) {
         {/* Contact Column */}
         <div>
           <h4 className="font-bold text-on-surface mb-6 font-body-md text-body-md border-b border-on-surface/5 pb-2">
-            {t.contactUs}
+            {language === 'hi' ? 'संपर्क सूत्र' : 'Contact Us'}
           </h4>
           <p className="text-on-surface-variant font-body-md text-body-md mb-4 flex items-start gap-2 leading-relaxed">
             <span className="material-symbols-outlined text-primary shrink-0 mt-1">location_on</span>
             <a 
-              href="https://www.google.com/maps/place/26%C2%B029'55.8%22N+83%C2%B027'07.6%22E/@26.4988289,83.4495354,17z/data=!3m1!4b1!4m4!3m3!8m2!3d26.4988289!4d83.4521103?hl=en&entry=ttu&g_ep=EgoyMDI2MDYwMy4xIKXMDSoASAFQAw%3D%3D" 
+              href="https://www.google.com/maps/place/Deesa,+Gujarat" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="hover:text-primary transition-colors hover:underline"
@@ -128,23 +142,23 @@ export default function Footer({ language }) {
             </a>
           </p>
           <div className="text-on-surface-variant font-body-md text-body-md mb-4 flex items-start gap-2 leading-relaxed">
-            <span className="material-symbols-outlined text-primary shrink-0 mt-1">call</span>
-            <div className="flex flex-col gap-1">
-              <a href="tel:+918400936290" className="hover:text-primary transition-colors hover:underline">+91 8400936290</a>
-              <a href="tel:+917905887340" className="hover:text-primary transition-colors hover:underline">+91 79058 87340</a>
+            <span className="material-symbols-outlined text-primary shrink-0 mt-1">schedule</span>
+            <div>
+              <p>{t.hoursVal}</p>
+              <p className="text-sm">{t.sunday}</p>
             </div>
           </div>
           <p className="text-on-surface-variant font-body-md text-body-md flex items-start gap-2 leading-relaxed">
             <span className="material-symbols-outlined text-primary shrink-0 mt-1">mail</span>
-            <a href="mailto:skandchaueby03@gmail.com" className="hover:text-primary transition-colors hover:underline">
-              skandchaueby03@gmail.com
+            <a href="mailto:info@swastikainterlocking.live" className="hover:text-primary transition-colors hover:underline">
+              info@swastikainterlocking.live
             </a>
           </p>
         </div>
       </div>
 
       <div className="max-w-container-max mx-auto mt-12 pt-8 border-t border-on-surface/10 text-center text-on-surface-variant font-body-md text-body-md">
-        © {new Date().getFullYear()} Swastika Interlocking. All Rights Reserved.
+        © {new Date().getFullYear()} Swastika Interlocking | Dilip Chaubey & Alok Chaubey | Deesa, Gujarat
       </div>
     </footer>
   );

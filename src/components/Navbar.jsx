@@ -12,8 +12,9 @@ const TRANSLATIONS = {
     contact: 'Contact',
     order: 'Order',
     portal: 'Portal Login',
-    buildingMaterials: 'Building Materials',
-    shutteringMaterials: 'Shuttering Materials'
+    buildingMaterials: 'Building Materials (Dilip Chaubey)',
+    shutteringMaterials: 'Shuttering Materials',
+    pipes: 'Pipes & Drainage (Alok Chaubey)'
   },
   en: {
     home: 'Home',
@@ -24,8 +25,9 @@ const TRANSLATIONS = {
     contact: 'Contact',
     order: 'Order',
     portal: 'Portal Login',
-    buildingMaterials: 'Building Materials',
-    shutteringMaterials: 'Shuttering Materials'
+    buildingMaterials: 'Building Materials (Dilip Chaubey)',
+    shutteringMaterials: 'Shuttering Materials',
+    pipes: 'Pipes & Drainage (Alok Chaubey)'
   }
 };
 
@@ -34,7 +36,7 @@ export default function Navbar({ language, setLanguage }) {
   const location = useLocation();
   const { profile, signOut } = useAuth();
   
-  const t = TRANSLATIONS['en'];
+  const t = TRANSLATIONS[language];
 
   const isLinkActive = (path) => {
     return location.pathname === path;
@@ -70,26 +72,29 @@ export default function Navbar({ language, setLanguage }) {
 
         {/* Desktop Navigation */}
         <div className="hidden lg:flex items-center gap-6 xl:gap-8">
-          <Link className={linkClass('/')} to="/">Home</Link>
+          <Link className={linkClass('/')} to="/">{t.home}</Link>
           
           <div className="group relative">
             <Link to="/products" className={`flex items-center gap-1 ${linkClass('/products')}`}>
-              Products <span className="material-symbols-outlined text-[16px]">expand_more</span>
+              {t.products} <span className="material-symbols-outlined text-[16px]">expand_more</span>
             </Link>
-            <div className="absolute top-full left-0 mt-4 w-56 bg-black/80 backdrop-blur-xl shadow-xl rounded-xl border border-white/10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 overflow-hidden">
+            <div className="absolute top-full left-0 mt-4 w-64 bg-black/80 backdrop-blur-xl shadow-xl rounded-xl border border-white/10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 overflow-hidden">
               <Link to="/products" className="flex items-center gap-3 p-4 hover:bg-white/10 text-white/90 hover:text-white transition-colors">
-                <span className="text-sm font-medium">Building Materials</span>
+                <span className="text-sm font-medium">{t.buildingMaterials}</span>
               </Link>
               <Link to="/shuttering" className="flex items-center gap-3 p-4 hover:bg-white/10 text-white/90 hover:text-white transition-colors">
-                <span className="text-sm font-medium">Shuttering Materials</span>
+                <span className="text-sm font-medium">{t.shutteringMaterials}</span>
+              </Link>
+              <Link to="/pipes" className="flex items-center gap-3 p-4 hover:bg-white/10 text-white/90 hover:text-white transition-colors">
+                <span className="text-sm font-medium">{t.pipes}</span>
               </Link>
             </div>
           </div>
           
-          <Link className={linkClass('/rcc-roads')} to="/rcc-roads">RCC Roads</Link>
-          <Link className={linkClass('/about')} to="/about">About</Link>
-          <Link className={linkClass('/order')} to="/order">Order</Link>
-          <Link className={linkClass('/contact')} to="/contact">Contact</Link>
+          <Link className={linkClass('/rcc-roads')} to="/rcc-roads">{t.rccRoads}</Link>
+          <Link className={linkClass('/about')} to="/about">{t.about}</Link>
+          <Link className={linkClass('/order')} to="/order">{t.order}</Link>
+          <Link className={linkClass('/contact')} to="/contact">{t.contact}</Link>
         </div>
         
         {/* Actions & Mobile Toggle */}
@@ -190,10 +195,11 @@ export default function Navbar({ language, setLanguage }) {
           <Link to="/" onClick={() => setIsOpen(false)} className={`py-2 font-medium ${isLinkActive('/') ? 'text-white' : 'text-white/70'}`}>Home</Link>
           
           <div className="flex flex-col gap-2">
-            <div className={`py-2 font-medium ${isLinkActive('/products') || isLinkActive('/shuttering') ? 'text-white' : 'text-white/70'}`}>Products</div>
+            <div className={`py-2 font-medium ${isLinkActive('/products') || isLinkActive('/shuttering') || isLinkActive('/pipes') ? 'text-white' : 'text-white/70'}`}>Products</div>
             <div className="flex flex-col pl-4 border-l-2 border-white/10 ml-2 gap-3">
-              <Link to="/products" onClick={() => setIsOpen(false)} className={`text-sm font-medium ${isLinkActive('/products') ? 'text-white' : 'text-white/60'}`}>Building Materials</Link>
-              <Link to="/shuttering" onClick={() => setIsOpen(false)} className={`text-sm font-medium ${isLinkActive('/shuttering') ? 'text-white' : 'text-white/60'}`}>Shuttering Materials</Link>
+              <Link to="/products" onClick={() => setIsOpen(false)} className={`text-sm font-medium ${isLinkActive('/products') ? 'text-white' : 'text-white/60'}`}>{t.buildingMaterials}</Link>
+              <Link to="/shuttering" onClick={() => setIsOpen(false)} className={`text-sm font-medium ${isLinkActive('/shuttering') ? 'text-white' : 'text-white/60'}`}>{t.shutteringMaterials}</Link>
+              <Link to="/pipes" onClick={() => setIsOpen(false)} className={`text-sm font-medium ${isLinkActive('/pipes') ? 'text-white' : 'text-white/60'}`}>{t.pipes}</Link>
             </div>
           </div>
           <Link to="/rcc-roads" onClick={() => setIsOpen(false)} className={`py-2 font-medium ${isLinkActive('/rcc-roads') ? 'text-white' : 'text-white/70'}`}>RCC Roads</Link>

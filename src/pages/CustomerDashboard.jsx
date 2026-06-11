@@ -818,7 +818,7 @@ export default function CustomerDashboard({ language }) {
                       Download Invoice
                     </button>
                     <a 
-                      href={`https://wa.me/917905978260?text=I%20have%20a%20question%20regarding%20my%20order%20${selectedOrder.order_number || ''}`}
+                      href={`https://wa.me/918400936290?text=I%20have%20a%20question%20regarding%20my%20order%20${selectedOrder.order_number || ''}`}
                       target="_blank"
                       rel="noreferrer"
                       className="w-full py-2.5 bg-[#25D366] text-white rounded-lg font-bold text-xs hover:opacity-95 flex items-center justify-center gap-1.5"

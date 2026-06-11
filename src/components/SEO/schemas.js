@@ -3,8 +3,10 @@
 // ============================================================
 
 const BASE_URL = 'https://www.swastikainterlocking.live';
-const PHONE = '+91-8400936290';
-const WHATSAPP = '+91-7905978260';
+const PHONE_DILIP = '+91-8400936290';
+const PHONE_ALOK = '+91-9722832661';
+const WHATSAPP_DILIP = '+91-8400936290';
+const WHATSAPP_ALOK = '+91-9722832661';
 const EMAIL = 'info@swastikainterlocking.live';
 
 export const organizationSchema = {
@@ -14,11 +16,25 @@ export const organizationSchema = {
   alternateName: 'स्वस्तिका इंटरलॉकिंग',
   url: BASE_URL,
   logo: `${BASE_URL}/logo.svg`,
-  description: 'Manufacturer of interlocking paver blocks, shuttering materials rental, and RCC road construction in Deesa, Gujarat, India.',
+  description: 'Manufacturer of interlocking paver blocks, shuttering materials rental, RCC road construction, and pipes & drainage solutions in Deesa, Banaskantha, Gujarat, India. Operated by Dilip Chaubey and Alok Chaubey.',
   foundingDate: '2010',
+  founder: [
+    {
+      '@type': 'Person',
+      name: 'Dilip Chaubey',
+      telephone: PHONE_DILIP,
+      jobTitle: 'Proprietor & Founder',
+    },
+    {
+      '@type': 'Person',
+      name: 'Alok Chaubey',
+      telephone: PHONE_ALOK,
+      jobTitle: 'Co-Owner, Pipes Division',
+    },
+  ],
   address: {
     '@type': 'PostalAddress',
-    streetAddress: 'Girdharpur Uncher, Kauriram',
+    streetAddress: 'Deesa',
     addressLocality: 'Deesa',
     addressRegion: 'Gujarat',
     postalCode: '385535',
@@ -27,19 +43,20 @@ export const organizationSchema = {
   contactPoint: [
     {
       '@type': 'ContactPoint',
-      telephone: PHONE,
+      telephone: PHONE_DILIP,
       contactType: 'sales',
       availableLanguage: ['Hindi', 'Gujarati', 'English'],
     },
     {
       '@type': 'ContactPoint',
-      telephone: WHATSAPP,
+      telephone: WHATSAPP_DILIP,
       contactType: 'customer support',
       contactOption: 'WhatsApp',
     },
   ],
   sameAs: [
-    `https://wa.me/917905978260`,
+    `https://wa.me/918400936290`,
+    `https://wa.me/919722832661`,
   ],
 };
 
@@ -47,18 +64,18 @@ export const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': ['LocalBusiness', 'Store'],
   name: 'Swastika Interlocking',
-  alternateName: 'स्वस्तिका इंटरलॉकिंग',
+  alternateName: 'स्वस्तिका इंटरలॉకింగ్',
   image: [
     `${BASE_URL}/logo.svg`,
     `${BASE_URL}/interlocking-street-image-3x.jpg`,
     `${BASE_URL}/Business-division-Bulding-Material.png`,
   ],
   priceRange: '₹₹',
-  telephone: PHONE,
+  telephone: [PHONE_DILIP, PHONE_ALOK],
   email: EMAIL,
   address: {
     '@type': 'PostalAddress',
-    streetAddress: 'Girdharpur Uncher, Kauriram',
+    streetAddress: 'Deesa',
     addressLocality: 'Deesa',
     addressRegion: 'Gujarat',
     postalCode: '385535',
@@ -90,11 +107,12 @@ export const localBusinessSchema = {
   ],
   hasOfferCatalog: {
     '@type': 'OfferCatalog',
-    name: 'Construction Materials',
+    name: 'Construction Materials & Solutions',
     itemListElement: [
       { '@type': 'Offer', itemOffered: { '@type': 'Product', name: 'Interlocking Paver Blocks' } },
       { '@type': 'Offer', itemOffered: { '@type': 'Product', name: 'Shuttering Materials' } },
       { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'RCC Road Construction' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Product', name: 'Pipes & Drainage Solutions' } },
     ],
   },
 };

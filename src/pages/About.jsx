@@ -6,69 +6,74 @@ import { getBreadcrumbSchema } from '../components/SEO/schemas';
 const TRANSLATIONS = {
   hi: {
     title: 'हमारे बारे में',
-    subtitle: 'Girdharpur Uncher, Kauriram, Uttar Pradesh का विश्वसनीय निर्माण साथी',
-    ourStory: 'हमारी कहानी',
-    ourStoryTitle: 'हमारी कहानी',
-    storyText1: 'स्वस्तिका इंटरलॉकिंग गजपुर कौड़ीराम, उत्तर प्रदेश के केंद्र में स्थित एक गर्वित पारिवारिक व्यवसाय है। 1990 के दशक से, हम अपने समुदाय की नींव को अटूट ईमानदारी के साथ बनाने के लिए प्रतिबद्ध हैं।',
-    storyText2: 'हम भारी भार और समय की कसौटी पर खरा उतरने के लिए डिज़ाइन किए गए इंटरलॉकिंग पेवर ब्लॉकों के सटीक विनिर्माण में विशेषज्ञता रखते हैं। पेवर्स के अलावा, हम प्रीमियम रेत, बजरी, उच्च ग्रेड सीमेंट और औद्योगिक क्षमता वाले जल निकासी पाइपों सहित निर्माण आवश्यक वस्तुओं का एक पूरा सूट प्रदान करते हैं।',
-    processTitle: 'निर्माण प्रक्रिया',
-    processSubtitle: 'हम इसे कैसे बनाते हैं',
-    steps: [
-      { num: '1', title: 'कच्चा माल', desc: 'हम एक मजबूत नींव के लिए उच्चतम गुणवत्ता वाली रेत, बजरी और सीमेंट का स्रोत बनाते हैं।' },
-      { num: '2', title: 'मिश्रण', desc: 'कम्प्यूटरीकृत मिश्रण अधिकतम स्थायित्व और मजबूती के लिए सही अनुपात सुनिश्चित करता है।' },
-      { num: '3', title: 'ढलाई', desc: 'उच्च दबाव कंपन मोल्डिंग सटीक, इंटरलॉकिंग आकृतियों का निर्माण करता है।' },
-      { num: '4', title: 'क्योरिंग और डिलीवरी', desc: 'आपके स्थान पर सीधे वितरित होने से पहले 14 दिनों तक पानी की क्योरिंग की जाती है।' }
-    ],
-    whyChooseTitle: 'स्वस्तिका को क्यों चुनें?',
-    whyChooseOptions: [
-      { title: 'गुणवत्ता गारंटी', desc: 'आईएस कोड को पूरा करने के लिए प्रत्येक ब्लॉक की मजबूती और पहनने के प्रतिरोध का परीक्षण किया जाता है।' },
-      { title: 'तेज डिलीवरी', desc: 'हमारा समर्पित रसद बेड़ा यह सुनिश्चित करता है कि आपकी सामग्री ठीक समय पर पहुंचे।' },
-      { title: 'सर्वोत्तम मूल्य', desc: 'बिना बिचौलियों के सीधे फैक्ट्री मूल्य निर्धारण, आपके निर्माण के लिए सर्वोत्तम मूल्य सुनिश्चित करता है।' }
-    ],
-    stats: [
-      { value: '500+', label: 'खुश ग्राहक' },
-      { value: '10+', label: 'वर्षों का अनुभव' },
-      { value: '50,000+', label: 'ब्लॉक निर्मित' },
-      { value: '5', label: 'उपलब्ध उत्पाद' }
-    ],
-    ctaTitle: 'ऑर्डर करें आज',
-    ctaSub: 'अपने लैंडस्केपिंग या निर्माण परियोजना के लिए व्यक्तिगत कोटेशन प्राप्त करें।',
-    ctaBtn: 'ऑर्डर बुक करें',
-    whatsappBtn: 'व्हाट्सएप करें'
+    heroSub: 'एक परिवार, एक विश्वास',
+    storyTitle: 'हमारी कहानी',
+    storyText: 'स्वस्तिका इंटरलॉकिंग एक पारिवारिक व्यवसाय है जिसे भाइयों दिलीप चौबे और आलोक चौबे ने देसा, बनासकांठा, गुजरात में स्थापित किया। एक छोटी पेवर ब्लॉक निर्माण इकाई से शुरू होकर यह एक पूर्ण निर्माण समाधान प्रदाता बन गया है।',
+    storyTextEn: 'Swastika Interlocking is a family-owned business founded by brothers Dilip Chaubey and Alok Chaubey in Deesa, Banaskantha, Gujarat. What started as a small paver block manufacturing unit has grown into a complete construction solutions provider serving Deesa and surrounding districts of Gujarat.',
+    meetTeam: 'हमारी टीम से मिलें',
+    dilipName: 'Dilip Chaubey / दिलीप चौबे',
+    dilipTitle: 'Proprietor & Founder / संस्थापक',
+    dilipDivision: 'Building Materials • Shuttering • RCC Roads',
+    dilipBio: 'Dilip bhai leads our manufacturing and construction division with 10+ years of expertise in paver block production and RCC road construction across Banaskantha district.',
+    dilipBioHi: 'दिलीप भाई हमारे निर्माण विभाग का नेतृत्व करते हैं। पेवर ब्लॉक उत्पादन और RCC सड़क निर्माण में 10+ वर्षों का अनुभव।',
+    alokName: 'Alok Chaubey / आलोक चौबे',
+    alokTitle: 'Co-Owner, Pipes Division / सह-मालिक, पाइप विभाग',
+    alokDivision: 'Drainage Pipes • Water Supply • Pool Pipes',
+    alokBio: 'Alok bhai heads our pipes and drainage division, providing complete piping solutions for drainage systems, water supply, swimming pools, and industrial applications across Gujarat.',
+    alokBioHi: 'आलोक भाई हमारे पाइप और ड्रेनेज विभाग के प्रमुख हैं। ड्रेनेज, जल आपूर्ति और स्विमिंग पूल पाइपिंग में विशेषज्ञता।',
+    callNow: 'कॉल करें',
+    whatsapp: 'व्हाट्सएप',
+    valuesTitle: 'हमारे मूल्य',
+    quality: 'गुणवत्ता / Quality',
+    honesty: 'ईमानदारी / Honesty',
+    onTime: 'समय पर / On Time',
+    ctaTitle: 'किसी भी विभाग से संपर्क करें',
+    dilipBtn: 'Dilip bhai - 84009 36290',
+    alokBtn: 'Alok bhai - 97228 32661',
+    waBtn: 'WhatsApp करें'
   },
   en: {
     title: 'About Us',
-    subtitle: 'Trusted construction partner of Gajpur Kauriram, Uttar Pradesh',
-    ourStory: 'Our Story',
-    ourStoryTitle: 'Our Story',
-    storyText1: 'Swastika Interlocking is a proud family-run business based in the heart of Gajpur Kauriram, Uttar Pradesh. Since the 1990s, we have been at the forefront of the local construction industry, committed to building the foundations of our community with unshakeable integrity.',
-    storyText2: 'We specialize in the high-precision manufacturing of interlocking paver blocks, designed to withstand heavy loads and the test of time. Beyond pavers, we provide a complete suite of construction essentials including premium sand, gravel, high-grade cement, and industrial-strength drainage pipes.',
-    processTitle: 'Manufacturing Process',
-    processSubtitle: 'How We Make It',
-    steps: [
-      { num: '1', title: 'Raw Materials', desc: 'We source the highest quality sand, gravel, and cement for a strong foundation.' },
-      { num: '2', title: 'Mixing', desc: 'Computerized mixing ensures the perfect ratio for maximum durability and strength.' },
-      { num: '3', title: 'Moulding', desc: 'High-pressure vibration moulding creates precise, interlocking shapes.' },
-      { num: '4', title: 'Curing & Delivery', desc: 'Water curing for 14 days before being delivered directly to your site.' }
-    ],
-    whyChooseTitle: 'Why Choose Swastika?',
-    whyChooseOptions: [
-      { title: 'Quality Guaranteed', desc: 'Every block is tested for compressive strength and wear resistance to meet IS codes.' },
-      { title: 'Fast Delivery', desc: 'Our dedicated logistics fleet ensures your materials arrive on site exactly when needed.' },
-      { title: 'Best Price', desc: 'Direct factory pricing without middlemen, ensuring the best value for your construction.' }
-    ],
-    stats: [
-      { value: '500+', label: 'Happy Customers' },
-      { value: '10+', label: 'Years Experience' },
-      { value: '50,000+', label: 'Blocks Made' },
-      { value: '5', label: 'Products Available' }
-    ],
-    ctaTitle: 'Order Today',
-    ctaSub: 'Get a personalized quote for your landscaping or building project.',
-    ctaBtn: 'Book Your Order',
-    whatsappBtn: 'WhatsApp Us'
+    heroSub: 'One Family, One Trust',
+    storyTitle: 'Our Story',
+    storyText: 'स्वस्तिका इंटरलॉकिंग एक पारिवारिक व्यवसाय है जिसे भाइयों दिलीप चौबे और आलोक चौबे ने देसा, बनासकांठा, गुजरात में स्थापित किया। एक छोटी पेवर ब्लॉक निर्माण इकाई से शुरू होकर यह एक पूर्ण निर्माण समाधान प्रदाता बन गया है।',
+    storyTextEn: 'Swastika Interlocking is a family-owned business founded by brothers Dilip Chaubey and Alok Chaubey in Deesa, Banaskantha, Gujarat. What started as a small paver block manufacturing unit has grown into a complete construction solutions provider serving Deesa and surrounding districts of Gujarat.',
+    meetTeam: 'Meet Our Team',
+    dilipName: 'Dilip Chaubey / दिलीप चौबे',
+    dilipTitle: 'Proprietor & Founder / संस्थापक',
+    dilipDivision: 'Building Materials • Shuttering • RCC Roads',
+    dilipBio: 'Dilip bhai leads our manufacturing and construction division with 10+ years of expertise in paver block production and RCC road construction across Banaskantha district.',
+    dilipBioHi: 'दिलीप भाई हमारे निर्माण विभाग का नेतृत्व करते हैं। पेवर ब्लॉक उत्पादन और RCC सड़क निर्माण में 10+ वर्षों का अनुभव।',
+    alokName: 'Alok Chaubey / आलोक चौबे',
+    alokTitle: 'Co-Owner, Pipes Division / सह-मालिक, पाइप विभाग',
+    alokDivision: 'Drainage Pipes • Water Supply • Pool Pipes',
+    alokBio: 'Alok bhai heads our pipes and drainage division, providing complete piping solutions for drainage systems, water supply, swimming pools, and industrial applications across Gujarat.',
+    alokBioHi: 'आलोक भाई हमारे पाइप और ड्रेनेज विभाग के प्रमुख हैं। ड्रेनेज, जल आपूर्ति और स्विमिंग पूल पाइपिंग में विशेषज्ञता।',
+    callNow: 'Call Now',
+    whatsapp: 'WhatsApp',
+    valuesTitle: 'Our Values',
+    quality: 'गुणवत्ता / Quality',
+    honesty: 'ईमानदारी / Honesty',
+    onTime: 'समय पर / On Time',
+    ctaTitle: 'Contact Any Division',
+    dilipBtn: 'Dilip bhai - 84009 36290',
+    alokBtn: 'Alok bhai - 97228 32661',
+    waBtn: 'WhatsApp Us'
   }
 };
+
+const STATS = [
+  { value: '25+', label: 'Roads Built', labelHi: 'सड़कें बनाईं' },
+  { value: '500+', label: 'Customers', labelHi: 'ग्राहक' },
+  { value: '10+', label: 'Years', labelHi: 'वर्ष' },
+  { value: '2', label: 'Expert Divisions', labelHi: 'विशेषज्ञ विभाग' }
+];
+
+const VALUES = [
+  { icon: 'verified', title: 'Quality', titleHi: 'गुणवत्ता', color: '#E8650A' },
+  { icon: 'handshake', title: 'Honesty', titleHi: 'ईमानदारी', color: '#E8650A' },
+  { icon: 'schedule', title: 'On Time', titleHi: 'समय पर', color: '#E8650A' }
+];
 
 export default function About({ language }) {
   const t = TRANSLATIONS[language];
@@ -77,167 +82,209 @@ export default function About({ language }) {
     <div className="pt-16 bg-surface text-on-surface">
       <SEOHead
         title="About Swastika Interlocking - Paver Block Manufacturer Deesa Gujarat Since 2010"
-        description="Learn about Swastika Interlocking, trusted manufacturer of paver blocks and construction materials in Deesa, Banaskantha, Gujarat. Family business with 10+ years experience."
-        keywords="Swastika Interlocking Deesa, paver block manufacturer Gujarat, construction company Banaskantha, interlocking blocks history"
+        description="Learn about Swastika Interlocking, trusted manufacturer of paver blocks and construction materials in Deesa, Banaskantha, Gujarat. Family business with Dilip & Alok Chaubey."
+        keywords="Swastika Interlocking Deesa, Dilip Chaubey, Alok Chaubey, paver block manufacturer Gujarat"
         url="/about"
         breadcrumb={getBreadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'About', path: '/about' }])}
         language={language}
       />
 
-      {/* Our Story */}
+      {/* Hero Section */}
+      <section className="relative py-32 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/95 to-primary/85"></div>
+        <img 
+          src="/interlocking-street-image-3x.jpg" 
+          alt="Swastika Interlocking" 
+          className="absolute inset-0 w-full h-full object-cover opacity-10"
+        />
+        <div className="max-w-container-max mx-auto px-gutter relative z-10 text-center">
+          <h1 className="text-4xl md:text-6xl font-display-lg text-white mb-6">
+            {language === 'hi' ? 'हमारे बारे में' : 'About Us'}
+          </h1>
+          <p className="text-xl md:text-2xl text-white/90 font-medium">
+            {t.heroSub}
+          </p>
+        </div>
+      </section>
+
+      {/* Our Story Section */}
       <section className="max-w-container-max mx-auto px-gutter py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
           <div className="space-y-6">
-            <span className="inline-block px-4 py-1 bg-primary-fixed text-on-primary-fixed font-semibold text-xs rounded-full">EST. 1990s</span>
+            <span className="inline-block px-4 py-1 bg-primary-fixed text-on-primary-fixed font-semibold text-xs rounded-full">
+              {language === 'hi' ? 'EST. 2010' : 'EST. 2010'}
+            </span>
             <h2 className="font-display-lg text-3xl md:text-4xl text-primary leading-tight">
-              {t.ourStoryTitle}
+              {t.storyTitle}
             </h2>
             <div className="space-y-4 font-body-lg text-on-surface-variant leading-relaxed">
-              <p>{t.storyText1}</p>
-              <p>{t.storyText2}</p>
+              <p>{language === 'hi' ? t.storyText : t.storyTextEn}</p>
+              <p>{language === 'hi' 
+                ? '10+ वर्षों के अनुभव के साथ, हमने सड़कें बनाईं, सामग्री की आपूर्ति की और सैकड़ों परिवारों और ठेकेदारों को उनके सपने बनाने में मदद की।' 
+                : 'With over a decade of experience, we have built roads, supplied materials, and helped hundreds of families and contractors build their dreams.'
+              }</p>
             </div>
           </div>
           <div className="relative group">
-            <div className="aspect-video rounded-tl-[4rem] rounded-br-[4rem] rounded-tr-2xl rounded-bl-2xl shadow-[0_20px_50px_rgba(232,101,10,0.15)] border border-primary/20 flex flex-col items-center justify-center bg-surface-container-low transition-all duration-700 hover:-translate-y-2 hover:shadow-[0_30px_60px_rgba(232,101,10,0.25)] overflow-hidden z-10 relative">
+            <div className="aspect-video rounded-2xl shadow-lg border border-primary/20 bg-surface-container-low overflow-hidden">
               <img 
-                alt="Manufacturing facility" 
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out" 
-                src="/screen.png" 
+                alt="Team at Swastika Interlocking" 
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+                src="/swastika-interlocking-pertol-bricks-3x.jpg" 
               />
             </div>
-            {/* Decorative background blurs */}
-            <div className="absolute -bottom-8 -left-8 w-48 h-48 bg-primary rounded-full -z-0 blur-[60px] opacity-30 group-hover:opacity-50 transition-opacity duration-700"></div>
-            <div className="absolute -top-8 -right-8 w-48 h-48 bg-[#1565C0] rounded-full -z-0 blur-[60px] opacity-20 group-hover:opacity-40 transition-opacity duration-700"></div>
-          </div>
-        </div>
-      </section>
-      {/* Manufacturing Process */}
-      <section className="w-full bg-[#F0EBE0] py-20">
-        <div className="max-w-container-max mx-auto px-gutter">
-          <h2 className="font-display-lg text-3xl md:text-4xl text-center text-primary mb-16">
-            {t.processTitle} / <span className="text-on-surface">{t.processSubtitle}</span>
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
-            <div className="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-primary/20 -translate-y-1/2 -z-10"></div>
-            {t.steps.map((step, idx) => (
-              <div key={idx} className="group relative bg-surface p-6 rounded-xl border-t-4 border-primary shadow-sm hover:shadow-xl transition-all duration-300">
-                <div className="absolute -top-4 -left-4 w-10 h-10 bg-primary text-on-primary flex items-center justify-center rounded-full font-bold">{step.num}</div>
-                <div className="mb-4 text-primary">
-                  <span className="material-symbols-outlined text-4xl">
-                    {idx === 0 ? 'layers' : idx === 1 ? 'cyclone' : idx === 2 ? 'view_in_ar' : 'local_shipping'}
-                  </span>
-                </div>
-                <h3 className="font-headline-md text-base mb-2 font-bold">{step.title}</h3>
-                <p className="text-on-surface-variant text-sm">{step.desc}</p>
-              </div>
-            ))}
           </div>
         </div>
       </section>
 
-      {/* Engineering Standards (Bento Grid) */}
-      <section className="w-full bg-[#F6F2EC] py-24">
-        <div className="max-w-container-max mx-auto px-gutter">
-          <div className="mb-12">
-            <h2 className="font-display-lg text-4xl md:text-5xl text-[#2D3748] mb-4">
-              {language === 'hi' ? 'निर्माण प्रक्रिया' : 'Engineering Standards'}
-            </h2>
-            <p className="text-on-surface-variant font-medium">
-              {language === 'hi' ? 'हर माइक्रोन पर सटीकता, हर कण में स्थायित्व।' : 'Precision at every micron, durability in every grain.'}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 auto-rows-fr">
-            
-            {/* Column 1 */}
-            <div className="flex flex-col gap-6">
-              <div className="relative rounded-2xl overflow-hidden shadow-lg group flex-1 min-h-[300px]">
-                <img 
-                  src="/swastika-interlocking-pertol-bricks-3x.jpg" 
-                  alt="Raw Materials" 
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
-                <div className="absolute bottom-0 left-0 p-8 w-full text-white">
-                  <div className="text-3xl font-bold text-[#FCD3A1] mb-2">01</div>
-                  <h3 className="text-xl font-bold mb-2">{language === 'hi' ? 'कच्चा माल' : 'Raw Materials'}</h3>
-                  <p className="text-sm text-white/80 leading-relaxed max-w-[90%]">
-                    {language === 'hi' ? 'एक मजबूत नींव के लिए उच्चतम गुणवत्ता वाली रेत और बजरी की सोर्सिंग।' : 'Sourcing high quality sand and gravel for a strong foundation.'}
-                  </p>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-2xl shadow-lg p-8 group flex-1 min-h-[250px] flex flex-col justify-center border border-black/5">
-                <div className="mb-6">
-                  <span className="material-symbols-outlined text-4xl text-primary">cyclone</span>
-                </div>
-                <h3 className="text-xl font-bold mb-3 text-on-surface">{language === 'hi' ? 'मिश्रण' : 'Mixing'}</h3>
-                <p className="text-sm text-on-surface-variant leading-relaxed">
-                  {language === 'hi' ? 'कम्प्यूटरीकृत मिश्रण अधिकतम स्थायित्व और मजबूती के लिए सही अनुपात सुनिश्चित करता है।' : 'Computerized mixing ensures the perfect ratio for maximum durability and strength.'}
-                </p>
-              </div>
-            </div>
-
-            {/* Column 2 */}
-            <div className="flex flex-col gap-6 lg:h-full">
-              <div className="relative rounded-2xl overflow-hidden shadow-lg group h-full min-h-[500px]">
-                <img 
-                  src="/interlocking-street-image-3x.jpg" 
-                  alt="Moulding" 
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#B04A00]/90 via-black/40 to-transparent mix-blend-multiply"></div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
-                <div className="absolute bottom-0 left-0 p-8 w-full text-white">
-                  <div className="text-4xl font-bold text-white mb-2">03</div>
-                  <h3 className="text-2xl font-bold mb-3 text-white">{language === 'hi' ? 'ढलाई' : 'Moulding'}</h3>
-                  <p className="text-sm text-white/80 leading-relaxed font-medium">
-                    {language === 'hi' ? 'उच्च दबाव कंपन मोल्डिंग सटीक, इंटरलॉकिंग आकृतियों का निर्माण करता है जो सहनशक्ति को फिर से परिभाषित करते हैं।' : 'High-pressure vibration moulding creates precise, interlocking shapes that redefine endurance.'}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Column 3 */}
-            <div className="flex flex-col gap-6">
-              <div className="bg-[#38332A] rounded-2xl shadow-lg p-8 group flex-1 min-h-[300px] flex flex-col justify-center">
-                <div className="text-3xl font-bold text-primary mb-4">04</div>
-                <h3 className="text-xl font-bold mb-4 text-white">{language === 'hi' ? 'क्योरिंग और डिलीवरी' : 'Curing & Delivery'}</h3>
-                <p className="text-sm text-white/70 leading-relaxed">
-                  {language === 'hi' ? 'आपके स्थान पर सीधे वितरित होने से पहले 14 दिनों तक पानी की क्योरिंग की जाती है। हमारे गुणवत्ता नियंत्रण से कोई समझौता नहीं।' : 'Water curing for 14 days before being delivered directly to your site. Our quality control is non-negotiable.'}
-                </p>
-              </div>
-
-              <div className="bg-[#F8EFE4] rounded-2xl shadow-lg p-8 group flex-1 min-h-[250px] flex flex-col items-center justify-center text-center border border-[#E8DBC9]">
-                <div className="mb-4">
-                  <span className="material-symbols-outlined text-5xl text-[#C06014]" style={{fontVariationSettings: "'FILL' 0, 'wght' 300"}}>verified</span>
-                </div>
-                <h3 className="text-sm font-bold text-[#2D3748]">{language === 'hi' ? 'आईएसओ मानक प्रमाणित' : 'ISO Standards Compliant'}</h3>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* Why Choose Us */}
+      {/* Meet Our Team Section */}
       <section className="max-w-container-max mx-auto px-gutter py-20">
-        <h2 className="font-display-lg text-3xl text-center mb-12 text-on-surface">{t.whyChooseTitle}</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {t.whyChooseOptions.map((opt, idx) => (
-            <div key={idx} className="bg-white p-8 rounded-xl border border-primary/10 shadow-sm hover:-translate-y-1 transition-all duration-300 group">
-              <div className="w-14 h-14 bg-secondary-container text-on-secondary-container rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <span className="material-symbols-outlined text-2xl font-bold">
-                  {idx === 0 ? 'check_circle' : idx === 1 ? 'local_shipping' : 'currency_rupee'}
-                </span>
+        <h2 className="font-display-lg text-3xl md:text-4xl text-center text-primary mb-16">
+          {t.meetTeam}
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Dilip Card */}
+          <div className="bg-surface p-8 rounded-2xl border border-primary/10 shadow-sm hover:shadow-lg transition-all duration-300">
+            <div className="flex flex-col items-center mb-6">
+              <div className="w-32 h-32 rounded-full border-4 border-[#E8650A] flex items-center justify-center bg-[#FFF5EB] mb-4 overflow-hidden">
+                <span className="material-symbols-outlined text-6xl text-[#E8650A]">person</span>
               </div>
-              <h3 className="font-headline-md text-lg mb-3 font-bold">{opt.title}</h3>
-              <p className="text-on-surface-variant text-sm leading-relaxed">{opt.desc}</p>
+              <h3 className="font-display-md text-2xl font-bold text-on-surface mb-2 text-center">
+                {t.dilipName}
+              </h3>
+              <p className="text-primary font-semibold mb-2">{t.dilipTitle}</p>
+              <div className="bg-primary/10 px-4 py-1 rounded-full text-primary text-sm font-medium">
+                {t.dilipDivision}
+              </div>
+            </div>
+            <p className="text-on-surface-variant text-center leading-relaxed mb-6">
+              {language === 'hi' ? t.dilipBioHi : t.dilipBio}
+            </p>
+            <div className="flex gap-3 justify-center">
+              <a 
+                href="tel:+918400936290" 
+                className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-xl font-semibold hover:bg-primary-dark transition-colors"
+              >
+                <span className="material-symbols-outlined">call</span>
+                {language === 'hi' ? 'कॉल करें' : 'Call Now'}
+              </a>
+              <a 
+                href="https://wa.me/918400936290" 
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 px-6 py-3 bg-[#25D366] text-white rounded-xl font-semibold hover:bg-[#1DA852] transition-colors"
+              >
+                <span className="material-symbols-outlined">chat</span>
+                {t.whatsapp}
+              </a>
+            </div>
+          </div>
+
+          {/* Alok Card */}
+          <div className="bg-surface p-8 rounded-2xl border border-[#1565C0]/10 shadow-sm hover:shadow-lg transition-all duration-300">
+            <div className="flex flex-col items-center mb-6">
+              <div className="w-32 h-32 rounded-full border-4 border-[#1565C0] flex items-center justify-center bg-[#E3F2FD] mb-4 overflow-hidden">
+                <span className="material-symbols-outlined text-6xl text-[#1565C0]">person</span>
+              </div>
+              <h3 className="font-display-md text-2xl font-bold text-on-surface mb-2 text-center">
+                {t.alokName}
+              </h3>
+              <p className="text-[#1565C0] font-semibold mb-2">{t.alokTitle}</p>
+              <div className="bg-[#1565C0]/10 px-4 py-1 rounded-full text-[#1565C0] text-sm font-medium">
+                {t.alokDivision}
+              </div>
+            </div>
+            <p className="text-on-surface-variant text-center leading-relaxed mb-6">
+              {language === 'hi' ? t.alokBioHi : t.alokBio}
+            </p>
+            <div className="flex gap-3 justify-center">
+              <a 
+                href="tel:+919722832661" 
+                className="flex items-center gap-2 px-6 py-3 bg-[#1565C0] text-white rounded-xl font-semibold hover:bg-[#0D47A1] transition-colors"
+              >
+                <span className="material-symbols-outlined">call</span>
+                {language === 'hi' ? 'कॉल करें' : 'Call Now'}
+              </a>
+              <a 
+                href="https://wa.me/919722832661" 
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 px-6 py-3 bg-[#25D366] text-white rounded-xl font-semibold hover:bg-[#1DA852] transition-colors"
+              >
+                <span className="material-symbols-outlined">chat</span>
+                {t.whatsapp}
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Our Values Section */}
+      <section className="max-w-container-max mx-auto px-gutter py-20 bg-[#F0EBE0]">
+        <h2 className="font-display-lg text-3xl md:text-4xl text-center text-primary mb-16">
+          {t.valuesTitle}
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {VALUES.map((value, idx) => (
+            <div key={idx} className="bg-white p-8 rounded-xl border border-primary/10 shadow-sm text-center group">
+              <div className="w-16 h-16 bg-[#FFF5EB] rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                <span className="material-symbols-outlined text-4xl text-[#E8650A]">{value.icon}</span>
+              </div>
+              <h3 className="font-headline-md text-lg mb-2 font-bold text-on-surface">
+                {language === 'hi' ? value.titleHi : value.title}
+              </h3>
             </div>
           ))}
         </div>
       </section>
 
+      {/* Stats Section */}
+      <section className="py-16 bg-primary">
+        <div className="max-w-container-max mx-auto px-gutter grid grid-cols-2 md:grid-cols-4 gap-8">
+          {STATS.map((stat, idx) => (
+            <div key={idx} className="text-center">
+              <div className="text-4xl md:text-5xl font-display-lg text-white mb-2">{stat.value}</div>
+              <div className="text-white/90 font-medium">
+                {language === 'hi' ? stat.labelHi : stat.label}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 max-w-container-max mx-auto px-gutter">
+        <div className="bg-gradient-to-r from-primary to-primary-dark rounded-3xl p-12 text-center text-white">
+          <h2 className="font-display-lg text-3xl md:text-4xl mb-8">
+            {language === 'hi' ? 'किसी भी विभाग से संपर्क करें' : t.ctaTitle}
+          </h2>
+          <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
+            <a 
+              href="tel:+918400936290" 
+              className="flex items-center gap-2 px-8 py-4 bg-white text-primary rounded-xl font-bold hover:bg-opacity-90 transition-colors"
+            >
+              <span className="material-symbols-outlined">call</span>
+              {t.dilipBtn}
+            </a>
+            <a 
+              href="tel:+919722832661" 
+              className="flex items-center gap-2 px-8 py-4 bg-white text-primary rounded-xl font-bold hover:bg-opacity-90 transition-colors"
+            >
+              <span className="material-symbols-outlined">call</span>
+              {t.alokBtn}
+            </a>
+            <a 
+              href="https://wa.me/918400936290" 
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-2 px-8 py-4 bg-[#25D366] text-white rounded-xl font-bold hover:bg-[#1DA852] transition-colors"
+            >
+              <span className="material-symbols-outlined">chat</span>
+              {t.waBtn}
+            </a>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
