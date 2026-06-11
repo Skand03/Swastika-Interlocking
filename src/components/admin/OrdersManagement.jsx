@@ -68,7 +68,7 @@ export default function OrdersManagement({ language, orders, handleStatusChange 
                 value={search}
                 onChange={e => { setSearch(e.target.value); setCurrentPage(1); }}
                 className="bg-white border border-gray-200 rounded-xl pl-9 pr-4 py-2 w-full sm:w-64 focus:ring-2 focus:ring-[#E8650A] outline-none text-sm shadow-sm"
-                placeholder={isHindi ? 'ऑర్డర్ खोजें...' : 'Search orders...'}
+                placeholder={isHindi ? 'ऑर्डर खोजें...' : 'Search orders...'}
                 type="text"
               />
               <span className="material-symbols-outlined absolute left-3 top-2.5 text-gray-400 text-sm">search</span>
@@ -91,10 +91,10 @@ export default function OrdersManagement({ language, orders, handleStatusChange 
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
           {[
-            { label: isHindi ? 'नए ऑర్డర' : 'New Orders',  count: newOrders,        color: '#E8650A', icon: 'inbox'          },
-            { label: isHindi ? 'ప్రగతి పర' : 'Processing',  count: processingOrders, color: '#1565C0', icon: 'sync'           },
+            { label: isHindi ? 'नए ऑर्डर' : 'New Orders',  count: newOrders,        color: '#E8650A', icon: 'inbox'          },
+            { label: isHindi ? 'प्रोसेसिंग' : 'Processing',  count: processingOrders, color: '#1565C0', icon: 'sync'           },
             { label: isHindi ? 'भेजे गए' : 'Dispatched',   count: shippedOrders,    color: '#7B1FA2', icon: 'local_shipping' },
-            { label: isHindi ? 'డిలివర్' : 'Delivered',     count: deliveredOrders,  color: '#2E7D32', icon: 'check_circle'   },
+            { label: isHindi ? 'डिलीवर्ड' : 'Delivered',     count: deliveredOrders,  color: '#2E7D32', icon: 'check_circle'   },
           ].map(s => (
             <div key={s.label} className="bg-white rounded-xl p-4 sm:p-5 shadow-sm border-l-4" style={{ borderColor: s.color }}>
               <div className="flex justify-between items-start">
@@ -129,8 +129,8 @@ export default function OrdersManagement({ language, orders, handleStatusChange 
                 {currentItems.length === 0 ? (
                   <tr>
                     <td colSpan="7" className="text-center py-10 sm:py-12 text-gray-400 font-bold text-sm">
-                      {isHindi ? 'కोई ఆర్డర్ కాదు' : 'No orders found.'}
-                    </td>
+                    {isHindi ? 'कोई ऑर्डर नहीं' : 'No orders found.'}
+                  </td>
                   </tr>
                 ) : currentItems.map(ord => (
                   <tr key={ord.id} className="hover:bg-gray-50 transition-colors">
@@ -159,7 +159,7 @@ export default function OrdersManagement({ language, orders, handleStatusChange 
                         className="px-2.5 sm:px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-[10px] sm:text-xs font-bold transition-colors cursor-pointer flex items-center gap-1 ml-auto"
                       >
                         <span className="material-symbols-outlined text-sm">visibility</span>
-                        {isHindi ? 'చూడండి' : 'View'}
+                        {isHindi ? 'देखें' : 'View'}
                       </button>
                     </td>
                   </tr>
@@ -176,11 +176,11 @@ export default function OrdersManagement({ language, orders, handleStatusChange 
             <div className="flex gap-2">
               <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)}
                 className="px-3 sm:px-4 py-1.5 bg-white border border-gray-200 rounded-lg text-[10px] sm:text-xs font-bold disabled:opacity-40 cursor-pointer hover:bg-gray-50">
-                {isHindi ? 'మునుపటి' : 'Prev'}
+                {isHindi ? 'पिछला' : 'Prev'}
               </button>
               <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => p + 1)}
                 className="px-3 sm:px-4 py-1.5 bg-white border border-gray-200 rounded-lg text-[10px] sm:text-xs font-bold disabled:opacity-40 cursor-pointer hover:bg-gray-50">
-                {isHindi ? 'తరువాత' : 'Next'}
+                {isHindi ? 'अगला' : 'Next'}
               </button>
             </div>
           </div>

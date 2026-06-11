@@ -13,7 +13,6 @@ export const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'Swastika Interlocking',
-  alternateName: 'स्वस्तिका इंटरलॉकिंग',
   url: BASE_URL,
   logo: `${BASE_URL}/logo.svg`,
   description: 'Manufacturer of interlocking paver blocks, shuttering materials rental, RCC road construction, and pipes & drainage solutions in Deesa, Banaskantha, Gujarat, India. Operated by Dilip Chaubey and Alok Chaubey.',
@@ -64,7 +63,6 @@ export const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': ['LocalBusiness', 'Store'],
   name: 'Swastika Interlocking',
-  alternateName: 'स्वस्तिका इंटरలॉకింగ్',
   image: [
     `${BASE_URL}/logo.svg`,
     `${BASE_URL}/interlocking-street-image-3x.jpg`,
